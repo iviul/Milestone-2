@@ -24,27 +24,27 @@
 
   "vm_instances": [
     {
-      "name": "frontend",
-      "size": "small",
-      "zone": "a",
-      "subnet": "public-subnet",
-      "tags": ["web", "frontend"],
-      "port": 3000
-    },
-    {
       "name": "reverse-proxy",
       "size": "small",
       "zone": "a",
       "subnet": "public-subnet",
       "tags": ["proxy"],
-      "port": 443
+      "port": 80
+    },
+    {
+      "name": "frontend",
+      "size": "small",
+      "zone": "b",
+      "subnet": "private-subnet",
+      "tags": ["frontend"],
+      "port": 3000
     },
     {
       "name": "backend",
       "size": "medium",
       "zone": "b",
       "subnet": "private-subnet",
-      "tags": ["backend", "api"],
+      "tags": ["backend"],
       "port": 8080
     },
     {
@@ -76,31 +76,30 @@
 
   "security_groups": [
     {
-      "name": "sg-frontend",
-      "attach_to": ["frontend"],
-      "description": "Public access to frontend (port 3000)",
-      "ingress": [
-        { "protocol": "tcp", "port": 3000, "source": "public" }
-      ],
-      "egress": [
-        { "protocol": "tcp", "port": 443, "destination": "reverse-proxy" }
-      ]
-    },
-    {
       "name": "sg-reverse-proxy",
       "attach_to": ["reverse-proxy"],
-      "description": "Accepts HTTPS from frontend, proxies to backend",
+      "description": "Allow public HTTP traffic and forward to front/back",
       "ingress": [
-        { "protocol": "tcp", "port": 443, "source": "frontend" }
+        { "protocol": "tcp", "port": 80, "source": "public" }
       ],
       "egress": [
+        { "protocol": "tcp", "port": 3000, "destination": "frontend" },
         { "protocol": "tcp", "port": 8080, "destination": "backend" }
       ]
     },
     {
+      "name": "sg-frontend",
+      "attach_to": ["frontend"],
+      "description": "Serve assets to proxy",
+      "ingress": [
+        { "protocol": "tcp", "port": 3000, "source": "reverse-proxy" }
+      ],
+      "egress": []
+    },
+    {
       "name": "sg-backend",
       "attach_to": ["backend"],
-      "description": "Receives traffic from reverse proxy, accesses DB/Redis",
+      "description": "API server behind proxy with DB/Redis access",
       "ingress": [
         { "protocol": "tcp", "port": 8080, "source": "reverse-proxy" }
       ],
@@ -112,7 +111,7 @@
     {
       "name": "sg-db",
       "attach_to": ["main-db"],
-      "description": "PostgreSQL — allow from backend",
+      "description": "PostgreSQL accessible only from backend",
       "ingress": [
         { "protocol": "tcp", "port": 5432, "source": "backend" }
       ],
@@ -121,7 +120,7 @@
     {
       "name": "sg-redis",
       "attach_to": ["redis"],
-      "description": "Redis — allow from backend",
+      "description": "Redis accessible only from backend",
       "ingress": [
         { "protocol": "tcp", "port": 6379, "source": "backend" }
       ],
