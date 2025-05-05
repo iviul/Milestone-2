@@ -1,0 +1,18 @@
+{
+    "vms": [
+        {
+            "name": "vm - 1",
+            "instance_type": "t2.micro",
+            "tags": {
+                "Name": "vm - 1"
+              }
+        },
+        {
+            "name": "vm - 2",
+            "instance_type": "t2.micro",
+            "tags": {
+                "Name": "vm - 2"
+              }
+        }
+    ]
+}
