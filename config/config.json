@@ -13,12 +13,14 @@
       {
         "name": "public-subnet",
         "cidr": "10.0.1.0/24",
-        "public": true
+        "public": true,
+        "zone": "a"
       },
       {
         "name": "private-subnet",
         "cidr": "10.0.2.0/24",
-        "public": false
+        "public": false,
+        "zone": "b"
       }
     ]
   },
