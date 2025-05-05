@@ -1,0 +1,72 @@
+{
+  "networks": [
+    {
+      "network_name": "mesh1",
+      "subnetwork_name": "mesh1-subnet",
+      "subnetwork_cidr": "10.0.0.0/16",
+      "region": "northamerica-northeast1",
+      "ports": ["22"]
+    },
+    {
+      "network_name": "mesh2",
+      "subnetwork_name": "mesh2-subnet",
+      "subnetwork_cidr": "10.1.0.0/16",
+      "region": "europe-central2",
+      "ports": ["22", "80", "443", "8080"]
+    }
+  ],
+  "dbs": [
+    {
+      "db_name": "postgres-db",
+      "database_version": "POSTGRES_15",
+      "region": "europe-central2",
+      "tier": "db-f1-micro",
+      "user_name": "postgres_user",
+      "password": "securepassword123",
+      "private_network": "mesh2",
+      "connection_ip": "188.163.30.241"
+    },
+    {
+      "db_name": "mysql-db",
+      "database_version": "MYSQL_8_0",
+      "region": "europe-central2",
+      "tier": "db-f1-micro",
+      "user_name": "mysql_user",
+      "password": "securepassword123",
+      "private_network": "mesh2",
+      "connection_ip": "188.163.30.241"
+    }
+  ],
+  "vms": [
+    {
+      "vm_name": "backend-vm",
+      "machine_type": "e2-medium",
+      "zone": "europe-central2-a",
+      "image": "ubuntu-os-cloud/ubuntu-2204-lts",
+      "network": "mesh2",
+      "subnetwork": "mesh2-subnet",
+      "metadata": {},
+      "tags": []
+    },
+    {
+      "vm_name": "frontend-vm",
+      "machine_type": "e2-small",
+      "zone": "europe-central2-a",
+      "image": "ubuntu-os-cloud/ubuntu-2204-lts",
+      "network": "mesh2",
+      "subnetwork": "mesh2-subnet",
+      "metadata": {},
+      "tags": []
+    },
+    {
+      "vm_name": "redis-vm",
+      "machine_type": "e2-micro",
+      "zone": "europe-central2-a",
+      "image": "ubuntu-os-cloud/ubuntu-2204-lts",
+      "network": "mesh2",
+      "subnetwork": "mesh2-subnet",
+      "metadata": {},
+      "tags": []
+    }
+  ]
+}

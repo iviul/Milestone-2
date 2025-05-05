@@ -1,4 +1,4 @@
 provider "google" {
-  project = var.project_id
-  region  = var.region
+  project = "ace-thought-458516-d9"
+  region  = "europe-central2"
 }
