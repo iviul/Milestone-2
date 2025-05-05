@@ -3,7 +3,8 @@
     "name": "my-infra",
     "environment": "dev",
     "region": "europe",
-    "os": "ubuntu"
+    "os": "ubuntu",
+    "terraform_username":"terraform_user"
   },
 
   "network": {
