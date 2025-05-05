@@ -1,5 +1,7 @@
 # Local .terraform directories
 **/.terraform/*
+*.lock.hcl
+
 
 # .tfstate files
 *.tfstate
@@ -30,3 +32,6 @@ terraform.rc
 *.njsproj
 *.sln
 *.sw?
+.DS_Store
+
+

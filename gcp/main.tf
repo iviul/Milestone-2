@@ -8,6 +8,12 @@ module "network" {
 
 }
 
+module "security_group" {
+  source        = "../modules/security_group"
+  networks_list = local.cfg["networks"]
+  network_self_links = module.network.network_self_links
+}
+
 module "vm" {
   source                = "../modules/vm"
   vms_list              = local.cfg["vms"]
