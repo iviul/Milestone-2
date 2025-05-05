@@ -10,27 +10,50 @@
     "vpc_cidr": "10.0.0.0/16",
     "subnets": [
       {
-        "name": "main-subnet",
+        "name": "public-subnet",
         "cidr": "10.0.1.0/24",
         "public": true
+      },
+      {
+        "name": "private-subnet",
+        "cidr": "10.0.2.0/24",
+        "public": false
       }
     ]
   },
 
   "vm_instances": [
     {
-      "name": "app-server",
+      "name": "frontend",
       "size": "small",
       "zone": "a",
-      "subnet": "main-subnet",
-      "tags": ["web", "frontend"]
+      "subnet": "public-subnet",
+      "tags": ["web", "frontend"],
+      "port": 3000
     },
     {
-      "name": "worker",
+      "name": "reverse-proxy",
+      "size": "small",
+      "zone": "a",
+      "subnet": "public-subnet",
+      "tags": ["proxy"],
+      "port": 443
+    },
+    {
+      "name": "backend",
       "size": "medium",
       "zone": "b",
-      "subnet": "main-subnet",
-      "tags": ["worker", "background"]
+      "subnet": "private-subnet",
+      "tags": ["backend", "api"],
+      "port": 8080
+    },
+    {
+      "name": "redis",
+      "size": "small",
+      "zone": "b",
+      "subnet": "private-subnet",
+      "tags": ["cache"],
+      "port": 6379
     }
   ],
 
@@ -40,54 +63,69 @@
       "type": "postgres",
       "version": "14",
       "size": "small",
-      "zone": "a",
-      "subnet": "main-subnet"
+      "zone": "b",
+      "subnet": "private-subnet",
+      "port": 5432
     }
   ],
 
   "networks": [
-    { "name": "public",   "cidr": "0.0.0.0/0"   },
+    { "name": "public",   "cidr": "0.0.0.0/0" },
     { "name": "internal", "cidr": "10.0.0.0/16" }
   ],
 
   "security_groups": [
     {
-      "name": "sg-app-server",
-      "attach_to": ["app-server"],
-      "description": "HTTP/HTTPS for users, limited SSH",
+      "name": "sg-frontend",
+      "attach_to": ["frontend"],
+      "description": "Public access to frontend (port 3000)",
       "ingress": [
-        { "protocol": "tcp", "port": 80,  "source": "public" },
-        { "protocol": "tcp", "port": 443, "source": "public" },
-        { "protocol": "tcp", "port": 22,  "source": "203.0.113.0/24" }
+        { "protocol": "tcp", "port": 3000, "source": "public" }
       ],
       "egress": [
-        { "protocol": "all", "port": "all", "destination": "public" }
+        { "protocol": "tcp", "port": 443, "destination": "reverse-proxy" }
       ]
     },
-
     {
-      "name": "sg-worker",
-      "attach_to": ["worker"],
-      "description": "Background workers — SSH only from inside VPC",
+      "name": "sg-reverse-proxy",
+      "attach_to": ["reverse-proxy"],
+      "description": "Accepts HTTPS from frontend, proxies to backend",
       "ingress": [
-        { "protocol": "tcp", "port": 22, "source": "internal" }
+        { "protocol": "tcp", "port": 443, "source": "frontend" }
       ],
       "egress": [
-        { "protocol": "all", "port": "all", "destination": "public" }
+        { "protocol": "tcp", "port": 8080, "destination": "backend" }
       ]
     },
-
     {
-      "name": "sg-postgres",
+      "name": "sg-backend",
+      "attach_to": ["backend"],
+      "description": "Receives traffic from reverse proxy, accesses DB/Redis",
+      "ingress": [
+        { "protocol": "tcp", "port": 8080, "source": "reverse-proxy" }
+      ],
+      "egress": [
+        { "protocol": "tcp", "port": 5432, "destination": "main-db" },
+        { "protocol": "tcp", "port": 6379, "destination": "redis" }
+      ]
+    },
+    {
+      "name": "sg-db",
       "attach_to": ["main-db"],
-      "description": "PostgreSQL — accept only from app & worker",
+      "description": "PostgreSQL — allow from backend",
       "ingress": [
-        { "protocol": "tcp", "port": 5432, "source": "app-server" },
-        { "protocol": "tcp", "port": 5432, "source": "worker" }
+        { "protocol": "tcp", "port": 5432, "source": "backend" }
       ],
-      "egress": [
-        { "protocol": "all", "port": "all", "destination": "internal" }
-      ]
+      "egress": []
+    },
+    {
+      "name": "sg-redis",
+      "attach_to": ["redis"],
+      "description": "Redis — allow from backend",
+      "ingress": [
+        { "protocol": "tcp", "port": 6379, "source": "backend" }
+      ],
+      "egress": []
     }
   ]
 }
