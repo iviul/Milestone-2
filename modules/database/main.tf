@@ -1,5 +1,42 @@
 locals {
   dbs = { for db in var.db_config : db.identifier => db}
+
+  dbs_without_secret = {
+    for id, check in data.external.check_secret_exists :
+    id => local.dbs[id] if check.result.exists == "false"
+  }
+}
+
+# Try to read existing secrets using a script
+data "external" "check_secret_exists" {
+  for_each = local.dbs
+
+  program = ["bash", "${path.root}/scripts/check-secret.sh", each.key]
+}
+
+# Create missing secrets
+resource "aws_secretsmanager_secret" "db_secret" {
+  for_each = local.dbs_without_secret
+
+  name = "db-credentials-${each.value.identifier}"
+  description = "Credentials for DB ${each.value.identifier}"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "db_secret_value" {
+  for_each = aws_secretsmanager_secret.db_secret
+
+  secret_id     = each.value.id
+  secret_string = jsonencode({
+    DB_USER = aws_db_instance.database[each.key].username
+    DB_HOST = aws_db_instance.database[each.key].address
+    DB_NAME = aws_db_instance.database[each.key].db_name
+    DB_PASS = aws_db_instance.database[each.key].password
+    DB_PORT = aws_db_instance.database[each.key].port
+  })
 }
 
 resource "aws_db_subnet_group" "my_db" {
@@ -12,7 +49,7 @@ resource "aws_db_subnet_group" "my_db" {
 }
 
 resource "aws_db_instance" "database" {
-    for_each = local.dbs
+  for_each = local.dbs
     
   allocated_storage    = each.value.allocated_storage
   db_name              = each.value.db_name
@@ -29,33 +66,4 @@ resource "aws_db_instance" "database" {
   vpc_security_group_ids = var.vpc_security_group_ids
 
   tags = each.value.tags
-}
-
-resource "random_id" "server" {
-  keepers = {
-    # Generate a new id each time we switch to a new AMI id
-    secret_id = aws_db_instance.database.identifier
-  }
-
-  byte_length = 8
-}
-
-resource "aws_secretsmanager_secret" "db_secret" {
-  for_each = local.dbs
-
-  name = "db-credentials-${each.value.identifier}-${random_id.server.hex}"
-  description = "Credentials for DB ${each.value.identifier}-${random_id.server.hex}"
-}
-
-resource "aws_secretsmanager_secret_version" "db_secret_value" {
-  for_each = aws_secretsmanager_secret.db_secret
-
-  secret_id     = each.value.id
-  secret_string = jsonencode({
-    DB_USER = aws_db_instance.database[each.key].username
-    DB_HOST = aws_db_instance.database[each.key].address
-    DB_NAME = aws_db_instance.database[each.key].db_name
-    DB_PASS = aws_db_instance.database[each.key].password
-    DB_PORT = aws_db_instance.database[each.key].port
-  })
 }

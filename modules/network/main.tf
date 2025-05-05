@@ -39,7 +39,7 @@ resource "aws_internet_gateway" "gw" {
 }
 
 # Route Table
-resource "aws_route_table" "test" {
+resource "aws_route_table" "rt" {
   vpc_id = aws_vpc.terraform.id
 
   route {
@@ -57,7 +57,7 @@ resource "aws_route_table" "test" {
 
 resource "aws_main_route_table_association" "a" {
   vpc_id         = aws_vpc.terraform.id
-  route_table_id = aws_route_table.test.id
+  route_table_id = aws_route_table.rt.id
 }
 
 # Security Group
