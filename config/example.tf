@@ -32,7 +32,7 @@ locals {
   fixed_zone_suffixes = ["a", "b", "c"]
 
   fixed_os_image = {
-    aws = { ubuntu = "ami-02f9ea74049c8a611" } # Ubuntu 22.04 LTS
+    aws = { ubuntu = "ami-03250b0e01c28d196" } # Ubuntu 22.04 LTS
     gcp = { ubuntu = "ubuntu-os-cloud/ubuntu-2204-lts" }
   }
 
