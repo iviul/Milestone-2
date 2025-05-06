@@ -29,3 +29,21 @@ resource "google_service_networking_connection" "private_connection" {
 
   reserved_peering_ranges = [google_compute_global_address.private_ip_range.name]
 }
+
+
+resource "google_compute_firewall" "rules" {
+  for_each = { for n in var.networks : n.network_name => n }
+
+  name    = "${each.value.network_name}-fw"
+  network =  var.network_self_links[each.value.network_name]
+
+  dynamic "allow" {
+    for_each = each.value.ports
+    content {
+      protocol = "tcp"
+      ports    = [allow.value]
+    }
+  }
+  source_ranges = ["0.0.0.0/0"]
+}
+
