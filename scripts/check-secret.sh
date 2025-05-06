@@ -15,7 +15,7 @@ aws_response=$(aws secretsmanager describe-secret --secret-id "$secret_name" 2>&
 
 if [[ "$aws_response" == *"ResourceNotFoundException"* ]]; then
   jq -n '{exists: "false"}'
-elif [[ "$aws_response" == *"ARN"* ]]; then  # Success response contains "SecretId"
+elif [[ "$aws_response" == *"ARN"* ]]; then
   jq -n '{exists: "true"}'
 else
   jq -n --arg error "$aws_response" '{error: $error}' >&2

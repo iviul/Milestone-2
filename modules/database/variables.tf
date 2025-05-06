@@ -1,4 +1,4 @@
-variable "db_config" {}
+variable "config" {}
 
 variable "subnet_ids" {
   description = "Subnet IDs for subnet group"

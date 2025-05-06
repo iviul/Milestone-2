@@ -1,5 +1,5 @@
 locals {
-  dbs = { for db in var.db_config : db.identifier => db}
+  dbs = { for db in var.config : db.identifier => db }
 
   dbs_without_secret = {
     for id, check in data.external.check_secret_exists :

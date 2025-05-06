@@ -13,14 +13,18 @@ provider "aws" {
 }
 
 locals {
-  # vmConfig = jsondecode(file("${path.module}/files/vms.json"))
-  dbConfig = jsondecode(file("${path.module}/files/dbs.json"))
+  Config = jsondecode(file("${path.module}/files/config.json"))
 }
 
 module "network" {
   source = "./modules/network"
+  vpcs = local.Config.network
 
   assign_public_ip = true
+}
+
+output "sg_keys" {
+  value = module.network.sg_keys
 }
 
 # module "test" {
@@ -28,9 +32,9 @@ module "network" {
 #   vm_config = local.vmConfig.vms
 # }
 
-module "db" {
-  source = "./modules/database"
-  db_config = local.dbConfig.dbs
-  subnet_ids = [ module.network.subnet_id_public, module.network.subnet_id_private, module.network.subnet_id_db ]
-  vpc_security_group_ids  = [ module.network.vpc_security_group_ids_rds ]
-}
+# module "db" {
+#   source = "./modules/database"
+#   config = local.Config.dbs
+#   subnet_ids = [ module.network.subnet_id_public, module.network.subnet_id_private, module.network.subnet_id_db ]
+#   vpc_security_group_ids  = [ module.network.vpc_security_group_ids_rds ]
+# }
