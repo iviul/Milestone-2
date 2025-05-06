@@ -21,7 +21,7 @@ module "network" {
 }
 module "vms" {
   source             = "./modules/vms"
-  vms                = local.config.vms
-  vpc_id             = module.networks.vpc_id
-  subnet_ids_by_name = module.networks.subnet_ids_by_name
+  vms                = local.vms
+  vpc_id             = module.network.vpc_id
+  subnet_ids_by_name = module.network.subnet_ids_by_name
 }
