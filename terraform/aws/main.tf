@@ -19,3 +19,9 @@ module "network" {
   region = local.fixed_region_map
   vpcs   = local.config.network
 }
+module "vms" {
+  source             = "./modules/vms"
+  vms                = local.config.vms
+  vpc_id             = module.networks.vpc_id
+  subnet_ids_by_name = module.networks.subnet_ids_by_name
+}
