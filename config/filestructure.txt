@@ -1,0 +1,40 @@
+terraform/
+├── README.md
+├── aws/
+│   ├── backend.tf
+│   ├── main.tf
+│   ├── provider.tf
+│   ├── terraform.tfvars
+│   ├── variables.tf
+│   └── modules/
+│       ├── db/
+│       │   ├── main.tf
+│       │   ├── outputs.tf
+│       │   └── variables.tf
+│       ├── instance/
+│       │   ├── main.tf
+│       │   ├── outputs.tf
+│       │   └── variables.tf
+│       └── network/
+│           ├── main.tf
+│           ├── outputs.tf
+│           └── variables.tf
+├── gcp/
+│   ├── backend.tf
+│   ├── main.tf
+│   ├── provider.tf
+│   ├── terraform.tfvars
+│   ├── variables.tf
+│   └── modules/
+│       ├── db/
+│       │   ├── main.tf
+│       │   ├── outputs.tf
+│       │   └── variables.tf
+│       ├── instance/
+│       │   ├── main.tf
+│       │   ├── outputs.tf
+│       │   └── variables.tf
+│       └── network/
+│           ├── main.tf
+│           ├── outputs.tf
+│           └── variables.tf
