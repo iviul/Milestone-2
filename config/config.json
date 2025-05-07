@@ -7,27 +7,31 @@
     "terraform_username":"terraform_user"
   },
 
-  "network": {
-    "vpc_cidr": "10.0.0.0/16",
-    "subnets": [
-      {
-        "name": "public-subnet",
-        "cidr": "10.0.1.0/24",
-        "public": true,
-        "zone": "a"
-      },
-      {
-        "name": "private-subnet",
-        "cidr": "10.0.2.0/24",
-        "public": false,
-        "zone": "b"
-      }
-    ]
-  },
+  "network": [
+    {
+      "name": "main",
+      "vpc_cidr": "10.0.0.0/16",
+      "subnets": [
+        {
+          "name": "public-subnet",
+          "cidr": "10.0.1.0/24",
+          "public": true,
+          "zone": "a"
+        },
+        {
+          "name": "private-subnet",
+          "cidr": "10.0.2.0/24",
+          "public": false,
+          "zone": "b"
+        }
+      ]
+    }
+  ],
 
  "vm_instances": [
   {
     "name": "reverse-proxy",
+    "network": "main",
     "size": "small",
     "zone": "a",
     "subnet": "public-subnet",
@@ -37,6 +41,7 @@
   },
   {
     "name": "frontend",
+    "network": "main",
     "size": "small",
     "zone": "b",
     "subnet": "private-subnet",
@@ -46,6 +51,7 @@
   },
   {
     "name": "backend",
+    "network": "main",
     "size": "medium",
     "zone": "b",
     "subnet": "private-subnet",
@@ -55,6 +61,7 @@
   },
   {
     "name": "redis",
+    "network": "main",
     "size": "small",
     "zone": "b",
     "subnet": "private-subnet",
@@ -67,6 +74,7 @@
   "databases": [
     {
       "name": "main-db",
+      "network": "main",
       "type": "postgres",
       "version": "14",
       "size": "small",
