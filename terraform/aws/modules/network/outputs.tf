@@ -7,3 +7,7 @@ output "subnet_ids" {
     }
   }
 }
+
+output "subnets" {
+  value = local.subnets
+}

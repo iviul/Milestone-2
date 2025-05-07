@@ -33,6 +33,10 @@ output "subnets" {
   value = module.network.subnet_ids
 }
 
+output "all_subnets" {
+  value = module.network.subnets
+}
+
 # module "db" {
 #   source = "./modules/database"
 #   config = local.Config.databases
