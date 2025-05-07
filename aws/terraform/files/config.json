@@ -1,0 +1,96 @@
+{
+    "dbs": [
+        {
+            "allocated_storage": 20,
+            "db_name": "postgres",
+            "identifier": "schedule-db-1",
+            "engine": "postgres",
+            "instance_class": "db.t4g.micro",
+            "username": "schedule_user",
+            "password": "schedule_password",
+            "parameter_group_name": "default.postgres17",
+            "publicly_accessible": true,
+            "skip_final_snapshot": true,
+            "port": 5432,
+            "tags": {
+                "Name": "terraform_db"
+            }
+        },
+        {
+            "allocated_storage": 20,
+            "db_name": "postgres",
+            "identifier": "schedule-db-2",
+            "engine": "postgres",
+            "instance_class": "db.t4g.micro",
+            "username": "schedule_user",
+            "password": "schedule_password",
+            "parameter_group_name": "default.postgres17",
+            "publicly_accessible": true,
+            "skip_final_snapshot": true,
+            "port": 5432,
+            "tags": {
+                "Name": "terraform_db2"
+            }
+        }
+    ],
+    "network": {
+      "main_vpc": {
+        "name": "main",
+        "vpc_cidr": "10.0.0.0/16",
+        "tags": {
+                "Name": "Main VPC"
+            },
+        "subnets": [
+          {
+            "cidr_block": "10.0.1.0/24",
+            "availability_zone": "eu-central-1a",
+            "name": "subnet-a",
+            "is_public": true,
+            "tags": {
+                "Name": "public"
+            }
+          },
+          {
+            "cidr_block": "10.0.2.0/24",
+            "availability_zone": "eu-central-1b",
+            "name": "subnet-b",
+            "is_public": false,
+            "tags": {
+                "Name": "private"
+            }
+          },
+          {
+            "cidr_block": "10.0.3.0/24",
+            "availability_zone": "eu-central-1c",
+            "name": "subnet-c",
+            "is_public": false,
+            "tags": {
+                "Name": "private_db"
+            }
+          }
+        ],
+        "security-groups": [
+          {
+            "name": "sg_db",
+            "description": "PostgreSQL accessible only from backend",
+            "ingress": [
+              { "protocol": "tcp", "port": 5432, "source": "backend" }
+            ],
+            "egress": []
+          },
+          {
+            "name": "sg_backend",
+            "attach_to": ["backend"],
+            "description": "API server behind proxy with DB/Redis access",
+            "ingress": [
+              { "protocol": "tcp", "port": 8080, "source": "db" }
+            ],
+            "egress": [
+              { "protocol": "tcp", "port": 5432, "destination": "db" },
+              { "protocol": "tcp", "port": 6379, "destination": "db" }
+            ]
+          }
+        ]
+      }
+    }
+}
