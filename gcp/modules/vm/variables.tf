@@ -1,18 +1,31 @@
-variable "vms_list" {
-  description = "List of VM definitions from config.json"
+variable "project_id" {
+  type        = string
+  description = "GCP project ID"
+}
+
+variable "region" {
+  type        = string
+  description = "GCP region (e.g. europe-central2)"
+}
+
+variable "project_os" {
+  type        = string
+  description = "Key for OS lookup (e.g. ubuntu)"
+}
+
+variable "vm_instances" {
   type = list(object({
-    vm_name      = string
-    machine_type = string
-    zone         = string
-    image        = string
-    network      = string
-    subnetwork   = string
-    metadata     = map(string)
-    tags         = list(string)
+    name   = string
+    size   = string
+    zone   = string
+    subnet = string
+    tags   = set(string)
+    port   = number
   }))
+  description = "List of VMs (from config.json)"
 }
 
 variable "subnet_self_links_map" {
-  description = "Map of subnetwork self_links by network name"
   type        = map(string)
+  description = "Map of subnet name → self_link (from network module)"
 }

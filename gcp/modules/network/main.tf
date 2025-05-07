@@ -1,49 +1,72 @@
-resource "google_compute_network" "vpc_network" {
-  for_each = { for net in var.networks : net.network_name => net }
+locals {
+  # map ACL name → cidr
+  acls_map = { for a in var.acls : a.name => a.cidr }
+}
 
-  name                    = each.value.network_name
+# 1) The single VPC
+resource "google_compute_network" "vpc" {
+  name                    = "${var.project_id}-vpc"
   auto_create_subnetworks = false
 }
 
+# 2) Regional subnets
 resource "google_compute_subnetwork" "subnet" {
-  for_each = { for net in var.networks : net.network_name => net }
-
-  name          = each.value.subnetwork_name
-  ip_cidr_range = each.value.subnetwork_cidr
-  region        = each.value.region
-  network       = google_compute_network.vpc_network[each.key].id
+  for_each      = { for s in var.subnets : s.name => s }
+  name          = each.value.name
+  ip_cidr_range = each.value.cidr
+  region        = var.region
+  network       = google_compute_network.vpc.id
 }
 
-resource "google_compute_global_address" "private_ip_range" {
-  name          = "mesh2-private-ip-range"
-  purpose       = "VPC_PEERING"
-  address_type  = "INTERNAL"
-  prefix_length = 16
-  network       = google_compute_network.vpc_network["mesh2"].self_link
-}
+# 3) Ingress firewalls
+resource "google_compute_firewall" "ingress" {
+  for_each    = {
+    for sg in var.security_groups : sg.name => sg
+    if length(sg.ingress) > 0
+  }
 
-resource "google_service_networking_connection" "private_connection" {
-  provider = google
-  network  = google_compute_network.vpc_network["mesh2"].self_link
-  service  = "servicenetworking.googleapis.com"
-
-  reserved_peering_ranges = [google_compute_global_address.private_ip_range.name]
-}
-
-
-resource "google_compute_firewall" "rules" {
-  for_each = { for n in var.networks : n.network_name => n }
-
-  name    = "${each.value.network_name}-fw"
-  network =  var.network_self_links[each.value.network_name]
+  name        = each.value.name
+  network     = google_compute_network.vpc.self_link
+  target_tags = each.value.attach_to
 
   dynamic "allow" {
-    for_each = each.value.ports
+    for_each = each.value.ingress
     content {
-      protocol = "tcp"
-      ports    = [allow.value]
+      protocol = allow.value.protocol
+      ports    = [tostring(allow.value.port)]
     }
   }
-  source_ranges = ["0.0.0.0/0"]
+
+  source_ranges = [
+    for rule in each.value.ingress :
+    lookup(local.acls_map, rule.source, rule.source)
+          if contains(keys(local.acls_map), rule.source)
+  ]
 }
 
+# 4) Egress firewalls
+resource "google_compute_firewall" "egress" {
+  for_each    = {
+    for sg in var.security_groups : sg.name => sg
+    if length(sg.egress) > 0
+  }
+
+  name        = "${each.key}-egress"
+  network     = google_compute_network.vpc.self_link
+  target_tags = each.value.attach_to
+  direction   = "EGRESS"
+
+  dynamic "allow" {
+    for_each = each.value.egress
+    content {
+      protocol = allow.value.protocol
+      ports    = [tostring(allow.value.port)]
+    }
+  }
+
+ destination_ranges = [
+    for rule in each.value.egress :
+      lookup(local.acls_map, rule.destination, null)
+    if contains(keys(local.acls_map), rule.destination)
+  ]
+}
