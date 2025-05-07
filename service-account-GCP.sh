@@ -48,9 +48,6 @@ else
 fi
 #######################################################
 echo "- Activating service account using the key..."
-# if gcloud auth activate-service-account "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
-#       --key-file="$KEY_FILE" --project="$PROJECT_ID"; then
-#     echo "- Service account activated successfully."
 if gcloud auth activate-service-account \
         --key-file=$KEY_FILE; then
     echo "- Service account activated successfully."
