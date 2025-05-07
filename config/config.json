@@ -93,6 +93,7 @@
   "security_groups": [
     {
       "name": "reverse-proxy-sg",
+      "vpc": "main",
       "attach_to": ["reverse-proxy"],
       "description": "Allow public HTTP traffic and forward to front/back",
       "ingress": [
@@ -105,6 +106,7 @@
     },
     {
       "name": "frontend-sg",
+      "vpc": "main",
       "attach_to": ["frontend"],
       "description": "Serve assets to proxy",
       "ingress": [
@@ -114,6 +116,7 @@
     },
     {
       "name": "backend-sg",
+      "vpc": "main",
       "attach_to": ["backend"],
       "description": "API server behind proxy with DB/Redis access",
       "ingress": [
@@ -126,6 +129,7 @@
     },
     {
       "name": "db-sg",
+      "vpc": "main",
       "attach_to": ["main-db"],
       "description": "PostgreSQL accessible only from backend",
       "ingress": [
@@ -135,6 +139,7 @@
     },
     {
       "name": "redis-sg",
+      "vpc": "main",
       "attach_to": ["redis"],
       "description": "Redis accessible only from backend",
       "ingress": [
