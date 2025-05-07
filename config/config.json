@@ -91,8 +91,8 @@
         { "protocol": "tcp", "port": 80, "source": "public" }
       ],
       "egress": [
-        { "protocol": "tcp", "port": 3000, "destination": "frontend" },
-        { "protocol": "tcp", "port": 8080, "destination": "backend" }
+        { "protocol": "tcp", "port": 3000, "destination": "frontend-sg" },
+        { "protocol": "tcp", "port": 8080, "destination": "backend-sg" }
       ]
     },
     {
@@ -100,7 +100,7 @@
       "attach_to": ["frontend"],
       "description": "Serve assets to proxy",
       "ingress": [
-        { "protocol": "tcp", "port": 3000, "source": "reverse-proxy" }
+        { "protocol": "tcp", "port": 3000, "source": "reverse-proxy-sg" }
       ],
       "egress": []
     },
@@ -109,11 +109,11 @@
       "attach_to": ["backend"],
       "description": "API server behind proxy with DB/Redis access",
       "ingress": [
-        { "protocol": "tcp", "port": 8080, "source": "reverse-proxy" }
+        { "protocol": "tcp", "port": 8080, "source": "reverse-proxy-sg" }
       ],
       "egress": [
-        { "protocol": "tcp", "port": 5432, "destination": "main-db" },
-        { "protocol": "tcp", "port": 6379, "destination": "redis" }
+        { "protocol": "tcp", "port": 5432, "destination": "db-sg" },
+        { "protocol": "tcp", "port": 6379, "destination": "redis-sg" }
       ]
     },
     {
@@ -121,7 +121,7 @@
       "attach_to": ["main-db"],
       "description": "PostgreSQL accessible only from backend",
       "ingress": [
-        { "protocol": "tcp", "port": 5432, "source": "backend" }
+        { "protocol": "tcp", "port": 5432, "source": "backend-sg" }
       ],
       "egress": []
     },
@@ -130,7 +130,7 @@
       "attach_to": ["redis"],
       "description": "Redis accessible only from backend",
       "ingress": [
-        { "protocol": "tcp", "port": 6379, "source": "backend" }
+        { "protocol": "tcp", "port": 6379, "source": "backend-sg" }
       ],
       "egress": []
     }
