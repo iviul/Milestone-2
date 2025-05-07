@@ -25,40 +25,44 @@
     ]
   },
 
-  "vm_instances": [
-    {
-      "name": "reverse-proxy",
-      "size": "small",
-      "zone": "a",
-      "subnet": "public-subnet",
-      "tags": ["proxy"],
-      "port": 80
-    },
-    {
-      "name": "frontend",
-      "size": "small",
-      "zone": "b",
-      "subnet": "private-subnet",
-      "tags": ["frontend"],
-      "port": 3000
-    },
-    {
-      "name": "backend",
-      "size": "medium",
-      "zone": "b",
-      "subnet": "private-subnet",
-      "tags": ["backend"],
-      "port": 8080
-    },
-    {
-      "name": "redis",
-      "size": "small",
-      "zone": "b",
-      "subnet": "private-subnet",
-      "tags": ["cache"],
-      "port": 6379
-    }
-  ],
+ "vm_instances": [
+  {
+    "name": "reverse-proxy",
+    "size": "small",
+    "zone": "a",
+    "subnet": "public-subnet",
+    "tags": ["proxy"],
+    "port": 80,
+    "security_groups": ["reverse-proxy-sg"]
+  },
+  {
+    "name": "frontend",
+    "size": "small",
+    "zone": "b",
+    "subnet": "private-subnet",
+    "tags": ["frontend"],
+    "port": 3000,
+    "security_groups": ["frontend-sg"]
+  },
+  {
+    "name": "backend",
+    "size": "medium",
+    "zone": "b",
+    "subnet": "private-subnet",
+    "tags": ["backend"],
+    "port": 8080,
+    "security_groups": ["backend-sg"]
+  },
+  {
+    "name": "redis",
+    "size": "small",
+    "zone": "b",
+    "subnet": "private-subnet",
+    "tags": ["cache"],
+    "port": 6379,
+    "security_groups": ["redis-sg"]
+  }
+],
 
   "databases": [
     {
@@ -68,7 +72,8 @@
       "size": "small",
       "zone": "b",
       "subnet": "private-subnet",
-      "port": 5432
+      "port": 5432,
+      "security_groups": ["db-sg"]
     }
   ],
 
@@ -79,7 +84,7 @@
 
   "security_groups": [
     {
-      "name": "sg-reverse-proxy",
+      "name": "reverse-proxy-sg",
       "attach_to": ["reverse-proxy"],
       "description": "Allow public HTTP traffic and forward to front/back",
       "ingress": [
@@ -91,7 +96,7 @@
       ]
     },
     {
-      "name": "sg-frontend",
+      "name": "frontend-sg",
       "attach_to": ["frontend"],
       "description": "Serve assets to proxy",
       "ingress": [
@@ -100,7 +105,7 @@
       "egress": []
     },
     {
-      "name": "sg-backend",
+      "name": "backend-sg",
       "attach_to": ["backend"],
       "description": "API server behind proxy with DB/Redis access",
       "ingress": [
@@ -112,7 +117,7 @@
       ]
     },
     {
-      "name": "sg-db",
+      "name": "db-sg",
       "attach_to": ["main-db"],
       "description": "PostgreSQL accessible only from backend",
       "ingress": [
@@ -121,7 +126,7 @@
       "egress": []
     },
     {
-      "name": "sg-redis",
+      "name": "redis-sg",
       "attach_to": ["redis"],
       "description": "Redis accessible only from backend",
       "ingress": [
