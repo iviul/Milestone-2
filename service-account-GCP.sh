@@ -13,10 +13,12 @@ if [[ -z "$PROJECT_ID" ]]; then
 fi
 #######################################################
 echo "- Enabling IAM Service Account Credentials API..."
-
-gcloud services enable iamcredentials.googleapis.com --project=$PROJECT_ID
-
-echo "- IAM Service Account Credentials API enabled"
+if gcloud services enable iamcredentials.googleapis.com \
+        --project=$PROJECT_ID; then
+    echo "- IAM Service Account Credentials API enabled"
+else
+    echo "- Error: IAM Service Account Credentials API can't be enabled"
+fi
 #######################################################
 echo "- Checking if service account '$SERVICE_ACCOUNT_NAME' already exists..."
 if gcloud iam service-accounts list \
