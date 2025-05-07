@@ -2,7 +2,6 @@ variable "config" {}
 
 variable "subnet_ids" {
   description = "Subnet IDs for subnet group"
-  type = list(string)
 }
 
 variable "vpc_security_group_ids" {

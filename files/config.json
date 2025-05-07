@@ -86,8 +86,8 @@
               { "protocol": "tcp", "port": 8080, "source": "db" }
             ],
             "egress": [
-              { "protocol": "tcp", "port": 5432, "destination": "main-db" },
-              { "protocol": "tcp", "port": 6379, "destination": "redis" }
+              { "protocol": "tcp", "port": 5432, "destination": "db" },
+              { "protocol": "tcp", "port": 6379, "destination": "db" }
             ]
           }
         ]
