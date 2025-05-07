@@ -84,7 +84,7 @@
       "type": "postgres",
       "version": "14",
       "size": "small",
-      "zone": "b",
+      "zone": ["a","b"],
       "subnet": "private-subnet",
       "port": 5432,
       "security_groups": ["db-sg"]
