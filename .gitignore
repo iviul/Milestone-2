@@ -14,9 +14,8 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
-# Ignore test.tf and .gitignore
+# Ignore test.tf
 test.tf
-.gitignore
 
 # Ignore CLI configuration files
 .terraformrc
