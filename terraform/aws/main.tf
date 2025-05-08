@@ -19,9 +19,17 @@ module "network" {
   region = local.fixed_region_map
   vpcs   = local.config.network
 }
+
+module "security_groups" {
+  source           = "./modules/security_groups"
+  security_groups  = local.security_groups
+  networks_by_name = local.networks_by_name
+  vpc_ids_by_name  = module.network.vpc_ids_by_name
+}
+
 module "vms" {
-  source             = "./modules/vms"
-  vms                = local.vms
-  vpc_id             = module.network.vpc_id
-  subnet_ids_by_name = module.network.subnet_ids_by_name
+  source                        = "./modules/vms"
+  vms                           = local.vms
+  sg_ids_by_name                = module.security_groups.sg_ids_by_name
+  subnet_ids_by_vpc_subnet_name = module.network.subnet_ids_by_vpc_subnet_name
 }
