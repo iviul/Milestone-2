@@ -62,22 +62,22 @@ executeCommands \
 echo "=== Binding role '$ROLE' to the service account... ==="
 executeCommands \
 	"gcloud projects add-iam-policy-binding \"$PROJECT_ID\" \
-    --member=\"serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com\" \
-    --role=\"$ROLE\"" \
+		--member=\"serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com\" \
+		--role=\"$ROLE\"" \
 	"The role '$ROLE' was bound to the service account!" \
 	"Error: Failed to bind role '$ROLE' to the service account."
 #######################################################
 echo "=== Generating key file for $SERVICE_ACCOUNT_NAME... ==="
 executeCommands \
 	"gcloud iam service-accounts keys create \"$KEY_FILE\" \
-    --iam-account=\"$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com\"" \
+		--iam-account=\"$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com\"" \
 	"Key file created: $KEY_FILE" \
 	"Error: Failed to create key file for service account $SERVICE_ACCOUNT_NAME."
 #######################################################
 echo "=== Activating service account using the key... ==="
 executeCommands \
 	"gcloud auth activate-service-account \
-    --key-file=$KEY_FILE" \
+		--key-file=$KEY_FILE" \
 	"Service account activated successfully!" \
 	"Error: Failed to activate the service account."
 #######################################################
