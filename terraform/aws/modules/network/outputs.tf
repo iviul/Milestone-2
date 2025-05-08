@@ -1,7 +1,13 @@
-output "vpc_id" {
-  value = aws_vpc.main.id
+output "subnet_ids" {
+  description = "Map of subnet keys to their IDs and attributes"
+  value = { for k, subnet in aws_subnet.subnets : k => {
+    # name = subnet.tags["Name"]  # Assuming 'Name' is set in tags
+    id   = subnet.id
+    zone = subnet.availability_zone
+    }
+  }
 }
 
-output "subnet_ids_by_name" {
-  value = { for name, subnet in aws_subnet.subnets : name => subnet.id }
+output "subnets" {
+  value = local.subnets
 }
