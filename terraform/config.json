@@ -172,7 +172,7 @@
       "attach_to": ["bastion"],
       "description": "Allow SSH from admin IP to private network",
       "ingress": [
-        { "protocol": "tcp", "port": 22, "source": "203.0.113.0/24" }
+        { "protocol": "tcp", "port": 22, "source": "public" }
       ],
       "egress": [
         { "protocol": "tcp", "port": 22, "destination": "frontend-sg" },
