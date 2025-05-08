@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.70"
+      version = "~> 5.0"
     }
   }
 }
@@ -14,8 +14,8 @@ provider "aws" {
 }
 
 module "network" {
-  source   = "./modules/network"
-  region   = var.region
-  vpc_cidr = local.config.network.vpc_cidr
-  subnets  = local.config.network.subnets
+  source = "./modules/network"
+
+  region = local.fixed_region_map
+  vpcs   = local.config.network
 }

@@ -1,1 +1,3 @@
 variable "vpcs" {}
+
+variable "region" {}

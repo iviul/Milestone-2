@@ -1,18 +1,13 @@
 locals {
   vpcs = { for vpc in var.vpcs : vpc.name => vpc }
 
-  fixed_region_map = {
-    aws = "eu-central-1"
-    gcp = "europe-west3"
-  }
-
   subnets = merge([
     for vpc_key, vpc in local.vpcs : {
       for subnet in vpc.subnets :
       "${vpc_key}-${subnet.name}" => {
         vpc_id            = vpc_key
         cidr_block        = subnet.cidr
-        availability_zone = "${local.fixed_region_map.aws}${subnet.zone}"
+        availability_zone = "${var.region.aws}${subnet.zone}"
         is_public         = subnet.public
       }
     }
@@ -76,8 +71,8 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public" {
-  for_each       = local.public_subnets
-  
+  for_each = local.public_subnets
+
   subnet_id      = aws_subnet.subnets[each.key].id
   route_table_id = aws_route_table.public[each.value.vpc_id].id
 }
@@ -94,7 +89,7 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  for_each       = local.private_subnets
+  for_each = local.private_subnets
 
   subnet_id      = aws_subnet.subnets[each.key].id
   route_table_id = aws_route_table.private[each.value.vpc_id].id
