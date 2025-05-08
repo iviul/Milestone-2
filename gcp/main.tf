@@ -10,42 +10,35 @@ locals {
 
   region = local.fixed_region_map["gcp"]
 
+  project_id = var.project_id
 }
-
-# module "network" {
-#   source            = "./modules/network"
-#   networks          = local.config.networks
-#   allowed_ip_ranges = ["0.0.0.0/0"]
-#   network_self_links = module.network.network_self_links
-# }
-
 
 module "network" {
   source           = "./modules/network"
-  project_id       = local.config.project.project_id
+  project_id       = local.project_id
   region           = local.region
-  vpc_cidr         = local.config.network.vpc_cidr
-  subnets          = local.config.network.subnets
+  networks         = local.config.network
   acls             = local.config.networks
   security_groups  = local.config.security_groups
 }
 
-
 module "vm" {
   source                  = "./modules/vm"
-  project_id              = local.config.project.project_id
+  project_id              = local.project_id
   region                  = local.region
   project_os              = local.config.project.os
   vm_instances            = local.config.vm_instances
-  subnet_self_links_map   = module.network.subnet_self_links
+  subnet_self_links_map   = module.network.subnet_self_links_by_name
 
   depends_on = [ module.network ]
 }
 
-# module "db_instance" {
-#   source           = "./modules/db_instance"
-#   project_id       = var.project_id
-#   databases        = local.config.dbs
-#   private_networks = { for net in local.config.networks: net.network_name => module.network.network_self_links[net.network_name] }
-#   depends_on       = [module.network]
-# }
+module "db_instance" {
+  source           = "./modules/db_instance"
+  project_id       = local.project_id
+  region           = local.region
+  databases        = local.config.databases
+  private_networks = module.network.vpc_self_links
+  subnet_self_links = module.network.subnet_self_links_by_name
+  depends_on       = [module.network]
+}

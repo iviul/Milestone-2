@@ -1,16 +1,22 @@
-resource "google_sql_database_instance" "instances" {
-  for_each = { for db in var.databases : db.db_name => db }
+locals {
+}
 
-  name             = each.key
-  database_version = each.value.database_version
-  region           = each.value.region
+resource "google_sql_database_instance" "instances" {
+  for_each = { for db in var.databases : db.name => db }
+
+  name             = each.value.name
+  database_version = "${upper(each.value.type)}_${each.value.version}"
+  region           = var.region
 
   settings {
-    tier = each.value.tier
+    tier = "db-g1-${each.value.size}"
+    availability_type = length(each.value.zone) > 1 ? "REGIONAL" : "ZONAL"
 
     ip_configuration {
+      # Use public IPs instead of private IPs to avoid Service Networking API requirement
       ipv4_enabled    = true
-      private_network = var.private_networks[each.value.private_network]
+      # Comment out private_network to avoid using Service Networking API
+      # private_network = var.private_networks[each.value.network]
     }
   }
 
@@ -18,9 +24,18 @@ resource "google_sql_database_instance" "instances" {
 }
 
 resource "google_sql_database" "databases" {
-  for_each = { for db in var.databases : db.db_name => db }
+  for_each = { for db in var.databases : db.name => db }
 
-  name     = each.value.db_name
-  instance = google_sql_database_instance.instances[each.key].name
+  name     = each.value.name
+  instance = google_sql_database_instance.instances[each.value.name].name
 }
+
+# # Create default user for each database
+# resource "google_sql_user" "users" {
+#   for_each = { for db in var.databases : db.name => db }
+  
+#   name     = "dbuser"
+#   instance = google_sql_database_instance.instances[each.value.name].name
+#   password = "strongpassword123" # In production, use a proper secret management solution
+# }
 

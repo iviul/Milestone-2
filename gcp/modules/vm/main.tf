@@ -30,14 +30,10 @@ resource "google_compute_instance" "vm" {
     access_config {}
   }
 
-  tags = each.value.tags
-
-}
-
-output "vm_public_ips" {
-  description = "Mapping of VM name → public NAT IP"
-  value = {
-    for name, inst in google_compute_instance.vm :
-    name => inst.network_interface[0].access_config[0].nat_ip
-  }
+  # Include both the VM tags and security group names as instance tags
+  # This ensures firewall rules are properly applied
+  tags = concat(
+    tolist(each.value.tags),
+    lookup(each.value, "security_groups", [])
+  )
 }

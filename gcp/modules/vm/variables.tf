@@ -15,12 +15,14 @@ variable "project_os" {
 
 variable "vm_instances" {
   type = list(object({
-    name   = string
-    size   = string
-    zone   = string
-    subnet = string
-    tags   = set(string)
-    port   = number
+    name            = string
+    network         = string
+    size            = string
+    zone            = string
+    subnet          = string
+    tags            = set(string)
+    port            = number
+    security_groups = optional(list(string), [])
   }))
   description = "List of VMs (from config.json)"
 }

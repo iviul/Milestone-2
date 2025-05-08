@@ -8,17 +8,16 @@ variable "region" {
   description = "GCP region (e.g. europe-central2)"
 }
 
-variable "vpc_cidr" {
-  type        = string
-  description = "CIDR block for the VPC"
-}
-
-variable "subnets" {
+variable "networks" {
   type = list(object({
-    name   = string
-    cidr   = string
-    public = bool
-    zone   = string
+    name      = string
+    vpc_cidr  = string
+    subnets   = list(object({
+      name    = string
+      cidr    = string
+      public  = bool
+      zone    = string
+    }))
   }))
   description = "List of subnets with name, cidr, and whether public"
 }
@@ -34,6 +33,7 @@ variable "acls" {
 variable "security_groups" {
   type = list(object({
     name        = string
+    vpc         = string
     attach_to   = list(string)
     description = string
     ingress = list(object({

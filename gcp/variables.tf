@@ -1,7 +1,7 @@
 variable "project_id" {
   description = "The GCP project ID"
   type        = string
-  default     = "lofty-memento-458508-i1"
+  default     = "dogwood-abacus-456415-c2"
 }
 
 variable "region" {
