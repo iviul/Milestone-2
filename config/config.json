@@ -4,8 +4,8 @@
     "environment": "dev",
     "region": "europe",
     "os": "ubuntu",
-    "terraform_username": "terraform_user",
-    "state_bucket_location_gcp": "europe-west3a",
+    "terraform_username": "terraform-user",
+    "state_bucket_location_gcp": "europe-west3",
     "state_bucket_location_aws": "eu-central-1",
     "bucket_state_name": "state-bucket-name-1377"
   },
