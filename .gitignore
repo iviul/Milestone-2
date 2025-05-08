@@ -30,3 +30,6 @@ terraform.rc
 *.njsproj
 *.sln
 *.sw?
+
+# Ignore config dir
+config/*
