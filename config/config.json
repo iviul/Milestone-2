@@ -83,7 +83,7 @@
 
   "databases": [
     {
-      "name": "main-db",
+      "name": "maindb",
       "network": "main",
       "type": "postgres",
       "version": "14",
