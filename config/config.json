@@ -4,7 +4,11 @@
     "environment": "dev",
     "region": "europe",
     "os": "ubuntu",
-    "terraform_username":"terraform_user"
+    "terraform_username":"terraform_user",
+    "state_bucket_location_gcp": "europe-west3a",
+    "state_bucket_location_aws": "eu-central-1a",
+    "bucket_state_name":"state_bucket_name"
+    
   },
 
   "network": [
@@ -85,7 +89,7 @@
       "version": "14",
       "size": "small",
       "zone": ["a","b"],
-      "subnet": "private-subnet",
+      "subnets": ["private-subnet", "private-subnet-2"],
       "port": 5432,
       "security_groups": ["db-sg"]
     }
