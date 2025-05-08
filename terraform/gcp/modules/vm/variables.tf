@@ -23,6 +23,7 @@ variable "vm_instances" {
     tags            = set(string)
     port            = number
     security_groups = optional(list(string), [])
+    public_ip       = bool
   }))
   description = "List of VMs (from config.json)"
 }

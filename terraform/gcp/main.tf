@@ -6,8 +6,6 @@ locals {
     gcp = "europe-west3"
   }
 
-  fixed_zone_suffixes = ["a", "b", "c"]
-
   region = local.fixed_region_map["gcp"]
 
   project_id = var.project_id

@@ -27,7 +27,12 @@ resource "google_compute_instance" "vm" {
 
   network_interface {
     subnetwork = lookup(var.subnet_self_links_map, each.value.subnet)
-    access_config {}
+
+      dynamic "access_config" {
+      # if each.value.public_ip (or var.public_ip) is true, this emits one empty block
+      for_each = each.value.public_ip ? [1] : []
+      content {}
+    }
   }
 
   # Include both the VM tags and security group names as instance tags
