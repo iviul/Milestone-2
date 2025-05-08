@@ -46,7 +46,8 @@
       "subnet": "public-subnet",
       "tags": ["proxy"],
       "port": 80,
-      "security_groups": ["reverse-proxy-sg"]
+      "security_groups": ["reverse-proxy-sg"],
+      "public_ip": true
     },
     {
       "name": "frontend",
@@ -56,7 +57,8 @@
       "subnet": "private-subnet",
       "tags": ["frontend"],
       "port": 3000,
-      "security_groups": ["frontend-sg"]
+      "security_groups": ["frontend-sg"],
+      "public_ip": false
     },
     {
       "name": "backend",
@@ -66,7 +68,8 @@
       "subnet": "private-subnet",
       "tags": ["backend"],
       "port": 8080,
-      "security_groups": ["backend-sg"]
+      "security_groups": ["backend-sg"],
+      "public_ip": false
     },
     {
       "name": "redis",
@@ -76,7 +79,8 @@
       "subnet": "private-subnet",
       "tags": ["cache"],
       "port": 6379,
-      "security_groups": ["redis-sg"]
+      "security_groups": ["redis-sg"],
+      "public_ip": false
     },
     {
       "name": "bastion",
@@ -86,7 +90,8 @@
       "subnet": "public-subnet",
       "tags": ["bastion", "ssh"],
       "port": 22,
-      "security_groups": ["bastion-sg"]
+      "security_groups": ["bastion-sg"],
+      "public_ip": true
     }
   ],
 
