@@ -4,11 +4,7 @@
     "environment": "dev",
     "region": "europe",
     "os": "ubuntu",
-    "terraform_username":"terraform_user",
-    "state_bucket_location_gcp": "europe-west3a",
-    "state_bucket_location_aws": "eu-central-1a",
-    "bucket_state_name":"state_bucket_name"
-    
+    "terraform_username":"terraform_user"
   },
 
   "network": [
@@ -83,13 +79,13 @@
 
   "databases": [
     {
-      "name": "maindb",
+      "name": "main-db",
       "network": "main",
       "type": "postgres",
       "version": "14",
       "size": "small",
       "zone": ["a","b"],
-      "subnets": ["private-subnet", "private-subnet-2"],
+      "subnet": "private-subnet",
       "port": 5432,
       "security_groups": ["db-sg"]
     }

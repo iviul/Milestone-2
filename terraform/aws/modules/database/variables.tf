@@ -1,10 +1,10 @@
 variable "config" {}
 
-variable "subnet_ids" {
+variable "subnets" {
   description = "Subnet IDs for subnet group"
 }
 
-variable "vpc_security_group_ids" {
-  description = "List of VPC security groups to associate"
-  type = list(string)
-}
+# variable "vpc_security_group_ids" {
+#   description = "List of VPC security groups to associate"
+#   type = list(string)
+# }

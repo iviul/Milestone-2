@@ -21,26 +21,9 @@ module "network" {
   vpcs = local.Config.network
 }
 
-# output "sg_keys" {
-#   value = module.network.sg_keys
-# }
-
-# output "all_resources" {
-#   value = module.network.all_resources
-# }
-
-output "subnets" {
-  value = module.network.subnet_ids
+module "db" {
+  source = "./modules/database"
+  config = local.Config.databases
+  subnets = module.network.subnets
+  # vpc_security_group_ids  = [ module.network.vpc_security_group_ids_rds ]
 }
-
-output "all_subnets" {
-  value = module.network.subnets
-}
-
-# module "db" {
-#   source = "./modules/database"
-#   config = local.Config.databases
-#   # subnet_ids = [ module.network.subnet_id_public, module.network.subnet_id_private, module.network.subnet_id_db ]
-#   subnet_ids = module.network.subnet_ids
-#   vpc_security_group_ids  = [ module.network.vpc_security_group_ids_rds ]
-# }

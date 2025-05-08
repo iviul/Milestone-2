@@ -21,6 +21,8 @@ locals {
 
 resource "aws_vpc" "terraform" {
   for_each = local.vpcs
+  enable_dns_support   = true # for testing
+  enable_dns_hostnames = true
 
   cidr_block = each.value.vpc_cidr
 }
@@ -76,8 +78,8 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public" {
-  for_each       = local.public_subnets
-  
+  for_each = local.public_subnets
+
   subnet_id      = aws_subnet.subnets[each.key].id
   route_table_id = aws_route_table.public[each.value.vpc_id].id
 }
@@ -94,7 +96,7 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  for_each       = local.private_subnets
+  for_each = local.private_subnets
 
   subnet_id      = aws_subnet.subnets[each.key].id
   route_table_id = aws_route_table.private[each.value.vpc_id].id
