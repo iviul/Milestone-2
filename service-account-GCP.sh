@@ -1,12 +1,13 @@
 #!/bin/bash
 set -euo pipefail
 #######################################################
-SERVICE_ACCOUNT_NAME=$1
-ROLE=$2
+SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' ./config/config.json)
+ROLE=roles/$1
 PROJECT_ID=$(gcloud config get-value project)
 DESCRIPTION="The service account for the Terraform"
-KEY_FILE=$3
-BUCKET_NAME=$4
+KEY_FILE=$2
+BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' ./config/config.json)
+BUCKET_LOCATION=$(grep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' ./config/config.json)
 #######################################################
 if [[ -z "$PROJECT_ID" ]]; then
 	echo "- Error: Unable to retrieve GCP project ID. Ensure your GCP project is set."
@@ -87,7 +88,7 @@ echo
 echo "=== Creating the bucket 'gs://$BUCKET_NAME'...  ==="
 executeCommands \
 	"gcloud storage buckets create gs://$BUCKET_NAME \
-		--location=us-central1 \
+		--location=$BUCKET_LOCATION \
 		--uniform-bucket-level-access" \
 	"The bucket 'gs://$BUCKET_NAME' was created successfully!" \
 	"Error: a bucket 'gs://$BUCKET_NAME' wasn't created. The bucket name '$BUCKET_NAME' already exists, try another name. Skipping creation..."
