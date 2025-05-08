@@ -1,7 +1,12 @@
 variable "project_id" {
   description = "The GCP project ID"
   type        = string
-  default     = "ace-thought-458516-d9"
+  default     = "steady-copilot-459219-s2"
+  
+}
+variable "db_password" {
+  description = "The GCP project ID"
+  
 }
 
 variable "region" {
