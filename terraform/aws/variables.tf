@@ -19,3 +19,7 @@ variable "aws_secret_access_key" {
   description = "AWS Secret Access Key"
   sensitive   = true
 }
+
+variable "aws_user" {
+  type = string
+}

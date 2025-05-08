@@ -78,9 +78,9 @@ resource "aws_secretsmanager_secret" "db_secret" {
   depends_on = [aws_db_instance.database]
 
   # Prevent secrets from being accidentally destroyed
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
 # --- Secrets Manager: Store actual secret values ---
