@@ -1,0 +1,32 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowRoleManagement",
+      "Effect": "Allow",
+      "Action": [
+        "iam:GetRole",
+        "iam:ListRoleTags",
+        "iam:ListRoles",
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:PutRolePolicy",
+        "iam:ListInstanceProfilesForRole",
+        "iam:GetServiceLinkedRoleDeletionStatus",
+        "iam:CreateServiceLinkedRole",
+        "iam:ListAttachedRolePolicies",
+        "iam:DeleteRolePolicy",
+        "iam:ListRolePolicies",
+        "iam:GetRolePolicy",
+        "s3:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowAssumeAnyRole",
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "*"
+    }
+  ]
+}
