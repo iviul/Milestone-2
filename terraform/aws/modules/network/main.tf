@@ -5,6 +5,7 @@ locals {
     for vpc_key, vpc in local.vpcs : {
       for subnet in vpc.subnets :
       "${vpc_key}-${subnet.name}" => {
+        name              = subnet.name
         vpc_id            = vpc_key
         cidr_block        = subnet.cidr
         availability_zone = "${var.region.aws}${subnet.zone}"
