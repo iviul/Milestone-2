@@ -4,10 +4,10 @@
     "environment": "dev",
     "region": "europe",
     "os": "ubuntu",
-    "terraform_username":"terraform_user",
+    "terraform_username": "terraform_user",
     "state_bucket_location_gcp": "europe-west3a",
     "state_bucket_location_aws": "eu-central-1",
-    "bucket_state_name":"state-bucket-name-1377"
+    "bucket_state_name": "state-bucket-name-1377"
   },
 
   "network": [
@@ -37,48 +37,58 @@
     }
   ],
 
- "vm_instances": [
-  {
-    "name": "reverse-proxy",
-    "network": "main",
-    "size": "small",
-    "zone": "a",
-    "subnet": "public-subnet",
-    "tags": ["proxy"],
-    "port": 80,
-    "security_groups": ["reverse-proxy-sg"]
-  },
-  {
-    "name": "frontend",
-    "network": "main",
-    "size": "small",
-    "zone": "b",
-    "subnet": "private-subnet",
-    "tags": ["frontend"],
-    "port": 3000,
-    "security_groups": ["frontend-sg"]
-  },
-  {
-    "name": "backend",
-    "network": "main",
-    "size": "medium",
-    "zone": "b",
-    "subnet": "private-subnet",
-    "tags": ["backend"],
-    "port": 8080,
-    "security_groups": ["backend-sg"]
-  },
-  {
-    "name": "redis",
-    "network": "main",
-    "size": "small",
-    "zone": "b",
-    "subnet": "private-subnet",
-    "tags": ["cache"],
-    "port": 6379,
-    "security_groups": ["redis-sg"]
-  }
-],
+  "vm_instances": [
+    {
+      "name": "reverse-proxy",
+      "network": "main",
+      "size": "small",
+      "zone": "a",
+      "subnet": "public-subnet",
+      "tags": ["proxy"],
+      "port": 80,
+      "security_groups": ["reverse-proxy-sg"]
+    },
+    {
+      "name": "frontend",
+      "network": "main",
+      "size": "small",
+      "zone": "b",
+      "subnet": "private-subnet",
+      "tags": ["frontend"],
+      "port": 3000,
+      "security_groups": ["frontend-sg"]
+    },
+    {
+      "name": "backend",
+      "network": "main",
+      "size": "medium",
+      "zone": "b",
+      "subnet": "private-subnet",
+      "tags": ["backend"],
+      "port": 8080,
+      "security_groups": ["backend-sg"]
+    },
+    {
+      "name": "redis",
+      "network": "main",
+      "size": "small",
+      "zone": "b",
+      "subnet": "private-subnet",
+      "tags": ["cache"],
+      "port": 6379,
+      "security_groups": ["redis-sg"]
+    },
+    {
+      "name": "bastion",
+      "network": "main",
+      "size": "small",
+      "zone": "a",
+      "subnet": "public-subnet",
+      "tags": ["bastion", "ssh"],
+      "port": 22,
+      "security_groups": ["bastion-sg"]
+    }
+  ],
 
   "databases": [
     {
@@ -87,7 +97,7 @@
       "type": "postgres",
       "version": "14",
       "size": "small",
-      "zone": ["a","b"],
+      "zone": ["a", "b"],
       "subnets": ["private-subnet", "private-subnet-2"],
       "port": 5432,
       "security_groups": ["db-sg"]
@@ -95,7 +105,7 @@
   ],
 
   "networks": [
-    { "name": "public",   "cidr": "0.0.0.0/0" },
+    { "name": "public", "cidr": "0.0.0.0/0" },
     { "name": "internal", "cidr": "10.0.0.0/16" }
   ],
 
@@ -139,7 +149,7 @@
     {
       "name": "db-sg",
       "vpc": "main",
-      "attach_to": ["main-db"],
+      "attach_to": ["maindb"],
       "description": "PostgreSQL accessible only from backend",
       "ingress": [
         { "protocol": "tcp", "port": 5432, "source": "backend-sg" }
@@ -155,6 +165,21 @@
         { "protocol": "tcp", "port": 6379, "source": "backend-sg" }
       ],
       "egress": []
+    },
+    {
+      "name": "bastion-sg",
+      "vpc": "main",
+      "attach_to": ["bastion"],
+      "description": "Allow SSH from admin IP to private network",
+      "ingress": [
+        { "protocol": "tcp", "port": 22, "source": "203.0.113.0/24" }
+      ],
+      "egress": [
+        { "protocol": "tcp", "port": 22, "destination": "frontend-sg" },
+        { "protocol": "tcp", "port": 22, "destination": "backend-sg" },
+        { "protocol": "tcp", "port": 22, "destination": "redis-sg" },
+        { "protocol": "tcp", "port": 22, "destination": "db-sg" }
+      ]
     }
   ]
 }
