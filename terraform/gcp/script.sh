@@ -52,23 +52,14 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --role="$ROLE" || echo "⚠️ Role binding may already exist"
 
 # Generate key only if it doesn't exist
-echo "=== Checking if key file already exists: $KEY_FILE ==="
-if [[ -f "$KEY_FILE" ]]; then
-  echo "ℹ️ Key file already exists: $KEY_FILE. Skipping creation."
-else
-  echo "🔐 Creating key file: $KEY_FILE"
-  gcloud iam service-accounts keys create "$KEY_FILE" \
-    --iam-account="$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com"
-fi
-
-# Activate service account
-echo "✅ Activating service account..."
-gcloud auth activate-service-account \
-  "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
-  --key-file="$KEY_FILE" || {
-    echo "❌ Failed to activate service account. Check time sync or key validity."
-    exit 1
-  }
+# echo "=== Checking if key file already exists: $KEY_FILE ==="
+# if [[ -f "$KEY_FILE" ]]; then
+#   echo "ℹ️ Key file already exists: $KEY_FILE. Skipping creation."
+# else
+#   echo "🔐 Creating key file: $KEY_FILE"
+#   gcloud iam service-accounts keys create "$KEY_FILE" \
+#     --iam-account="$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com"
+# fi
 
 # Create bucket if not exists
 echo "=== Checking if bucket exists: gs://$BUCKET_NAME ==="
