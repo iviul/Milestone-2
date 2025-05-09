@@ -12,3 +12,7 @@ variable "aws_user" {
   description = "AWS CLI profile name to use"
   type        = string
 }
+
+variable "aws_user" {
+  type = string
+}
