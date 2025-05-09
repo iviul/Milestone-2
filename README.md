@@ -1,2 +1,1 @@
-# Milestone-2
-Public repository for collaboration
+README for this directory :)
