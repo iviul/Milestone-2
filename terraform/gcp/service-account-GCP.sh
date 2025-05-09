@@ -1,23 +1,22 @@
 #!/bin/bash
 set -euo pipefail
-#######################################################
-JSON_CONFIG_FILE=../../config/config.json
-SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' $JSON_CONFIG_FILE)
-ROLE=roles/$1
+
+CONFIG_PATH=$1
+SERVICE_ACCOUNT_NAME=$(jq -r '.terraform_username' "$CONFIG_PATH")
+ROLE="roles/$2"
 PROJECT_ID=$(gcloud config get-value project)
-DESCRIPTION="The service account for the Terraform"
-KEY_FILE=$2
-BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' $JSON_CONFIG_FILE)
-BUCKET_LOCATION=$(grep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' $JSON_CONFIG_FILE)
-#######################################################
+DESCRIPTION="The service account for Terraform"
+KEY_FILE=$3
+BUCKET_NAME=$(jq -r '.bucket_state_name' "$CONFIG_PATH")
+BUCKET_LOCATION=$(jq -r '.state_bucket_location_gcp' "$CONFIG_PATH")
+
 if [[ -z "$PROJECT_ID" ]]; then
-	echo "- Error: Unable to retrieve GCP project ID. Ensure your GCP project is set."
+	echo "❌ Error: Unable to retrieve GCP project ID. Use 'gcloud config set project YOUR_PROJECT_ID'"
 	exit 1
 else
-	echo "=== Project's id: '$PROJECT_ID' ==="
-	echo
+	echo "=== Project's ID: '$PROJECT_ID' ==="
 fi
-#######################################################
+
 REQUIRED_APIS=(
 	"iamcredentials.googleapis.com"
 	"compute.googleapis.com"
@@ -25,78 +24,67 @@ REQUIRED_APIS=(
 	"serviceusage.googleapis.com"
 	"storage.googleapis.com"
 )
+
 echo "=== Enabling required APIs for project: $PROJECT_ID ==="
 for api in "${REQUIRED_APIS[@]}"; do
 	echo "- Enabling '$api'..."
-	if gcloud services enable "$api" \
-		--project=$PROJECT_ID; then
-		echo "- '$api' was enabled"
-	else
-		echo "- '$api' wasn't enabled"
-		exit 1
-	fi
+	gcloud services enable "$api" --project="$PROJECT_ID" || echo "⚠️  Failed to enable $api"
 done
-echo "=== Required APIs for project $PROJECT_ID were enabled! ==="
+echo "=== All required APIs attempted to enable. ==="
 echo
-#######################################################
-executeCommands() {
-	local command=$1
-	local result_true=$2
-	local result_false=$3
 
-	if eval $command; then
-		echo "=== $result_true ==="
-		echo
-	else
-		echo "=== $result_false ==="
-		exit 1
-	fi
+# Check if service account exists
+echo "=== Checking for service account $SERVICE_ACCOUNT_NAME... ==="
+if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" &>/dev/null; then
+	echo "ℹ️ Service account already exists: $SERVICE_ACCOUNT_NAME"
+else
+	echo "🆕 Creating service account: $SERVICE_ACCOUNT_NAME"
+	gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" \
+		--description="$DESCRIPTION" \
+		--display-name="$SERVICE_ACCOUNT_NAME"
+fi
+
+# Assign role
+echo "🔑 Binding role '$ROLE' to service account..."
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+	--member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
+	--role="$ROLE" || echo "⚠️ Role binding may already exist"
+
+# Generate key only if it doesn't exist
+echo "=== Checking if key file already exists: $KEY_FILE ==="
+if [[ -f "$KEY_FILE" ]]; then
+	echo "ℹ️ Key file already exists: $KEY_FILE. Skipping creation."
+else
+	echo "🔐 Creating key file: $KEY_FILE"
+	gcloud iam service-accounts keys create "$KEY_FILE" \
+		--iam-account="$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com"
+fi
+
+# Activate service account
+echo "✅ Activating service account..."
+gcloud auth activate-service-account \
+	"$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
+		--key-file="$KEY_FILE" || {
+    echo "❌ Failed to activate service account. Check time sync or key validity."
+    exit 1
 }
-#######################################################
-echo "=== Creating service account $SERVICE_ACCOUNT_NAME... ==="
-executeCommands \
-	"gcloud iam service-accounts create \"$SERVICE_ACCOUNT_NAME\" \
-		--description=\"$DESCRIPTION\" \
-		--display-name=\"$SERVICE_ACCOUNT_NAME\"" \
-	"The service account $SERVICE_ACCOUNT_NAME created successfully!" \
-	"Error: The service account '$SERVICE_ACCOUNT_NAME' already exists, try another name. Skipping creation..."
-#######################################################
-echo "=== Binding role '$ROLE' to the service account... ==="
-executeCommands \
-	"gcloud projects add-iam-policy-binding \"$PROJECT_ID\" \
-		--member=\"serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com\" \
-		--role=\"$ROLE\"" \
-	"The role '$ROLE' was bound to the service account!" \
-	"Error: Failed to bind role '$ROLE' to the service account."
-#######################################################
-echo "=== Generating key file for $SERVICE_ACCOUNT_NAME... ==="
-executeCommands \
-	"gcloud iam service-accounts keys create \"$KEY_FILE\" \
-		--iam-account=\"$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com\"" \
-	"Key file created: $KEY_FILE" \
-	"Error: Failed to create key file for service account $SERVICE_ACCOUNT_NAME."
-#######################################################
-echo "=== Activating service account using the key... ==="
-executeCommands \
-	"gcloud auth activate-service-account \
-		--key-file=$KEY_FILE" \
-	"Service account activated successfully!" \
-	"Error: Failed to activate the service account."
-#######################################################
-echo "=== The service account - '$SERVICE_ACCOUNT_NAME' successfully configured via GCP CLI profile! ==="
-echo
-#######################################################
-echo "=== Creating the bucket 'gs://$BUCKET_NAME'...  ==="
-executeCommands \
-	"gcloud storage buckets create gs://$BUCKET_NAME \
-		--location=$BUCKET_LOCATION \
-		--uniform-bucket-level-access" \
-	"The bucket 'gs://$BUCKET_NAME' was created successfully!" \
-	"Error: a bucket 'gs://$BUCKET_NAME' wasn't created. The bucket name '$BUCKET_NAME' already exists, try another name. Skipping creation..."
-#######################################################
-echo "=== Enabling versioning for 'gs://$BUCKET_NAME'... ==="
-executeCommands \
-	"gsutil versioning set on gs://$BUCKET_NAME" \
-	"Enabled versioning for 'gs://$BUCKET_NAME'!" \
-	"Wasn't enabled versioning for 'gs://$BUCKET_NAME'"
-#######################################################
+
+# Create bucket if not exists
+echo "=== Checking if bucket exists: gs://$BUCKET_NAME ==="
+if gsutil ls -p "$PROJECT_ID" "gs://$BUCKET_NAME" &>/dev/null; then
+	echo "ℹ️ Bucket already exists: gs://$BUCKET_NAME"
+else
+	echo "🪣 Creating bucket: gs://$BUCKET_NAME in $BUCKET_LOCATION"
+	gcloud storage buckets create "gs://$BUCKET_NAME" \
+		--location="$BUCKET_LOCATION" \
+		--uniform-bucket-level-access
+fi
+
+# Enable versioning
+echo "🔁 Enabling versioning on bucket: gs://$BUCKET_NAME"
+gsutil versioning set on "gs://$BUCKET_NAME" || echo "⚠️ Versioning already enabled?"
+
+# Terraform
+echo "🚀 STARTING TERRAFORM"
+terraform init
+terraform apply
