@@ -20,6 +20,7 @@ fi
 REQUIRED_APIS=(
   "iamcredentials.googleapis.com"
   "compute.googleapis.com"
+  "sqladmin.googleapis.com"
   "cloudresourcemanager.googleapis.com"
   "serviceusage.googleapis.com"
   "storage.googleapis.com"
@@ -86,5 +87,6 @@ gsutil versioning set on "gs://$BUCKET_NAME" || echo "⚠️ Versioning already 
 
 # Terraform
 echo "🚀 STARTING TERRAFORM"
-terraform init
+export TF_VAR_bucket=$BUCKET_NAME
+terraform init -backend-config="bucket=$TF_VAR_bucket"
 terraform apply

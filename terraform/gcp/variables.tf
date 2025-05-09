@@ -1,7 +1,7 @@
 variable "project_id" {
   description = "The GCP project ID"
   type        = string
-  default     = "steady-copilot-459219-s2"
+  default     = "lofty-memento-458508-i1"
   
 }
 variable "db_password" {
