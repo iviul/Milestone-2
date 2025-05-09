@@ -1,6 +1,41 @@
-.terraform/
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .terraform.lock files
 .terraform.lock.hcl
-terraform.tfstate
-terraform.tfstate.backup
-modules/test/
+**/.terraform.lock.hcl
+gcp/.terraform.lock.hcl
+# Crash log files
+crash.log
+
+# Ignore override files as they are usually used to override resources locally
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore test.tf and .gitignore
 test.tf
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+# Ignore JSON files
+*.json
+
+# Ignore IDE files
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
