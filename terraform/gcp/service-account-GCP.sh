@@ -1,13 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 #######################################################
-SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' ./config/config.json)
+JSON_CONFIG_FILE=../../config/config.json
+SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' $JSON_CONFIG_FILE)
 ROLE=roles/$1
 PROJECT_ID=$(gcloud config get-value project)
 DESCRIPTION="The service account for the Terraform"
 KEY_FILE=$2
-BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' ./config/config.json)
-BUCKET_LOCATION=$(grep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' ./config/config.json)
+BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' $JSON_CONFIG_FILE)
+BUCKET_LOCATION=$(grep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' $JSON_CONFIG_FILE)
 #######################################################
 if [[ -z "$PROJECT_ID" ]]; then
 	echo "- Error: Unable to retrieve GCP project ID. Ensure your GCP project is set."
