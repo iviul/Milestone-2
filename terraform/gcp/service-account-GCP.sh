@@ -8,8 +8,7 @@ PROJECT_ID=$(gcloud config get-value project)
 DESCRIPTION="The service account for the Terraform"
 KEY_FILE=$3
 BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' $CONFIG_PATH)
-# NEW_BUCKET_NAME=$BUCKET_NAME-$(date +'%Y-%m-%d-%H-%M-%S')
-NEW_BUCKET_NAME="state-bucket-name-1377-2025-05-10-09-45-49"
+NEW_BUCKET_NAME=$BUCKET_NAME-$(date +'%Y-%m-%d-%H-%M-%S')
 BUCKET_LOCATION=$(grep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' "$CONFIG_PATH")
 #########################################################################
 if [[ -z "$PROJECT_ID" ]]; then
