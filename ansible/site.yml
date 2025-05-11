@@ -1,0 +1,7 @@
+---
+- name: Set up reverse proxy
+  hosts: reverse_proxy
+  become: true
+  roles:
+    - reverse_proxy
+
