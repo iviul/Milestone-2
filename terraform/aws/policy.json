@@ -1,0 +1,225 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowRoleManagement",
+      "Effect": "Allow",
+      "Action": [
+        "iam:GetRole",
+        "iam:ListRoleTags",
+        "iam:ListRoles",
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:PutRolePolicy",
+        "iam:ListInstanceProfilesForRole",
+        "iam:GetServiceLinkedRoleDeletionStatus",
+        "iam:CreateServiceLinkedRole",
+        "iam:ListAttachedRolePolicies",
+        "iam:DeleteRolePolicy",
+        "iam:ListRolePolicies",
+        "iam:GetRolePolicy",
+        "s3:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowAssumeAnyRole",
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iam:*",
+        "organizations:DescribeAccount",
+        "organizations:DescribeOrganization",
+        "organizations:DescribeOrganizationalUnit",
+        "organizations:DescribePolicy",
+        "organizations:ListChildren",
+        "organizations:ListParents",
+        "organizations:ListPoliciesForTarget",
+        "organizations:ListRoots",
+        "organizations:ListPolicies",
+        "organizations:ListTargetsForPolicy"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "rds:*",
+        "application-autoscaling:DeleteScalingPolicy",
+        "application-autoscaling:DeregisterScalableTarget",
+        "application-autoscaling:DescribeScalableTargets",
+        "application-autoscaling:DescribeScalingActivities",
+        "application-autoscaling:DescribeScalingPolicies",
+        "application-autoscaling:PutScalingPolicy",
+        "application-autoscaling:RegisterScalableTarget",
+        "cloudwatch:DescribeAlarms",
+        "cloudwatch:GetMetricStatistics",
+        "cloudwatch:PutMetricAlarm",
+        "cloudwatch:DeleteAlarms",
+        "cloudwatch:ListMetrics",
+        "cloudwatch:GetMetricData",
+        "ec2:DescribeAccountAttributes",
+        "ec2:DescribeAvailabilityZones",
+        "ec2:DescribeCoipPools",
+        "ec2:DescribeInternetGateways",
+        "ec2:DescribeLocalGatewayRouteTablePermissions",
+        "ec2:DescribeLocalGatewayRouteTables",
+        "ec2:DescribeLocalGatewayRouteTableVpcAssociations",
+        "ec2:DescribeLocalGateways",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeVpcAttribute",
+        "ec2:DescribeVpcs",
+        "ec2:GetCoipPoolUsage",
+        "sns:ListSubscriptions",
+        "sns:ListTopics",
+        "sns:Publish",
+        "logs:DescribeLogStreams",
+        "logs:GetLogEvents",
+        "outposts:GetOutpostInstanceTypes",
+        "devops-guru:GetResourceCollection"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "pi:*",
+      "Resource": [
+        "arn:aws:pi:*:*:metrics/rds/*",
+        "arn:aws:pi:*:*:perf-reports/rds/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "iam:AWSServiceName": [
+            "rds.amazonaws.com",
+            "rds.application-autoscaling.amazonaws.com"
+          ]
+        }
+      }
+    },
+    {
+      "Action": [
+        "devops-guru:SearchInsights",
+        "devops-guru:ListAnomaliesForInsight"
+      ],
+      "Effect": "Allow",
+      "Resource": "*",
+      "Condition": {
+        "ForAllValues:StringEquals": {
+          "devops-guru:ServiceNames": [
+            "RDS"
+          ]
+        },
+        "Null": {
+          "devops-guru:ServiceNames": "false"
+        }
+      }
+    },
+    {
+      "Sid": "BasePermissions",
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:*",
+        "cloudformation:CreateChangeSet",
+        "cloudformation:DescribeChangeSet",
+        "cloudformation:DescribeStackResource",
+        "cloudformation:DescribeStacks",
+        "cloudformation:ExecuteChangeSet",
+        "docdb-elastic:GetCluster",
+        "docdb-elastic:ListClusters",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeVpcs",
+        "kms:DescribeKey",
+        "kms:ListAliases",
+        "kms:ListKeys",
+        "lambda:ListFunctions",
+        "rds:DescribeDBClusters",
+        "rds:DescribeDBInstances",
+        "redshift:DescribeClusters",
+        "redshift-serverless:ListWorkgroups",
+        "redshift-serverless:GetNamespace",
+        "tag:GetResources"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "LambdaPermissions",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:AddPermission",
+        "lambda:CreateFunction",
+        "lambda:GetFunction",
+        "lambda:InvokeFunction",
+        "lambda:UpdateFunctionConfiguration"
+      ],
+      "Resource": "arn:aws:lambda:*:*:function:SecretsManager*"
+    },
+    {
+      "Sid": "SARPermissions",
+      "Effect": "Allow",
+      "Action": [
+        "serverlessrepo:CreateCloudFormationChangeSet",
+        "serverlessrepo:GetApplication"
+      ],
+      "Resource": "arn:aws:serverlessrepo:*:*:applications/SecretsManager*"
+    },
+    {
+      "Sid": "S3Permissions",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::awsserverlessrepo-changesets*",
+        "arn:aws:s3:::secrets-manager-rotation-apps-*/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "ec2:*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "elasticloadbalancing:*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "cloudwatch:*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "autoscaling:*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": [
+            "autoscaling.amazonaws.com",
+            "ec2scheduled.amazonaws.com",
+            "elasticloadbalancing.amazonaws.com",
+            "spot.amazonaws.com",
+            "spotfleet.amazonaws.com",
+            "transitgateway.amazonaws.com"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,3 +1,4 @@
 provider "google" {
-  region  = local.config.state_bucket_location_gcp
+  project = var.project_id
+  region  = local.region
 }
