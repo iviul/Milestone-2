@@ -1,0 +1,5 @@
+---
+- name: Pull an image
+  community.general.docker_image:
+    name: dolvladzio/frontend
+    source: pull
