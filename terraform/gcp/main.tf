@@ -10,6 +10,11 @@ locals {
 
   project_id = var.project_id
 }
+
+terraform {
+  backend "gcs" {}
+}
+
 module "network" {
   source           = "./modules/network"
   project_id       = local.project_id
