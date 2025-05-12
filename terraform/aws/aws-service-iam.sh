@@ -20,8 +20,14 @@ fi
 
 aws iam attach-user-policy --user-name "$USER_NAME" --policy-arn "$POLICY_ARN"
 
-CREDENTIALS=$(aws iam create-access-key --user-name "$USER_NAME" --query 'AccessKey.[AccessKeyId,SecretAccessKey]' --output text)
-ACCESS_KEY_ID=$(echo $CREDENTIALS | awk '{print $1}')
-SECRET_ACCESS_KEY=$(echo $CREDENTIALS | awk '{print $2}')
+EXISTING_KEY=$(aws iam list-access-keys --user-name "$USER_NAME" --query 'AccessKeyMetadata[*].AccessKeyId' --output text)
 
-echo "$USER_NAME $ACCESS_KEY_ID $SECRET_ACCESS_KEY $USER_ARN"
+if [ -z "$EXISTING_KEY" ]; then
+    CREDENTIALS=$(aws iam create-access-key --user-name "$USER_NAME" --query 'AccessKey.[AccessKeyId,SecretAccessKey]' --output text)
+    ACCESS_KEY_ID=$(echo $CREDENTIALS | awk '{print $1}')
+    SECRET_ACCESS_KEY=$(echo $CREDENTIALS | awk '{print $2}')
+    aws configure set aws_access_key_id "$ACCESS_KEY_ID" --profile "$USER_NAME"
+    aws configure set aws_secret_access_key "$SECRET_ACCESS_KEY" --profile "$USER_NAME"
+fi
+
+echo "$USER_NAME $USER_ARN"

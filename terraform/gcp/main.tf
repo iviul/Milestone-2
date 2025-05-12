@@ -24,6 +24,7 @@ locals {
   db_password = data.google_secret_manager_secret_version_access.db_password.secret
 
 }
+
 module "network" {
   source           = "./modules/network"
   project_id       = local.project_id
