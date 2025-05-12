@@ -1,11 +1,11 @@
 ---
 - name: Pull an image
   community.general.docker_image:
-    name: dolvladzio/new-frontend
+    name: "{{ image_name }}"
     source: pull
 #############################################
 - name: Verify the Docker image
-  command: docker images dolvladzio/new-frontend
+  command: docker images "{{ image_name }}"
 #############################################
 - name: Start the docker container
-  command: docker run -d -p 3000:3000 dolvladzio/new-frontend
+  command: docker run -d -p 3000:3000 "{{ image_name }}"
