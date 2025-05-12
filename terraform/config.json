@@ -121,7 +121,8 @@
       "attach_to": ["reverse-proxy"],
       "description": "Allow public HTTP traffic and forward to front/back",
       "ingress": [
-        { "protocol": "tcp", "port": 80, "source": "public" }
+        { "protocol": "tcp", "port": 80, "source": "public" },
+        { "protocol": "tcp", "port": 22, "source": "bastion-sg" }
       ],
       "egress": [
         { "protocol": "tcp", "port": 3000, "destination": "frontend-sg" },
@@ -159,7 +160,8 @@
       "attach_to": ["maindb"],
       "description": "PostgreSQL accessible only from backend",
       "ingress": [
-        { "protocol": "tcp", "port": 5432, "source": "backend-sg" }
+        { "protocol": "tcp", "port": 5432, "source": "backend-sg" },
+        { "protocol": "tcp", "port": 22, "source": "bastion-sg" }
       ],
       "egress": []
     },
