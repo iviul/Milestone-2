@@ -94,32 +94,23 @@ resource "google_compute_firewall" "egress" {
       contains(keys(local.acls_map), rule.destination) ? [local.acls_map[rule.destination]] : ["0.0.0.0/0"]
     if !contains(keys(local.sg_to_instances_map), rule.destination)
   ]))
-  
-  # For destinations that are security groups, we can't directly set target tags for egress
-  # This is a limitation of GCP. In a real implementation, you'd need to use network tags or
-  # service accounts to identify targets accurately
-}
 
-# 1. Cloud Router (must live in your VPC + same region as your subnets)
+}
 resource "google_compute_router" "nat_router" {
-  name    = "nat-router"
-  network = google_compute_network.vpc.self_link
+  for_each = google_compute_network.vpc
+
+  name    = "${each.key}-nat-router"
+  network = each.value.self_link
   region  = var.region
 }
 
-# 2. Cloud NAT itself
 resource "google_compute_router_nat" "cloud_nat" {
-  name   = "nat"
-  router = google_compute_router.nat_router.name
-  region = var.region
+  for_each = google_compute_router.nat_router
 
-  # Let GCP auto‐allocate one or more external IPs for you
-  nat_ip_allocate_option             = "AUTO_ONLY"
+  name                       = "${each.key}-nat"
+  router                     = each.value.name
+  region                     = var.region
 
-  # NAT all subnets’ IP ranges in this VPC
+  nat_ip_allocate_option     = "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-
-  # Optional tuning (reduce or increase port pool per VM)
-  min_ports_per_vm = 64
-  enable_logging   = false
 }
