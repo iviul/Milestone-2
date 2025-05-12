@@ -1,5 +1,5 @@
 ---
-- name: Install and Configure Frontend
+- name: Install and Start the Frontend's image
   hosts: frontend
   become: yes  # Run as sudo
 
