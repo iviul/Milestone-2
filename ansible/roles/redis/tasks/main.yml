@@ -1,0 +1,40 @@
+---
+- name: Install dependencies (lsb-release, curl, gpg)
+  ansible.builtin.apt:
+    name:
+      - lsb-release
+      - curl
+      - gpg
+    state: present
+
+- name: Download and add Redis GPG key
+  ansible.builtin.shell: |
+    curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+  args:
+    creates: /usr/share/keyrings/redis-archive-keyring.gpg  # Ensures idempotency
+
+- name: Set correct permissions for GPG key
+  ansible.builtin.file:
+    path: /usr/share/keyrings/redis-archive-keyring.gpg
+    mode: "0644"
+
+- name: Add Redis official repository
+  ansible.builtin.shell: |
+    echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+  args:
+    creates: /etc/apt/sources.list.d/redis.list  # Ensures idempotency
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Redis
+  ansible.builtin.apt:
+    name: redis
+    state: latest
+
+- name: Ensure Redis is running
+  ansible.builtin.service:
+    name: redis-server
+    state: started
+    enabled: yes

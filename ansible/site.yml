@@ -1,0 +1,7 @@
+---
+- name: Install and Configure Redis
+  hosts: redis
+  become: yes  # Run as sudo
+
+  roles:
+    - redis
