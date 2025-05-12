@@ -1,11 +1,7 @@
 variable "project_id" {
   description = "The GCP project ID"
   type        = string
-  default     = "lofty-memento-458508-i1"
-  
-}
-variable "db_password" {
-  description = "The GCP project ID"
+  default     = "ace-thought-458516-d9"
   
 }
 
