@@ -1,0 +1,7 @@
+---
+- name: Install and Configure Frontend
+  hosts: frontend
+  become: yes  # Run as sudo
+
+  roles:
+    - frontend
