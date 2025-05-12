@@ -45,6 +45,7 @@
       "zone": "a",
       "subnet": "public-subnet",
       "tags": ["proxy"],
+      "public_ip": true,
       "port": 80,
       "security_groups": ["reverse-proxy-sg"]
     },
@@ -54,6 +55,7 @@
       "size": "small",
       "zone": "b",
       "subnet": "private-subnet",
+      "public_ip": false,
       "tags": ["frontend"],
       "port": 3000,
       "security_groups": ["frontend-sg"]
@@ -64,6 +66,7 @@
       "size": "small",
       "zone": "b",
       "subnet": "private-subnet",
+      "public_ip": false,
       "tags": ["backend"],
       "port": 8080,
       "security_groups": ["backend-sg"]
@@ -74,6 +77,7 @@
       "size": "small",
       "zone": "b",
       "subnet": "private-subnet",
+      "public_ip": false,
       "tags": ["cache"],
       "port": 6379,
       "security_groups": ["redis-sg"]
@@ -84,6 +88,7 @@
       "size": "small",
       "zone": "a",
       "subnet": "public-subnet",
+      "public_ip": true,
       "tags": ["bastion", "ssh"],
       "port": 22,
       "security_groups": ["bastion-sg"]
@@ -129,7 +134,8 @@
       "attach_to": ["frontend"],
       "description": "Serve assets to proxy",
       "ingress": [
-        { "protocol": "tcp", "port": 3000, "source": "reverse-proxy-sg" }
+        { "protocol": "tcp", "port": 3000, "source": "reverse-proxy-sg" },
+        { "protocol": "tcp", "port": 22, "source": "bastion-sg" }
       ],
       "egress": []
     },
@@ -139,7 +145,8 @@
       "attach_to": ["backend"],
       "description": "API server behind proxy with DB/Redis access",
       "ingress": [
-        { "protocol": "tcp", "port": 8080, "source": "reverse-proxy-sg" }
+        { "protocol": "tcp", "port": 8080, "source": "reverse-proxy-sg" },
+        { "protocol": "tcp", "port": 22, "source": "bastion-sg" }
       ],
       "egress": [
         { "protocol": "tcp", "port": 5432, "destination": "db-sg" },
@@ -162,7 +169,8 @@
       "attach_to": ["redis"],
       "description": "Redis accessible only from backend",
       "ingress": [
-        { "protocol": "tcp", "port": 6379, "source": "backend-sg" }
+        { "protocol": "tcp", "port": 6379, "source": "backend-sg" },
+        { "protocol": "tcp", "port": 22, "source": "bastion-sg" }
       ],
       "egress": []
     },
