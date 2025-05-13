@@ -51,8 +51,8 @@ To deploy the infrastructure:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/milestone-2-infra.git
-cd milestone-2-infra
+git clone https://github.com/iviul/Milestone-2
+cd milestone-2
 
 # Authenticate with Google Cloud
 gcloud auth application-default login
