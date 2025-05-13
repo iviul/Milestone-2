@@ -2,7 +2,7 @@
 
 # Milestone-2 Infrastructure Deployment
 
-This project provisions a secure and scalable cloud infrastructure in **Google Cloud Platform (GCP)** **AWS** using **Terraform**. It is designed to host a future application deployment in a private network, with access managed through a bastion host and SSH agent forwarding.
+This project provisions a secure and scalable cloud infrastructure in **Google Cloud Platform (GCP)** / **AWS** using **Terraform**. It is designed to host a future application deployment in a private network, with access managed through a bastion host and SSH agent forwarding.
 
 ---
 
