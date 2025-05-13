@@ -1,0 +1,23 @@
+---
+- name: Налаштування ForceCommand
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^ForceCommand'
+    line: 'ForceCommand /bin/false'
+    state: present
+    create: yes
+    backup: yes
+
+- name: Налаштування PermitTTY
+  lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitTTY'
+        line: 'PermitTTY no'
+        state: present
+        create: yes
+        backup: yes
+
+- name: Перезапуск SSH
+  service:
+    name: ssh
+    state: restarted
