@@ -74,6 +74,7 @@ gcloud auth activate-service-account \
 }
 #########################################################################
 echo
+export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
 echo "=== Creating the bucket gs://$NEW_BUCKET_NAME ==="
 if gsutil ls "gs://$NEW_BUCKET_NAME"; then
 	echo "=== The bucket: gs://$NEW_BUCKET_NAME already exists. Creating a new bucket... ==="
@@ -90,6 +91,11 @@ if gsutil ls "gs://$NEW_BUCKET_NAME"; then
 			echo "=== Enabling versioning on the bucket: gs://$UPDATED_BUCKET_NAME ==="
 			gsutil versioning set on "gs://$UPDATED_BUCKET_NAME" || echo "=== Versioning already enabled ==="
 			echo
+
+			echo "🚀 STARTING TERRAFORM"
+			terraform init \
+			  -backend-config="bucket=$UPDATED_BUCKET_NAME"
+
 			break
 		else
 			echo "=== The bucket: gs://$UPDATED_BUCKET_NAME already exists( Trying again... ==="
@@ -106,7 +112,6 @@ fi
 #########################################################################
 echo "🚀 STARTING TERRAFORM"
 
-export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
-
-#terraform init && terraform apply --auto-approve
+terraform init \
+  -backend-config="bucket=$NEW_BUCKET_NAME"
 #########################################################################
