@@ -1,10 +1,2 @@
 ---
-- name: Install and Start the Frontend's image
-  hosts: frontend
-  become: yes  # Run as sudo
-
-  vars:
-    image_name: dolvladzio/new-frontend
-
-  roles:
-    - frontend
+- import_playbook: frontend.yml
