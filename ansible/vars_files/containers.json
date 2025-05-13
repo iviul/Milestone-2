@@ -1,0 +1,21 @@
+{
+  "containers": {
+    "backend": {
+      "name": "class_schedule_backend",
+      "image": "class_schedule_backend",
+      "tag": "latest",
+      "ports": ["8080:8080"],
+      "env": {
+        "DB_HOST": "{{ lookup('env', 'DB_HOST') }}",
+        "DB_USER": "{{ lookup('env', 'DB_USER') }}",
+        "DB_PASSWORD": "{{ lookup('env', 'DB_PASSWORD') }}",
+        "DB_PORT": "{{ lookup('env', 'DB_PORT') }}",
+        "DB_NAME": "{{ lookup('env', 'DB_NAME') }}",
+        "MONGODB_NAME": "{{ lookup('env', 'MONGODB_NAME') }}",
+        "MONGODB_CLUSTER": "{{ lookup('env', 'MONGODB_CLUSTER') }}",
+        "REDIS_HOST": "{{ lookup('env', 'REDIS_HOST') }}",
+        "REDIS_PORT": "{{ lookup('env', 'REDIS_PORT') }}"
+      }
+    }
+  }
+}
