@@ -42,19 +42,20 @@ enableApis() {
 	echo "=== All required APIs were enabled ==="
 	echo
 }
-enableApis()
 #########################################################################
-echo "=== Checking for service account $SERVICE_ACCOUNT_NAME... ==="
-if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" &>/dev/null; then
-	echo "=== Service account: $SERVICE_ACCOUNT_NAME already exists. ==="
-	echo
-else
-	echo "=== Creating service account: $SERVICE_ACCOUNT_NAME ==="
-	gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" \
-		--description="$DESCRIPTION" \
-		--display-name="$SERVICE_ACCOUNT_NAME"
-	echo
-fi
+createServiceAccount() {
+	echo "=== Checking for service account $SERVICE_ACCOUNT_NAME... ==="
+	if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" &>/dev/null; then
+		echo "=== Service account: $SERVICE_ACCOUNT_NAME already exists. ==="
+		echo
+	else
+		echo "=== Creating service account: $SERVICE_ACCOUNT_NAME ==="
+		gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" \
+			--description="$DESCRIPTION" \
+			--display-name="$SERVICE_ACCOUNT_NAME"
+		echo
+	fi
+}
 #########################################################################
 bindRole() {
 	IAM_ROLES=(
@@ -72,25 +73,28 @@ bindRole() {
 	echo "=== All iam roles were enabled ==="
 	echo
 }
-bindRole()
 #########################################################################
-echo "=== Checking if key file: $KEY_FILE already exists ==="
-if [[ -f "$KEY_FILE" ]]; then
-	echo "=== Key file: $KEY_FILE already exists. ==="
-	echo
-else
-	echo "=== Creating key file: $KEY_FILE ==="
-	gcloud iam service-accounts keys create "$KEY_FILE" \
-		--iam-account="$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com"
-	echo
-fi
+keyFile() {
+	echo "=== Checking if key file: $KEY_FILE already exists ==="
+	if [[ -f "$KEY_FILE" ]]; then
+		echo "=== Key file: $KEY_FILE already exists. ==="
+		echo
+	else
+		echo "=== Creating key file: $KEY_FILE ==="
+		gcloud iam service-accounts keys create "$KEY_FILE" \
+			--iam-account="$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com"
+		echo
+	fi
+}
 #########################################################################
-echo "=== Activating service account... ==="
-gcloud auth activate-service-account \
-	"$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
-		--key-file="$KEY_FILE" || {
-    echo "=== Failed to activate service account. Check time sync or key validity. ==="
-    exit 1
+acrivateServiceAccount() {
+	echo "=== Activating service account... ==="
+	gcloud auth activate-service-account \
+		"$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
+			--key-file="$KEY_FILE" || {
+		echo "=== Failed to activate service account. Check time sync or key validity. ==="
+		exit 1
+	}
 }
 #########################################################################
 createSecret() {
@@ -117,15 +121,13 @@ createSecret() {
         fi
     fi
 }
-createSecret "$SECRET_NAME_DB_USERNAME" "$PROJECT_ID" "$DB_PASS"
-createSecret "$SECRET_NAME_DB_PASS" "$PROJECT_ID" "$DB_USERNAME"
 #########################################################################
-startTerraform() {
-	echo "🚀 STARTING TERRAFORM"
-	terraform init --reconfigure \
-		-backend-config="bucket=$1"
-}
 createBucket() {
+	startTerraform() {
+		echo "🚀 STARTING TERRAFORM"
+		terraform init --reconfigure \
+			-backend-config="bucket=$1"
+	}
 	echo
 	echo "=== Creating the bucket gs://$NEW_BUCKET_NAME ==="
 	export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
@@ -160,7 +162,22 @@ createBucket() {
 		echo
 	fi
 }
-createBucket()
 #########################################################################
-startTerraform "$NEW_BUCKET_NAME"
+Account() {
+	enableApis()
+	createServiceAccount()
+	bindRole()
+	keyFile()
+	acrivateServiceAccount()
+}
+#########################################################################
+appStart() {
+	createSecret "$SECRET_NAME_DB_USERNAME" "$PROJECT_ID" "$DB_PASS"
+	createSecret "$SECRET_NAME_DB_PASS" "$PROJECT_ID" "$DB_USERNAME"
+	createBucket()
+	startTerraform "$NEW_BUCKET_NAME"
+}
+#########################################################################
+Account()
+appStart()
 #########################################################################
