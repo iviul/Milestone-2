@@ -26,6 +26,7 @@ REQUIRED_APIS=(
     "serviceusage.googleapis.com"
     "storage.googleapis.com"
     "artifactregistry.googleapis.com"
+	"secretmanager.googleapis.com"
 )
 
 echo "=== Enabling required APIs for project: $PROJECT_ID ==="
@@ -53,6 +54,10 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
 	--member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
 	--role="$ROLE" || echo "=== Role binding may already exist ==="
 echo
+###
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+	--member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
+	--role="roles/secretmanager.secretAccessor"
 #########################################################################
 echo "=== Checking if key file: $KEY_FILE already exists ==="
 if [[ -f "$KEY_FILE" ]]; then
@@ -73,14 +78,44 @@ gcloud auth activate-service-account \
     exit 1
 }
 #########################################################################
+DB_USERNAME=postgres
+DB_PASS=postgres
+SECRET_NAME_DB_USERNAME=db_user
+SECRET_NAME_DB_PASS=db_pass
+
+createSecret() {
+	SECRET_NAME=$1
+    PROJECT_ID=$2
+    SECRET_VALUE=$3
+	echo
+	echo "=== Creating secret ==="
+
+	if check_secret_exists "$SECRET_NAME" "$PROJECT_ID"; then
+        echo "✅ Secret '$SECRET_NAME' already exists."
+    else
+        echo "Creating secret '$SECRET_NAME'..."
+        if gcloud secrets create "$SECRET_NAME" \
+                --replication-policy="automatic" \
+                --project="$PROJECT_ID"; then
+            echo -n "$SECRET_VALUE" | gcloud secrets versions add "$SECRET_NAME" \
+                --data-file=- \
+                --project="$PROJECT_ID"
+            echo "✅ Secret '$SECRET_NAME' created and value added."
+        else
+            echo "❌ Failed to create secret '$SECRET_NAME'."
+            exit 1
+        fi
+    fi
+}
+
+createSecret "$SECRET_NAME_DB_USERNAME" "$PROJECT_ID" "$DB_PASS"
+#########################################################################
 echo
-
 export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
-
 startTerraform() {
 	echo "🚀 STARTING TERRAFORM"
 	terraform init --reconfigure \
-	  -backend-config="bucket=$1"
+		-backend-config="bucket=$1"
 }
 
 echo "=== Creating the bucket gs://$NEW_BUCKET_NAME ==="
