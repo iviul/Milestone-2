@@ -105,5 +105,8 @@ else
 fi
 #########################################################################
 echo "🚀 STARTING TERRAFORM"
-terraform init && terraform apply --auto-approve
+
+export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
+
+#terraform init && terraform apply --auto-approve
 #########################################################################
