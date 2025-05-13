@@ -20,11 +20,12 @@ else
 fi
 #########################################################################
 REQUIRED_APIS=(
-	"iamcredentials.googleapis.com"
-	"compute.googleapis.com"
-	"cloudresourcemanager.googleapis.com"
-	"serviceusage.googleapis.com"
-	"storage.googleapis.com"
+    "iamcredentials.googleapis.com"
+    "compute.googleapis.com"
+    "cloudresourcemanager.googleapis.com"
+    "serviceusage.googleapis.com"
+    "storage.googleapis.com"
+    "artifactregistry.googleapis.com"
 )
 
 echo "=== Enabling required APIs for project: $PROJECT_ID ==="
@@ -108,7 +109,6 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --role="roles/secretmanager.secretAccessor"
 
 #########################################################################
-# echo "🚀 STARTING TERRAFORM"
-# terraform init
-# terraform apply
+echo "🚀 STARTING TERRAFORM"
+terraform init && terraform apply --auto-approve
 #########################################################################
