@@ -1,11 +1,4 @@
 ---
-- name: Pull an image
-  community.general.docker_image:
-    name: "{{ image_name }}"
-    source: pull
-#############################################
-- name: Verify the Docker image
-  command: docker images "{{ image_name }}"
-#############################################
-- name: Start the docker container
-  command: docker run -d -p 3000:3000 "{{ image_name }}"
+- name: Set full container image path
+  set_fact:
+    full_image_path: "{{ registry_url }}/{{ container.image }}:{{ container.tag }}"
