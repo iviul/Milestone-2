@@ -1,0 +1,13 @@
+{
+  "containers": {
+    "frontend": {
+      "name": "class_schedule_frontend",
+      "image": "class_schedule_frontend",
+      "tag": "latest",
+      "ports": ["3000:3000"],
+      "env": {
+        "REDIS_PORT": "{{ lookup('env', 'REDIS_PORT') }}"
+      }
+    }
+  }
+}
