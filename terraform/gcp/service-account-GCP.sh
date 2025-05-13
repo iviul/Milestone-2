@@ -10,6 +10,10 @@ KEY_FILE=$3
 BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' $CONFIG_PATH)
 NEW_BUCKET_NAME=$BUCKET_NAME-$(date +'%Y-%m-%d-%H-%M-%S')
 BUCKET_LOCATION=$(grep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' "$CONFIG_PATH")
+DB_USERNAME=postgres # will be taken by grep
+DB_PASS=postgres # will be taken by grep
+SECRET_NAME_DB_USERNAME=db_user # will be taken by grep
+SECRET_NAME_DB_PASS=db_pass # will be taken by grep
 #########################################################################
 if [[ -z "$PROJECT_ID" ]]; then
 	echo "=== Error: Unable to retrieve GCP project ID. Use 'gcloud config set project YOUR_PROJECT_ID' ==="
@@ -19,23 +23,26 @@ else
 	echo
 fi
 #########################################################################
-REQUIRED_APIS=(
-    "iamcredentials.googleapis.com"
-    "compute.googleapis.com"
-    "cloudresourcemanager.googleapis.com"
-    "serviceusage.googleapis.com"
-    "storage.googleapis.com"
-    "artifactregistry.googleapis.com"
-	"secretmanager.googleapis.com"
-)
+enableApis() {
+	REQUIRED_APIS=(
+		"iamcredentials.googleapis.com"
+		"compute.googleapis.com"
+		"cloudresourcemanager.googleapis.com"
+		"serviceusage.googleapis.com"
+		"storage.googleapis.com"
+		"artifactregistry.googleapis.com"
+		"secretmanager.googleapis.com"
+	)
 
-echo "=== Enabling required APIs for project: $PROJECT_ID ==="
-for api in "${REQUIRED_APIS[@]}"; do
-	echo "- Enabling '$api'..."
-	gcloud services enable "$api" --project="$PROJECT_ID" || echo "=== Failed to enable $api ==="
-done
-echo "=== All required APIs attempted to enable. ==="
-echo
+	echo "=== Enabling required APIs for project: $PROJECT_ID ==="
+	for api in "${REQUIRED_APIS[@]}"; do
+		echo "- Enabling '$api'..."
+		gcloud services enable "$api" --project="$PROJECT_ID" || echo "=== Failed to enable $api ==="
+	done
+	echo "=== All required APIs were enabled ==="
+	echo
+}
+enableApis()
 #########################################################################
 echo "=== Checking for service account $SERVICE_ACCOUNT_NAME... ==="
 if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" &>/dev/null; then
@@ -49,15 +56,23 @@ else
 	echo
 fi
 #########################################################################
-echo "=== Binding role '$ROLE' to service account... ==="
-gcloud projects add-iam-policy-binding "$PROJECT_ID" \
-	--member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
-	--role="$ROLE" || echo "=== Role binding may already exist ==="
-echo
-###
-gcloud projects add-iam-policy-binding "$PROJECT_ID" \
-	--member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
-	--role="roles/secretmanager.secretAccessor"
+bindRole() {
+	IAM_ROLES=(
+		"$ROLE"
+		"secretmanager.secretAccessor"
+	)
+
+	echo "=== Binding role '$ROLE' to service account... ==="
+	for iam_role in "${IAM_ROLES[@]}"; do
+		echo "=== Binding role '$iam_role' to service account... ==="
+		gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+			--member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
+			--role="roles/$iam_role" || echo "=== Role binding may already exist ==="
+	done
+	echo "=== All iam roles were enabled ==="
+	echo
+}
+bindRole()
 #########################################################################
 echo "=== Checking if key file: $KEY_FILE already exists ==="
 if [[ -f "$KEY_FILE" ]]; then
@@ -78,11 +93,6 @@ gcloud auth activate-service-account \
     exit 1
 }
 #########################################################################
-DB_USERNAME=postgres
-DB_PASS=postgres
-SECRET_NAME_DB_USERNAME=db_user
-SECRET_NAME_DB_PASS=db_pass
-
 createSecret() {
 	SECRET_NAME=$1
     PROJECT_ID=$2
@@ -107,49 +117,50 @@ createSecret() {
         fi
     fi
 }
-
 createSecret "$SECRET_NAME_DB_USERNAME" "$PROJECT_ID" "$DB_PASS"
+createSecret "$SECRET_NAME_DB_PASS" "$PROJECT_ID" "$DB_USERNAME"
 #########################################################################
-echo
-export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
 startTerraform() {
 	echo "🚀 STARTING TERRAFORM"
 	terraform init --reconfigure \
 		-backend-config="bucket=$1"
 }
-
-echo "=== Creating the bucket gs://$NEW_BUCKET_NAME ==="
-if gsutil ls "gs://$NEW_BUCKET_NAME"; then
-	echo "=== The bucket: gs://$NEW_BUCKET_NAME already exists. Creating a new bucket... ==="
-	while true; do
-		# Generate a unique bucket name with a timestamp
-		UPDATED_BUCKET_NAME="${BUCKET_NAME}-$(date +'%Y-%m-%d-%H-%M-%S')"
-
-		if gcloud storage buckets create "gs://$UPDATED_BUCKET_NAME" \
-                --location="$BUCKET_LOCATION" \
-                --uniform-bucket-level-access; then
-			echo "=== The bucket: gs://$UPDATED_BUCKET_NAME created seccessfully ==="
-			echo
-
-			echo "=== Enabling versioning on the bucket: gs://$UPDATED_BUCKET_NAME ==="
-			gsutil versioning set on "gs://$UPDATED_BUCKET_NAME" || echo "=== Versioning already enabled ==="
-			echo
-
-			startTerraform "$UPDATED_BUCKET_NAME"
-
-			break
-		else
-			echo "=== The bucket: gs://$UPDATED_BUCKET_NAME already exists( Trying again... ==="
-		fi
-	done
-else
-	gcloud storage buckets create "gs://$NEW_BUCKET_NAME" \
-            --location="$BUCKET_LOCATION" \
-            --uniform-bucket-level-access
-	echo "=== Enabling versioning on the bucket: gs://$NEW_BUCKET_NAME ==="
-	gsutil versioning set on "gs://$NEW_BUCKET_NAME" || echo "=== Versioning already enabled ==="
+createBucket() {
 	echo
-fi
+	echo "=== Creating the bucket gs://$NEW_BUCKET_NAME ==="
+	export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
+	if gsutil ls "gs://$NEW_BUCKET_NAME"; then
+		echo "=== The bucket: gs://$NEW_BUCKET_NAME already exists. Creating a new bucket... ==="
+		while true; do
+			# Generate a unique bucket name with a timestamp
+			UPDATED_BUCKET_NAME="${BUCKET_NAME}-$(date +'%Y-%m-%d-%H-%M-%S')"
+
+			if gcloud storage buckets create "gs://$UPDATED_BUCKET_NAME" \
+					--location="$BUCKET_LOCATION" \
+					--uniform-bucket-level-access; then
+				echo "=== The bucket: gs://$UPDATED_BUCKET_NAME created seccessfully ==="
+				echo
+
+				echo "=== Enabling versioning on the bucket: gs://$UPDATED_BUCKET_NAME ==="
+				gsutil versioning set on "gs://$UPDATED_BUCKET_NAME" || echo "=== Versioning already enabled ==="
+				echo
+
+				startTerraform "$UPDATED_BUCKET_NAME"
+				break
+			else
+				echo "=== The bucket: gs://$UPDATED_BUCKET_NAME already exists( Trying again... ==="
+			fi
+		done
+	else
+		gcloud storage buckets create "gs://$NEW_BUCKET_NAME" \
+				--location="$BUCKET_LOCATION" \
+				--uniform-bucket-level-access
+		echo "=== Enabling versioning on the bucket: gs://$NEW_BUCKET_NAME ==="
+		gsutil versioning set on "gs://$NEW_BUCKET_NAME" || echo "=== Versioning already enabled ==="
+		echo
+	fi
+}
+createBucket()
 #########################################################################
 startTerraform "$NEW_BUCKET_NAME"
 #########################################################################
