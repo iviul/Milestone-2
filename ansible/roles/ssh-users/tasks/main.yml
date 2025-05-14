@@ -16,8 +16,4 @@
     path: /etc/ssh/sshd_config
     regexp: '^AllowAgentForwarding'
     line: AllowAgentForwarding yes
-
-- name: Restart ssh
-  ansible.builtin.service:
-    name: ssh
-    state: restarted
+  notify: Reload SSH

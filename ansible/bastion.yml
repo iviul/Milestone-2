@@ -6,3 +6,10 @@
   roles:
     - ssh-users
     - bastion-restriction
+
+- name: Configure local config file
+  hosts: localhost
+  become: false
+
+  roles:
+    - configure-ssh-config
