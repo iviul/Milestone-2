@@ -6,7 +6,7 @@
       "tag": "latest",
       "ports": ["3000:3000"],
       "env": {
-        "REDIS_PORT": "{{ lookup('env', 'REDIS_PORT') }}"
+        "REACT_APP_API_BASE_URL": "{{ lookup('env', 'REACT_APP_API_BASE_URL') }}"
       }
     }
   }
