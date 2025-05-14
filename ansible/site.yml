@@ -1,6 +1,6 @@
 ---
 - name: Set up reverse proxy
-  hosts: reverse_proxy
+  hosts: reverse-proxy
   become: true
   roles:
     - reverse_proxy

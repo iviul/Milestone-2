@@ -1,15 +1,8 @@
----
-- name: Install Nginx
-  ansible.builtin.yum:
-    name: nginx
-    state: present
-  when: ansible_facts['os_family'] == 'RedHat'
-
 - name: Install Nginx (Debian-based)
   ansible.builtin.apt:
     name: nginx
     state: present
-  when: ansible_facts['os_family'] == 'Debian'
+    update_cache: yes
 
 - name: Start Nginx and enable it on boot
   ansible.builtin.systemd:
@@ -25,14 +18,7 @@
   notify:
     - Reload Nginx
 
-- name: Ensure Nginx is running (RedHat)
+- name: Ensure Nginx is running
   ansible.builtin.systemd:
     name: nginx
     state: restarted
-  when: ansible_facts['os_family'] == 'RedHat'
-
-- name: Ensure Nginx is running (Debian)
-  ansible.builtin.systemd:
-    name: nginx
-    state: restarted
-  when: ansible_facts['os_family'] == 'Debian'
