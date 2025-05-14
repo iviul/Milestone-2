@@ -5,6 +5,6 @@
   vars_files:
     - vars_files/containers.json
   roles:
-    - role: container_exec
+    - role: frontend
   vars:
     container: "{{ containers.frontend }}"
