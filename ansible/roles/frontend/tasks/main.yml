@@ -6,3 +6,14 @@
 - name: Combine environment variables
   set_fact:
     combined_env: "{{ common_container_env | combine(container.env) }}"
+
+- name: Create Docker container
+  docker_container:
+    name: "{{ container.name }}"
+    image: "{{ full_image_path }}"
+    state: started
+    restart_policy: "{{ container_restart_policy }}"
+    ports: "{{ container.ports }}"
+    env: "{{ combined_env }}"
+    volumes: "{{ container.volumes | default([]) }}"
+    pull: yes
