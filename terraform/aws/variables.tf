@@ -13,6 +13,8 @@ variable "aws_user" {
   type        = string
 }
 
-variable "aws_user" {
+variable "home_dir" {
   type = string
+  description = "Home directory of the current user"
 }
+

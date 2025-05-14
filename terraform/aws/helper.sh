@@ -22,6 +22,7 @@ cat > "$ENV_FILE" <<EOL
 export TF_VAR_aws_user=$USER_NAME
 export TF_VAR_s3_bucket=$BUCKET_NAME
 export TF_VAR_aws_remote_region=$REGION
+export TF_VAR_home_dir="$HOME"
 EOL
 chmod +x "$ENV_FILE"
 
