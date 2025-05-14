@@ -94,8 +94,23 @@ resource "google_compute_firewall" "egress" {
       contains(keys(local.acls_map), rule.destination) ? [local.acls_map[rule.destination]] : ["0.0.0.0/0"]
     if !contains(keys(local.sg_to_instances_map), rule.destination)
   ]))
-  
-  # For destinations that are security groups, we can't directly set target tags for egress
-  # This is a limitation of GCP. In a real implementation, you'd need to use network tags or
-  # service accounts to identify targets accurately
+
+}
+resource "google_compute_router" "nat_router" {
+  for_each = google_compute_network.vpc
+
+  name    = "${each.key}-nat-router"
+  network = each.value.self_link
+  region  = var.region
+}
+
+resource "google_compute_router_nat" "cloud_nat" {
+  for_each = google_compute_router.nat_router
+
+  name                       = "${each.key}-nat"
+  router                     = each.value.name
+  region                     = var.region
+
+  nat_ip_allocate_option     = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }

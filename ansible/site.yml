@@ -1,7 +1,3 @@
 ---
-- name: Install and Configure Redis
-  hosts: redis
-  become: yes  # Run as sudo
-
-  roles:
-    - redis
+- import_playbook: backend.yml
+- import_playbook: ecr-auth.yml

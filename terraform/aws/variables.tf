@@ -8,18 +8,7 @@ variable "cloud_provider" {
   default     = "aws"
 }
 
-variable "aws_access_key_id" {
-  type        = string
-  description = "AWS Access Key Id"
-  sensitive   = true
-}
-
-variable "aws_secret_access_key" {
-  type        = string
-  description = "AWS Secret Access Key"
-  sensitive   = true
-}
-
 variable "aws_user" {
-  type = string
+  description = "AWS CLI profile name to use"
+  type        = string
 }

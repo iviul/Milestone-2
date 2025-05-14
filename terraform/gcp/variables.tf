@@ -1,11 +1,7 @@
 variable "project_id" {
   description = "The GCP project ID"
   type        = string
-  default     = "steady-copilot-459219-s2"
-  
-}
-variable "db_password" {
-  description = "The GCP project ID"
+  default     = "ace-thought-458516-d9"
   
 }
 
