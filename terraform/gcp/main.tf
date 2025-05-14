@@ -56,3 +56,11 @@ module "db_instance" {
   db_pass          = local.db_password
   db_username      = local.db_username
 }
+
+module "artifact_registry" {
+  source                        = "./modules/artifact_registry"
+  region                        = local.region
+  artifact_registry_id          = "test-artifact-registry"
+  artifact_registry_description = "This is a test Artifact Registry for Docker images."
+  artifact_registry_format      = "DOCKER"
+}
