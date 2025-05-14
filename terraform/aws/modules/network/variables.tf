@@ -1,3 +1,0 @@
-variable "vpcs" {}
-
-variable "region" {}
