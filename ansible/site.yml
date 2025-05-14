@@ -1,3 +1,2 @@
 ---
-- import_playbook: backend.yml
 - import_playbook: ecr-auth.yml
