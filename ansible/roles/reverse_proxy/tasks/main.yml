@@ -4,6 +4,14 @@
     state: present
     update_cache: yes
 
+- name: Ensure nginx user exists
+  ansible.builtin.user:
+    name: nginx
+    system: yes
+    shell: /usr/sbin/nologin
+    create_home: no
+    state: present
+
 - name: Start Nginx and enable it on boot
   ansible.builtin.systemd:
     name: nginx

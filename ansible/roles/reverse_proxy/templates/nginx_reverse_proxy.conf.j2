@@ -9,7 +9,6 @@ events {
 
 http {
     log_format {{ log_format_name }} {{ log_format | indent(4) }};
-
     access_log {{ access_log }} {{ log_format_name }};
 
     sendfile {{ sendfile }};
@@ -34,7 +33,7 @@ http {
         location {{ server.location_path }} {
             proxy_pass {{ server.proxy_pass }};
             {% for header in server.proxy_headers %}
-            proxy_set_header {{ header }};
+            proxy_set_header {{ header.key }} {{ header.value }};
             {% endfor %}
         }
     }
