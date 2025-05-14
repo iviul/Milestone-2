@@ -2,3 +2,7 @@
 - name: Set full container image path
   set_fact:
     full_image_path: "{{ registry_url }}/{{ container.image }}:{{ container.tag }}"
+
+- name: Combine environment variables
+  set_fact:
+    combined_env: "{{ common_container_env | combine(container.env) }}"
