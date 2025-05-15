@@ -6,8 +6,7 @@
 
 - name: Get subnet prefix from private group
   set_fact:
-    private_subnet_prefix: "{{ (groups['private'] | map('extract', hostvars, 'ansible_host') | list | first).split('.')[0:2] | join('.') }}"
-
+    private_subnet_prefix: "{{ hostvars[groups['private'][0]]['ansible_host'].split('.')[0:2] | join('.') }}"
 
 - name: Append SSH config block to ~/.ssh/config
   ansible.builtin.blockinfile:
