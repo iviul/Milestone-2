@@ -5,7 +5,7 @@ CONFIG_PATH=$1
 SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' "$CONFIG_PATH")
 PROJECT_ID=$(gcloud config get-value project)
 DESCRIPTION="The service account for the Terraform"
-KEY_FILE=$2
+KEY_FILE="${2%.json}.json"
 BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' $CONFIG_PATH)
 NEW_BUCKET_NAME=$BUCKET_NAME-$(date +'%Y-%m-%d-%H-%M-%S')
 BUCKET_LOCATION=$(grep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' "$CONFIG_PATH")
@@ -77,13 +77,13 @@ else
 	echo
 fi
 #########################################################################
-echo "=== Activating service account... ==="
-gcloud auth activate-service-account \
-	"$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
-		--key-file="$KEY_FILE" || {
-	echo "=== Failed to activate service account. Check time sync or key validity. ==="
-	exit 1
-}
+# echo "=== Activating service account... ==="
+# gcloud auth activate-service-account \
+# 	"$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
+# 		--key-file="$KEY_FILE" || {
+# 	echo "=== Failed to activate service account. Check time sync or key validity. ==="
+# 	exit 1
+# }
 #########################################################################
 check_secret_exists() {
     gcloud secrets describe "$1" --project="$2" &>/dev/null
