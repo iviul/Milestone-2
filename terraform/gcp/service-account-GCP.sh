@@ -77,14 +77,7 @@ else
 	echo
 fi
 #########################################################################
-# echo "=== Activating service account... ==="
-# gcloud auth activate-service-account \
-# 	"$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
-# 		--key-file="$KEY_FILE" || {
-# 	echo "=== Failed to activate service account. Check time sync or key validity. ==="
-# 	exit 1
-# }
-#########################################################################
+
 check_secret_exists() {
     gcloud secrets describe "$1" --project="$2" &>/dev/null
 }
@@ -129,9 +122,6 @@ else
 	echo
 fi
 
-gcloud projects add-iam-policy-binding "$PROJECT_ID" \
-  --member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
-  --role="roles/secretmanager.secretAccessor"
 
 #########################################################################
 startTerraform() {
