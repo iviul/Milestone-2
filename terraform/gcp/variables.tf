@@ -1,7 +1,7 @@
 variable "project_id" {
   description = "The GCP project ID"
   type        = string
-  default     = "ace-thought-458516-d9"
+  
   
 }
 
