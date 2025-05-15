@@ -11,3 +11,7 @@ variable "region" {
     default     = "europe-central2"
 }
 
+variable "private_key_path" {
+  type = string
+  description = "Path to a private key"
+}
