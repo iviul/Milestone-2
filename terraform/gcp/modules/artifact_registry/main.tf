@@ -4,7 +4,4 @@ resource "google_artifact_registry_repository" "artifact_repo" {
   description   = var.artifact_registry_description
   format        = var.artifact_registry_format
 
-  docker_config {
-    immutable_tags = true
-  }
 }

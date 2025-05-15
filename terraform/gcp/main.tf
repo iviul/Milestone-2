@@ -59,8 +59,8 @@ module "db_instance" {
 
 module "artifact_registry" {
   source                        = "./modules/artifact_registry"
-  region                        = local.region
-  artifact_registry_id          = "test-artifact-registry"
-  artifact_registry_description = "This is a test Artifact Registry for Docker images."
+  region                        = local.config.project.repository_location_gcp
+  artifact_registry_id          = local.config.project.repo_name
+  artifact_registry_description = "This is Artifact Registry for Docker images."
   artifact_registry_format      = "DOCKER"
 }
