@@ -1,2 +1,2 @@
 ---
-- import_playbook: ecr-auth.yml
+- import_playbook: aws_cli_install.yml
