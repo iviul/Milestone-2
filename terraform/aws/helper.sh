@@ -4,6 +4,12 @@ set -e
 CONFIG_FILE=$1
 POLICY_DOCUMENT=$2
 
+read -p 'First off, specify a full path to your private key: ' KEY_PATH
+if [ ! -f "$KEY_PATH" ]; then
+    echo "Key file not found: $KEY_PATH"
+    exit 1
+fi
+
 echo "=== Creating user and policy ==="
 USER_OUTPUT=$(./aws-service-iam.sh "$CONFIG_FILE" "$POLICY_DOCUMENT")
 USER_NAME=$(echo $USER_OUTPUT | awk '{print $1}')
@@ -22,7 +28,7 @@ cat > "$ENV_FILE" <<EOL
 export TF_VAR_aws_user=$USER_NAME
 export TF_VAR_s3_bucket=$BUCKET_NAME
 export TF_VAR_aws_remote_region=$REGION
-export TF_VAR_home_dir="$HOME"
+export TF_VAR_private_key_path="$KEY_PATH"
 EOL
 chmod +x "$ENV_FILE"
 
@@ -38,6 +44,12 @@ fi
 echo "✅ Done. You can now run: source $ENV_FILE"
 echo "=== Initialize Terraform backend ==="
 source "$ENV_FILE"
+
+echo "Using user: $TF_VAR_aws_user"
+echo "Bucket: $TF_VAR_s3_bucket"
+echo "Region: $TF_VAR_aws_remote_region"
+
 ./init.sh
+
 echo "=== Run Terraform apply ==="
-terraform apply 
+terraform apply

@@ -13,8 +13,8 @@ variable "aws_user" {
   type        = string
 }
 
-variable "home_dir" {
+variable "private_key_path" {
   type = string
-  description = "Home directory of the current user"
+  description = "Path to a private key"
 }
 
