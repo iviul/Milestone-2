@@ -1,0 +1,71 @@
+# - name: Install required packages
+#   apt:
+#     name: "{{ item }}"
+#     state: present
+#     update_cache: yes
+#   loop:
+#     - docker.io
+#     - unzip
+
+# - name: Download AWS CLI v2
+#   get_url:
+#     url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+#     dest: "/tmp/awscliv2.zip"
+
+# - name: Unzip AWS CLI v2
+#   unarchive:
+#     src: "/tmp/awscliv2.zip"
+#     dest: "/tmp/"
+#     remote_src: yes
+
+# - name: Install AWS CLI v2
+#   command: "/tmp/aws/install"
+#   become: yes
+#   args:
+#     creates: "/usr/local/bin/aws"  # Prevent running the install command if AWS CLI is already installed
+
+# - name: Clean up AWS CLI installer
+#   file:
+#     path: "/tmp/awscliv2.zip"
+#     state: absent
+
+# - name: Determine container registry URL
+#   set_fact:
+#     registry_url: "{{ registry_urls[cloud_provider] }}"
+
+# - name: Log in to Amazon ECR
+#   shell: >
+#     AWS_ACCESS_KEY_ID={{ aws_access_key_id }}
+#     AWS_SECRET_ACCESS_KEY={{ aws_secret_access_key }}
+#     aws ecr get-login-password --region {{ aws_region }} |
+#     docker login --username AWS --password-stdin {{ registry_url }}
+#   register: ecr_login
+#   changed_when: "'Login Succeeded' in ecr_login.stdout"
+
+- name: Build container environment from env_vars with all values as strings
+  set_fact:
+    container_env: >-
+      {{
+        dict(container.env |
+        zip(
+          container.env |
+          map('lower') |
+          map('extract', vars) |
+          map('string')
+        ))
+      }}
+
+- name: Set full container image path
+  set_fact:
+    full_image_path: "{{ registry_url }}/{{ container.image }}:{{ container.tag }}"
+
+- name: Create Docker container
+  docker_container:
+    name: "{{ container.name }}"
+    image: "{{ full_image_path }}"
+    state: started
+    restart_policy: "{{ container_restart_policy }}"
+    ports: "{{ container.ports }}"
+    env: "{{ container_env }}"
+    volumes: "{{ container.volumes | default([]) }}"
+    pull: yes 

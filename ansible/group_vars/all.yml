@@ -13,8 +13,3 @@ aws_account_id: "253490768279"  # Replace with actual account ID
 
 # Default GCP settings
 gcp_project_id: "my-project"  # Replace with actual project ID
-
-# Common environment variables for all containers
-common_container_env:
-  LOG_LEVEL: "info"
-  NODE_ENV: "production" 
