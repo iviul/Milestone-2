@@ -1,2 +1,6 @@
----
-# tasks file for frontend
+- name: Copy built frontend files
+  copy:
+    src: E:\DevOps\SoftServe\build
+    dest: /var/www/frontend/
+    mode: 0755
+  become: yes

@@ -1,32 +1,38 @@
-- name: Install Nginx (Debian-based)
-  ansible.builtin.apt:
+- name: Install Nginx
+  apt:
     name: nginx
     state: present
-    update_cache: yes
+  become: yes
 
-- name: Ensure nginx user exists
-  ansible.builtin.user:
-    name: nginx
-    system: yes
-    shell: /usr/sbin/nologin
-    create_home: no
-    state: present
-
-- name: Start Nginx and enable it on boot
-  ansible.builtin.systemd:
+- name: Ensure Nginx is started and enabled
+  service:
     name: nginx
     state: started
-    enabled: true
-    daemon_reload: true
+    enabled: yes
+  become: yes
 
-- name: Configure Nginx reverse proxy
-  ansible.builtin.template:
-    src: nginx_reverse_proxy.conf.j2
-    dest: /etc/nginx/nginx.conf
-  notify:
-    - Reload Nginx
+- name: Copy Nginx reverse proxy config
+  copy:
+    src: reverse-proxy.conf
+    dest: /etc/nginx/sites-available/frontend
+  become: yes
 
-- name: Ensure Nginx is running
-  ansible.builtin.systemd:
+- name: Enable site
+  file:
+    src: /etc/nginx/sites-available/frontend
+    dest: /etc/nginx/sites-enabled/frontend
+    state: link
+    force: yes
+  become: yes
+
+- name: Remove default site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  become: yes
+
+- name: Reload Nginx
+  service:
     name: nginx
-    state: restarted
+    state: reloaded
+  become: yes
