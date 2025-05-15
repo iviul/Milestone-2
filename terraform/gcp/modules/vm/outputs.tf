@@ -15,3 +15,9 @@ output "private_ips" {
     name => vm.network_interface[0].network_ip
   }
 }
+
+output "ports" {
+  value = {
+    for vm in var.vm_instances :vm.name => vm.port
+  }
+}
