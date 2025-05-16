@@ -33,10 +33,10 @@ module "vms" {
   subnet_ids_by_vpc_subnet_name = module.network.subnet_ids_by_vpc_subnet_name
 }
 
-# module "db" {
-#   source = "./modules/database"
+module "db" {
+  source = "./modules/database"
 
-#   config                 = local.config
-#   subnets                = module.network.subnets
-#   vpc_security_group_ids = module.security_groups.sg_ids_by_name
-# }
+  config                 = local.config
+  subnets                = module.network.subnets
+  vpc_security_group_ids = module.security_groups.sg_ids_by_name
+}
