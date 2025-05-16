@@ -9,4 +9,3 @@ resource "local_file" "ansible_inventory" {
   content  = local.inventory
   filename = "${path.module}/../../ansible/inventory/inventory.ini"
 }
-
