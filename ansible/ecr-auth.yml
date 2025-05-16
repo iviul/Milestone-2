@@ -1,6 +1,0 @@
----
-- name: Authenticate to ECR
-  hosts: all:!bastion
-  become: no
-  roles:
-    - role: ecr_docker_auth
