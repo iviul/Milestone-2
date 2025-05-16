@@ -12,3 +12,9 @@ variable "aws_user" {
   description = "AWS CLI profile name to use"
   type        = string
 }
+
+variable "private_key_path" {
+  type = string
+  description = "Path to a private key"
+}
+
