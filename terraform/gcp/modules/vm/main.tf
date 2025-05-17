@@ -12,7 +12,7 @@ locals {
 }
 
 resource "google_compute_instance" "vm" {
-  for_each     = { for vm in var.vm_instances : vm.name => vm }
+  for_each = { for vm in var.vm_instances : vm.name => vm }
 
   project      = var.project_id
   name         = each.key
@@ -28,7 +28,7 @@ resource "google_compute_instance" "vm" {
   network_interface {
     subnetwork = lookup(var.subnet_self_links_map, each.value.subnet)
 
-      dynamic "access_config" {
+    dynamic "access_config" {
       for_each = each.value.public_ip ? [1] : []
       content {}
     }

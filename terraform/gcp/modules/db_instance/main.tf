@@ -6,11 +6,11 @@ resource "google_sql_database_instance" "instances" {
   region           = var.region
 
   settings {
-    tier = "db-g1-${each.value.size}"
+    tier              = "db-g1-${each.value.size}"
     availability_type = length(each.value.zone) > 1 ? "REGIONAL" : "ZONAL"
 
     ip_configuration {
-      ipv4_enabled    = true
+      ipv4_enabled = true
     }
   }
 
@@ -26,7 +26,7 @@ resource "google_sql_database" "databases" {
 
 # Create default user for each database
 resource "google_sql_user" "users" {
-  for_each = {for db in var.databases : db.name => db}
+  for_each = { for db in var.databases : db.name => db }
 
   name     = var.db_username
   instance = google_sql_database_instance.instances[each.value.name].name

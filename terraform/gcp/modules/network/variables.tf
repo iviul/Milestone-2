@@ -10,13 +10,13 @@ variable "region" {
 
 variable "networks" {
   type = list(object({
-    name      = string
-    vpc_cidr  = string
-    subnets   = list(object({
-      name    = string
-      cidr    = string
-      public  = bool
-      zone    = string
+    name     = string
+    vpc_cidr = string
+    subnets = list(object({
+      name   = string
+      cidr   = string
+      public = bool
+      zone   = string
     }))
   }))
   description = "List of subnets with name, cidr, and whether public"
@@ -37,9 +37,9 @@ variable "security_groups" {
     attach_to   = list(string)
     description = string
     ingress = list(object({
-      protocol   = string
-      port       = number
-      source     = string
+      protocol = string
+      port     = number
+      source   = string
     }))
     egress = list(object({
       protocol    = string
