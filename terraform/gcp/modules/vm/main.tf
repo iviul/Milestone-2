@@ -38,4 +38,6 @@ resource "google_compute_instance" "vm" {
     tolist(each.value.tags),
     lookup(each.value, "security_groups", [])
   )
+
+  metadata_startup_script = file("${path.root}/scripts/setup_ssh_gcp.sh")
 }
