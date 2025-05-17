@@ -25,7 +25,8 @@ The toolkit includes the following scripts:
 
 ### Prerequisites
 
-* AWS CLI installed and configured
+* AWS CLI installed and configured and default output set to JSON
+* jq must be installed
 * Terraform installed
 * Appropriate AWS permissions to create IAM users and S3 buckets
 * Configuration files:
