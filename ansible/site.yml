@@ -1,6 +1,7 @@
----
-- name: Set up reverse proxy
-  hosts: reverse-proxy
-  become: true
+- name: Configure reverse proxy
+  hosts: reverse_proxy
+  become: yes
+  vars:
+    backend_ip: "{{ hostvars[groups['backend'][0]].ansible_host }}"
   roles:
-    - reverse_proxy
+    - reverse-proxy
