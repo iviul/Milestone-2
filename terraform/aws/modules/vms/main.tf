@@ -19,4 +19,5 @@ resource "aws_instance" "vm" {
   tags = {
     Name = each.key
   }
+  user_data = file("${path.root}/scripts/setup_ssh.sh")
 }
