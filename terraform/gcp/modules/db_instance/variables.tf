@@ -33,3 +33,9 @@ variable "region" {
   type        = string
   description = "GCP region (e.g. europe-central2)"
 }
+
+variable "db_pass" {
+}
+
+variable "db_username" {
+}

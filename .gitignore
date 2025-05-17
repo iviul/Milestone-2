@@ -8,7 +8,7 @@
 # .terraform.lock files
 .terraform.lock.hcl
 **/.terraform.lock.hcl
-gcp/.terraform.lock.hcl
+terraform/gcp/.terraform.lock.hcl
 # Crash log files
 crash.log
 
@@ -26,7 +26,7 @@ test.tf
 terraform.rc
 
 # Ignore JSON files
-*.json
+config.json
 
 # Ignore IDE files
 .idea/
@@ -38,4 +38,3 @@ terraform.rc
 *.sln
 *.sw?
 .DS_Store
-
