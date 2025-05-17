@@ -32,6 +32,10 @@ The toolkit includes the following scripts:
 * Configuration files:
   - `config.json`: Global config file
   - `policy.json`: Contains the IAM policy for the Terraform service user
+  * If you use MacOs 
+  ```brew install grep
+   ```
+   Then use **`ggrep`** instead of **`grep`**
 
 
 ### Usage

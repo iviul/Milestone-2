@@ -4,8 +4,8 @@ set -e
 CONFIG_FILE=$1
 USER_ARN=$2
 
-BUCKET_NAME=$(ggrep -oP '"bucket_state_name"\s*:\s*"\K[^"]+' "$CONFIG_FILE")
-REGION=$(ggrep -oP '"state_bucket_location_aws"\s*:\s*"\K[^"]+' "$CONFIG_FILE")
+BUCKET_NAME=$(grep -oP '"bucket_state_name"\s*:\s*"\K[^"]+' "$CONFIG_FILE")
+REGION=$(grep -oP '"state_bucket_location_aws"\s*:\s*"\K[^"]+' "$CONFIG_FILE")
 
 if ! aws s3api head-bucket --bucket "$BUCKET_NAME" > /dev/null 2>&1; then
     
