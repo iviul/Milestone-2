@@ -5,6 +5,13 @@
 *.tfstate
 *.tfstate.*
 
+<<<<<<< HEAD
+=======
+# .terraform.lock files
+.terraform.lock.hcl
+**/.terraform.lock.hcl
+terraform/gcp/.terraform.lock.hcl
+>>>>>>> 221407be99480a4eac5810e43b4092bb96ab10d5
 # Crash log files
 crash.log
 
@@ -14,12 +21,23 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
+<<<<<<< HEAD
+=======
+# Ignore test.tf and .gitignore
+test.tf
+
+>>>>>>> 221407be99480a4eac5810e43b4092bb96ab10d5
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
 
 # Ignore JSON files
+<<<<<<< HEAD
 *.json
+=======
+config.json
+keys.json
+>>>>>>> 221407be99480a4eac5810e43b4092bb96ab10d5
 
 # Ignore IDE files
 .idea/
@@ -30,3 +48,7 @@ terraform.rc
 *.njsproj
 *.sln
 *.sw?
+<<<<<<< HEAD
+=======
+.DS_Store
+>>>>>>> 221407be99480a4eac5810e43b4092bb96ab10d5

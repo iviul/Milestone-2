@@ -1,0 +1,6 @@
+---
+- name: Authenticate to ECR
+  hosts: ec2_instances
+  become: no
+  roles:
+    - role: ecr_docker_auth
