@@ -15,14 +15,12 @@ TAG="latest"
 
 echo "Got file: $CONFIG_PATH"
 
-# Use grep with extended regex (-E) and sed to extract region and repo_name
 REGION=$(grep -E '"repository_location_gcp":' "$CONFIG_PATH" | sed -E 's/.*"repository_location_gcp": *"([^"]+)".*/\1/')
 echo "Got region: $REGION"
 
 REPO_NAME=$(grep -E '"repo_name":' "$CONFIG_PATH" | sed -E 's/.*"repo_name": *"([^"]+)".*/\1/')
 echo "Got repo name: $REPO_NAME"
 
-# Ensure gcloud is installed and configured
 if ! command -v gcloud >/dev/null 2>&1; then
   echo "gcloud command not found. Please install Google Cloud SDK first."
   exit 1
