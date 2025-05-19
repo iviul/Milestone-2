@@ -39,3 +39,5 @@ terraform.rc
 *.sw?
 .DS_Store
 
+# Local ansible directories
+**/inventory/*
