@@ -1,0 +1,3 @@
+- name: Set backend_ip fact
+  set_fact:
+    backend_ip: "{{ lookup('pipe', 'terraform output -raw backend_public_ip') }}"

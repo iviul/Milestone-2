@@ -5,13 +5,13 @@ CONFIG_PATH=$1
 SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' "$CONFIG_PATH")
 PROJECT_ID=$(gcloud config get-value project)
 DESCRIPTION="The service account for the Terraform"
-KEY_FILE=$2
+KEY_FILE="${2%.json}.json"
 BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' $CONFIG_PATH)
 NEW_BUCKET_NAME=$BUCKET_NAME-$(date +'%Y-%m-%d-%H-%M-%S')
 BUCKET_LOCATION=$(grep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' "$CONFIG_PATH")
 DB_USERNAME=postgres # will be taken by grep
 DB_PASS=postgres # will be taken by grep
-SECRET_NAME_DB_USERNAME=db_user # will be taken by grep
+SECRET_NAME_DB_USERNAME=db_username # will be taken by grep
 SECRET_NAME_DB_PASS=db_pass # will be taken by grep
 #########################################################################
 if [[ -z "$PROJECT_ID" ]]; then
@@ -30,6 +30,7 @@ REQUIRED_APIS=(
 	"storage.googleapis.com"
 	"artifactregistry.googleapis.com"
 	"secretmanager.googleapis.com"
+	"sqladmin.googleapis.com"
 )
 
 echo "=== Enabling required APIs for project: $PROJECT_ID ==="
@@ -41,8 +42,11 @@ echo "=== All required APIs were enabled ==="
 echo
 #########################################################################
 echo "=== Checking for service account $SERVICE_ACCOUNT_NAME... ==="
-if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com"; then
+if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" > /dev/null 2>&1; 
+
+then
 	echo "=== Service account: $SERVICE_ACCOUNT_NAME already exists. ==="
+	
 	echo
 else
 	echo "=== Creating service account: $SERVICE_ACCOUNT_NAME ==="
@@ -55,6 +59,7 @@ fi
 IAM_ROLES=(
 	"editor"
 	"secretmanager.secretAccessor"
+    "iam.serviceAccountViewer"
 )
 for iam_role in "${IAM_ROLES[@]}"; do
 	echo "=== Binding role '$iam_role' to service account... ==="
@@ -77,14 +82,7 @@ else
 	echo
 fi
 #########################################################################
-echo "=== Activating service account... ==="
-gcloud auth activate-service-account \
-	"$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
-		--key-file="$KEY_FILE" || {
-	echo "=== Failed to activate service account. Check time sync or key validity. ==="
-	exit 1
-}
-#########################################################################
+
 check_secret_exists() {
     gcloud secrets describe "$1" --project="$2" &>/dev/null
 }
@@ -115,6 +113,12 @@ create_secret "$SECRET_NAME_DB_USERNAME" "$PROJECT_ID" "$DB_USERNAME"
 create_secret "$SECRET_NAME_DB_PASS" "$PROJECT_ID" "$DB_PASS"
 #########################################################################
 echo
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/secretmanager.secretAccessor"
+
+
 echo "=== Creating the bucket gs://$NEW_BUCKET_NAME ==="
 export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
 if gsutil ls "gs://$NEW_BUCKET_NAME"; then
@@ -129,9 +133,7 @@ else
 	echo
 fi
 
-gcloud projects add-iam-policy-binding "$PROJECT_ID" \
-  --member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
-  --role="roles/secretmanager.secretAccessor"
+
 
 #########################################################################
 startTerraform() {
