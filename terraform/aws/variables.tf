@@ -13,6 +13,8 @@ variable "aws_user" {
   type        = string
 }
 
-variable "aws_user" {
+variable "private_key_path" {
   type = string
+  description = "Path to a private key"
 }
+

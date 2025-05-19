@@ -12,7 +12,7 @@ locals {
 }
 
 resource "google_compute_instance" "vm" {
-  for_each     = { for vm in var.vm_instances : vm.name => vm }
+  for_each = { for vm in var.vm_instances : vm.name => vm }
 
   project      = var.project_id
   name         = each.key
@@ -28,15 +28,12 @@ resource "google_compute_instance" "vm" {
   network_interface {
     subnetwork = lookup(var.subnet_self_links_map, each.value.subnet)
 
-      dynamic "access_config" {
-      # if each.value.public_ip (or var.public_ip) is true, this emits one empty block
+    dynamic "access_config" {
       for_each = each.value.public_ip ? [1] : []
       content {}
     }
   }
 
-  # Include both the VM tags and security group names as instance tags
-  # This ensures firewall rules are properly applied
   tags = concat(
     tolist(each.value.tags),
     lookup(each.value, "security_groups", [])

@@ -1,6 +1,9 @@
 # Local .terraform directories
 **/.terraform/*
 
+# Local ansible directories
+**/inventory/*
+
 # .tfstate files
 *.tfstate
 *.tfstate.*
@@ -8,7 +11,7 @@
 # .terraform.lock files
 .terraform.lock.hcl
 **/.terraform.lock.hcl
-gcp/.terraform.lock.hcl
+terraform/gcp/.terraform.lock.hcl
 # Crash log files
 crash.log
 
@@ -26,7 +29,8 @@ test.tf
 terraform.rc
 
 # Ignore JSON files
-*.json
+config.json
+keys.json
 
 # Ignore IDE files
 .idea/
@@ -37,7 +41,3 @@ terraform.rc
 *.njsproj
 *.sln
 *.sw?
-.DS_Store
-
-# Local ansible directories
-**/inventory/*
