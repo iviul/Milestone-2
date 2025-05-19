@@ -27,6 +27,7 @@ terraform.rc
 
 # Ignore JSON files
 config.json
+keys.json
 
 # Ignore IDE files
 .idea/
