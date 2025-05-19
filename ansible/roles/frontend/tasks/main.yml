@@ -4,9 +4,13 @@
     #full_image_path: "{{ registry_url }}/{{ container.image }}:{{ container.tag }}"
     full_image_path: dolvladzio/frontend
 
+- name: Get reverse-proxy ansible_host
+  set_fact:
+    reverse_proxy_host: "{{ hostvars['reverse-proxy'].ansible_host }}"
+
 - name: Combine with common_container_env
   set_fact:
-    combined_env: "{{ common_container_env | combine({ 'REACT_APP_API_BASE_URL': ansible_host }) }}"
+    combined_env: "{{ common_container_env | combine({ 'REACT_APP_API_BASE_URL': reverse_proxy_host }) }}"
 
 - name: Create Docker container
   docker_container:
