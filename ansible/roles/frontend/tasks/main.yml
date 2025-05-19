@@ -1,8 +1,7 @@
 ---
 - name: Set full container image path
   set_fact:
-    #full_image_path: "{{ registry_url }}/{{ container.image }}:{{ container.tag }}"
-    full_image_path: dolvladzio/frontend
+    full_image_path: "{{ registry_url }}/{{ container.image }}:{{ container.tag }}"
 
 - name: Get reverse-proxy ansible_host
   set_fact:
@@ -10,12 +9,11 @@
 
 - name: Combine with common_container_env
   set_fact:
-    combined_env: "{{ common_container_env | combine({ 'REACT_APP_API_BASE_URL': reverse_proxy_host }) }}"
+    combined_env: "{{ common_container_env | combine({ containers.frontend.env: reverse_proxy_host }) }}"
 
 - name: Create Docker container
   docker_container:
-#    name: "{{ container.name }}"
-    name: "frontend"
+    name: "{{ container.name }}"
     image: "{{ full_image_path }}"
     state: started
     restart_policy: "{{ container_restart_policy }}"
