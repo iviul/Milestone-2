@@ -3,7 +3,7 @@
   hosts: frontend
   become: yes
   vars_files:
-    - vars_files/containers.json
+    - #path_to_the_config
   roles:
     - role: frontend
   vars:
