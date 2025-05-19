@@ -1,9 +1,10 @@
----
 - name: Add SSH public keys
   ansible.posix.authorized_key: 
     user: "{{ item.name }}" 
     key: "{{ item.key }}" 
-  loop: "{{ admin_users }}"  
+  loop: "{{ admin_users }}"
+  when: add_ssh_keys | default("no") == "yes"
+
 
 - name: Restrict root access
   ansible.builtin.lineinfile:
