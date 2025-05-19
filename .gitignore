@@ -20,7 +20,7 @@ override.tf.json
 
 # Ignore test.tf and inventory
 test.tf
-ansible/inventory/inventory.ini
+ansible/inventory/
 
 # Ignore CLI configuration files
 .terraformrc
