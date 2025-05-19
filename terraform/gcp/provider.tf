@@ -1,5 +1,5 @@
 provider "google" {
-  project     = var.project_id
+  project     = local.config.project.name
   region      = local.region
   credentials = file("keys.json")
 }

@@ -18,8 +18,6 @@ locals {
 
   region = local.fixed_region_map["gcp"]
 
-  project_id = var.project_id
-
   db_username = data.google_secret_manager_secret_version_access.db_username.secret
   db_password = data.google_secret_manager_secret_version_access.db_password.secret
 
@@ -27,7 +25,7 @@ locals {
 
 module "network" {
   source          = "./modules/network"
-  project_id      = local.project_id
+  project_id      = local.config.project.name
   region          = local.region
   networks        = local.config.network
   acls            = local.config.networks
@@ -36,7 +34,7 @@ module "network" {
 
 module "vm" {
   source                = "./modules/vm"
-  project_id            = local.project_id
+  project_id            = local.config.project.name
   region                = local.region
   project_os            = local.config.project.os
   vm_instances          = local.config.vm_instances
@@ -47,7 +45,7 @@ module "vm" {
 
 module "db_instance" {
   source            = "./modules/db_instance"
-  project_id        = local.project_id
+  project_id        = local.config.project.name
   region            = local.region
   databases         = local.config.databases
   private_networks  = module.network.vpc_self_links
@@ -59,8 +57,8 @@ module "db_instance" {
 
 module "artifact_registry" {
   source                        = "./modules/artifact_registry"
-  region                        = local.config.project.repository_location_gcp
-  artifact_registry_id          = local.config.project.repo_name
-  artifact_registry_description = "This is Artifact Registry for Docker images."
-  artifact_registry_format      = "DOCKER"
+  region                        = local.config.artifact_registry.region
+  artifact_registry_id          = local.config.artifact_registry.name
+  artifact_registry_description = local.config.artifact_registry.repository_type
+  artifact_registry_format      = local.config.artifact_registry.format
 }

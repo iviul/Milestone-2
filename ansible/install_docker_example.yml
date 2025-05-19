@@ -1,0 +1,6 @@
+- name: Install Docker on Ubuntu VMs
+  hosts: all
+  become: true
+
+  roles:
+    - install_packages

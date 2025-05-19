@@ -26,7 +26,8 @@ test.tf
 terraform.rc
 
 # Ignore JSON files
-*.json
+config.json
+keys.json
 
 # Ignore IDE files
 .idea/

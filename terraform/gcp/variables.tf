@@ -1,13 +1,4 @@
-variable "project_id" {
-  description = "The GCP project ID"
+variable "private_key_path" {
   type        = string
-  default     = "ace-thought-458516-d9"
-
+  description = "Path to a private key"
 }
-
-variable "region" {
-  description = "Region for the network"
-  type        = string
-  default     = "europe-central2"
-}
-
