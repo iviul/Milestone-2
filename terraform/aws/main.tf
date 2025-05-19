@@ -29,6 +29,7 @@ module "security_groups" {
 module "vms" {
   source                        = "./modules/vms"
   vms                           = local.vms
+  ssh_keys                      = local.ssh_keys
   sg_ids_by_name                = module.security_groups.sg_ids_by_name
   subnet_ids_by_vpc_subnet_name = module.network.subnet_ids_by_vpc_subnet_name
 }
@@ -40,3 +41,4 @@ module "db" {
   subnets                = module.network.subnets
   vpc_security_group_ids = module.security_groups.sg_ids_by_name
 }
+
