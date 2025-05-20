@@ -20,4 +20,9 @@ resource "aws_instance" "vm" {
   tags = {
     Name = each.key
   }
+
+  user_data = templatefile("${path.root}/scripts/setup_ssh.tpl", {
+    ssh_keys = join("\n", var.ssh_keys)
+  })
 }
+
