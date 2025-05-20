@@ -4,8 +4,8 @@ set -e
 CONFIG_FILE=$1
 POLICY_DOCUMENT=$2
 
-USER_NAME=$(ggrep -oP '"terraform_username"\s*:\s*"\K[^"]+' "$CONFIG_FILE")
-REGION=$(ggrep -oP '"state_bucket_location_aws"\s*:\s*"\K[^"]+' "$CONFIG_FILE")
+USER_NAME=$(grep -oP '"terraform_username"\s*:\s*"\K[^"]+' "$CONFIG_FILE")
+REGION=$(grep -oP '"state_bucket_location_aws"\s*:\s*"\K[^"]+' "$CONFIG_FILE")
 
 POLICY_NAME="TerraformAccessPolicy"
 

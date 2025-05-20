@@ -36,7 +36,7 @@ GITIGNORE_FILE=".gitignore"
 if [ ! -f "$GITIGNORE_FILE" ]; then
     touch "$GITIGNORE_FILE"
 fi
-if ! ggrep -Fxq "$ENV_FILE" "$GITIGNORE_FILE"; then
+if ! grep -Fxq "$ENV_FILE" "$GITIGNORE_FILE"; then
     echo "$ENV_FILE" >> "$GITIGNORE_FILE"
     echo "Added $ENV_FILE to $GITIGNORE_FILE"
 fi
