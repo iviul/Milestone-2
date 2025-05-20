@@ -16,6 +16,7 @@ resource "aws_instance" "vm" {
   associate_public_ip_address = each.value.subnet_data.public
   vpc_security_group_ids      = [for sg_name in each.value.security_groups : var.sg_ids_by_name[sg_name]]
   key_name                    = aws_key_pair.ssh-key.key_name
+  iam_instance_profile        = each.value.iam_instance_profile_name != null ? each.value.iam_instance_profile_name : null
   tags = {
     Name = each.key
   }
