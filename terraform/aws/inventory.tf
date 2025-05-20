@@ -14,9 +14,6 @@ locals {
     
     redis_host  = module.vms.private_ips["redis"]
     redis_port  = module.vms.ports["redis"]
-    
-    mongodb_name    = ""
-    mongodb_cluster = ""
   })
 }
 

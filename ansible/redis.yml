@@ -1,0 +1,11 @@
+---
+- name: Deploy Redis Service
+  hosts: redis
+  become: yes
+  vars_files:
+    - ../terraform/config.json
+  roles:
+    - role: install_packages
+    - role: container_exec
+  vars:
+    container: "{{ containers.redis }}" 

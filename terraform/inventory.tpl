@@ -22,6 +22,4 @@ db_port=${db_port}
 db_name=${db_name}
 redis_host=${redis_host}
 redis_port=${redis_port}
-mongodb_name=${mongodb_name}
-mongodb_cluster=${mongodb_cluster}
 
