@@ -1,7 +1,7 @@
 provider "google" {
   project     = local.config.project.name
   region      = local.region
-  credentials = file("keys.json")
+  credentials = file("${path.module}/keys.json")
 }
 
 terraform {

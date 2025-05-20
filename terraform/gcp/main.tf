@@ -25,6 +25,7 @@ locals {
     for ar in local.config.artifact_registry : ar
     if ar.provider == "gcp"
   ])
+  ssh_keys = local.config.project.keys
 }
 
 module "network" {
@@ -43,7 +44,7 @@ module "vm" {
   project_os            = local.config.project.os
   vm_instances          = local.config.vm_instances
   subnet_self_links_map = module.network.subnet_self_links_by_name
-
+  ssh_keys              = local.ssh_keys
   depends_on = [module.network]
 }
 

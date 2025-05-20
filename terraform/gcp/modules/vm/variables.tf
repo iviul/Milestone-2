@@ -32,3 +32,7 @@ variable "subnet_self_links_map" {
   type        = map(string)
   description = "Map of subnet name → self_link (from network module)"
 }
+
+variable "ssh_keys" {
+  description = "SSH public keys"
+}
