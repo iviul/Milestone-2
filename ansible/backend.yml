@@ -1,0 +1,13 @@
+---
+- name: Deploy Backend Service
+  hosts: backend
+  become: yes
+  vars_files:
+    - ../terraform/config.json
+  roles:
+    - role: install_packages
+    - role: awscli
+    - role: ecr_docker_auth
+    - role: container_exec
+  vars:
+    container: "{{ containers.backend }}" 
