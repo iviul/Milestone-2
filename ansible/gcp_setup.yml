@@ -1,0 +1,10 @@
+---
+- name: Setup GCP host with required packages and Docker auth
+  hosts: webserver
+  become: yes
+
+  vars:
+    gcp_registry_domain: "us-central1-docker.pkg.dev"          # Your GCP Artifact Registry domain
+  roles:
+    - install_packages
+    - gcp-docker-auth
