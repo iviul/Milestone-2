@@ -37,6 +37,8 @@
     state: latest
     update_cache: true
 
-- name: Install Docker Module for Python
-  pip:
+- name: Ensure Docker service is started and enabled
+  systemd:
     name: docker
+    enabled: true
+    state: started

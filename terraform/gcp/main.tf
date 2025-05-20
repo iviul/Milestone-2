@@ -54,3 +54,11 @@ module "db_instance" {
   db_pass           = local.db_password
   db_username       = local.db_username
 }
+
+module "artifact_registry" {
+  source                        = "./modules/artifact_registry"
+  region                        = local.config.artifact_registry.region
+  artifact_registry_id          = local.config.artifact_registry.name
+  artifact_registry_description = local.config.artifact_registry.repository_type
+  artifact_registry_format      = local.config.artifact_registry.format
+}

@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  region     = var.region
+  region  = var.region
   profile = var.aws_user
 }
 
@@ -42,3 +42,15 @@ module "db" {
   vpc_security_group_ids = module.security_groups.sg_ids_by_name
 }
 
+
+module "iam" {
+  source = "./modules/iam"
+
+  iam = local.config.iam.aws
+}
+
+module "registry" {
+  source = "./modules/registry"
+
+  config = local.config
+}

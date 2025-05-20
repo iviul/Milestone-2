@@ -1,0 +1,14 @@
+---
+# Default empty container if none specified
+container:
+  name: ""
+  image: ""
+  tag: "latest"
+  ports: []
+  env: []
+  volumes: []
+
+# Common settings
+container_restart_policy: "always"
+
+registry_url: ""

@@ -9,11 +9,11 @@ events {
 
 http {
     upstream backend_root {
-        server {{ backend_ip }};
+        server {{ hostvars['frontend']['ansible_host']  }}:3000;
     }
 
     upstream backend_api {
-        server {{ backend_ip }}:8080;
+        server {{ hostvars['backend']['ansible_host']  }}:8080;
     }
 
     server {
