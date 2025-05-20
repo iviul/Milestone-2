@@ -37,6 +37,15 @@
     state: latest
     update_cache: true
 
-- name: Install Docker Module for Python
-  pip:
+- name: Allow running Docker without sudo
+  user:
+    name: "{{ ansible_user | default('ubuntu') }}"
+    groups: docker
+    append: yes
+
+- name: Restart docker to apply group changes
+  systemd:
     name: docker
+    state: restarted
+    enabled: yes
+

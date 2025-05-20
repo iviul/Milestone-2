@@ -7,11 +7,6 @@
   failed_when: gcloud_check.rc != 0
   changed_when: false
 
-- name: Authenticate gcloud with service account
-  command: >
-    gcloud auth activate-service-account --key-file={{ gcp_sa_key_path }}
-  register: gcloud_auth
-  changed_when: false
 
 - name: Configure Docker to use gcloud as a credential helper for Artifact Registry
   command: >
@@ -19,10 +14,6 @@
   register: docker_auth
   changed_when: false
 
-- name: Show Docker authentication config
-  command: cat /home/{{ ansible_user }}/.docker/config.json
-  register: docker_config
-  changed_when: false
 
 - name: Show success message
   debug:
