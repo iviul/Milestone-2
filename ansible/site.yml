@@ -1,13 +1,10 @@
 
 - name: Configure reverse proxy
-  hosts: reverse_proxy
+  hosts: reverse-proxy
   become: yes
-  vars:
-    backend_ip: "{{ hostvars[groups['backend'][0]].ansible_host }}"
   roles:
     - reverse-proxy
 
----
-- import_playbook: aws_cli_install.yml
-- import_playbook: ecr-auth.yml
-
+- import_playbook: redis.yml
+- import_playbook: backend.yml
+- import_playbook: frontend.yml

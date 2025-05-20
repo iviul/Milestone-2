@@ -36,12 +36,15 @@ locals {
     }
   }
 
+  ssh_keys = local.config.project.keys
+
   vms = [
     for vm in local.config.vm_instances :
     merge(vm, {
       subnet_data   = local.subnets_by_vpc_and_name[vm.network][vm.subnet],
       instance_type = local.size_map[var.cloud_provider][vm.size],
-      image         = local.fixed_os_image[var.cloud_provider][local.os]
+      image         = local.fixed_os_image[var.cloud_provider][local.os],
+      ssh_keys      = local.ssh_keys
     })
   ]
 

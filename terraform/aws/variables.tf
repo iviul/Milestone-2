@@ -11,10 +11,12 @@ variable "cloud_provider" {
 variable "aws_user" {
   description = "AWS CLI profile name to use"
   type        = string
+  default     = "terraform-user"
 }
 
 variable "private_key_path" {
-  type = string
+  type        = string
   description = "Path to a private key"
+  default     = "/home/user/.ssh"
 }
 

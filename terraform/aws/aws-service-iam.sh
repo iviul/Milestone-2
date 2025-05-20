@@ -5,13 +5,15 @@ CONFIG_FILE=$1
 POLICY_DOCUMENT=$2
 
 USER_NAME=$(grep -oP '"terraform_username"\s*:\s*"\K[^"]+' "$CONFIG_FILE")
+REGION=$(grep -oP '"state_bucket_location_aws"\s*:\s*"\K[^"]+' "$CONFIG_FILE")
+
 POLICY_NAME="TerraformAccessPolicy"
 
-if ! aws iam get-user --user-name "$USER_NAME" > /dev/null 2>&1; then
-    aws iam create-user --user-name "$USER_NAME" > /dev/null 2>&1 || true
+if ! aws iam get-user --user-name "$USER_NAME" --region "$REGION" > /dev/null 2>&1; then
+    aws iam create-user --user-name "$USER_NAME" --region "$REGION" > /dev/null 2>&1 || true
 fi
 
-USER_ARN=$(aws iam get-user --user-name "$USER_NAME" --query 'User.Arn' --output text)
+USER_ARN=$(aws iam get-user --user-name "$USER_NAME" --region "$REGION" --query 'User.Arn' --output text)
 
 POLICY_ARN=$(aws iam list-policies --scope Local --query "Policies[?PolicyName=='$POLICY_NAME'].Arn" --output text)
 if [ -z "$POLICY_ARN" ]; then
@@ -23,6 +25,7 @@ aws iam attach-user-policy --user-name "$USER_NAME" --policy-arn "$POLICY_ARN"
 EXISTING_KEY=$(aws iam list-access-keys --user-name "$USER_NAME" --query 'AccessKeyMetadata[*].AccessKeyId' --output text)
 
 if [ -z "$EXISTING_KEY" ]; then
+    
     CREDENTIALS=$(aws iam create-access-key --user-name "$USER_NAME" --query 'AccessKey.[AccessKeyId,SecretAccessKey]' --output text)
     ACCESS_KEY_ID=$(echo $CREDENTIALS | awk '{print $1}')
     SECRET_ACCESS_KEY=$(echo $CREDENTIALS | awk '{print $2}')
