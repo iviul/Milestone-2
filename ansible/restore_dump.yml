@@ -1,0 +1,15 @@
+---
+- name: Restore database to Cloud SQL
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+    db_user: "your_db_user"           # set this to your database user
+    db_password: "password"           # set this to your database password
+    db_host: "your_database_host"
+    db_port: "5432"
+    db_name: "your_database_name"
+    db_dump_file: "./2024-08-19.dump" # Path to your dump file
+
+  roles:
+    - restore-db-from-dump

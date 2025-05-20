@@ -1,10 +1,42 @@
 ---
-- name: Setup GCP host with required packages and Docker auth
-  hosts: webserver
+- name: Configure reverse proxy
+  hosts: reverse-proxy
   become: yes
-
-  vars:
-    gcp_registry_domain: "us-central1-docker.pkg.dev"          # Your GCP Artifact Registry domain
   roles:
-    - install_packages
-    - gcp-docker-auth
+    - reverse-proxy
+
+- name: Deploy Redis Service
+  hosts: redis
+  become: yes
+  vars_files:
+    - ../terraform/config.json
+  roles:
+    - role: install_packages
+    - role: container_exec
+  vars:
+    container: "{{ containers.redis }}" 
+
+
+- name: Deploy Backend Service
+  hosts: backend
+  become: yes
+  vars_files:
+    - ../terraform/config.json
+  roles:
+    - role: install_packages
+    - role: gcp-docker-auth
+    - role: container_exec
+  vars:
+    container: "{{ containers.backend }}" 
+
+- name: Deploy Frontend Service
+  hosts: frontend
+  become: yes
+  vars_files:
+    - ../terraform/config.json
+  roles:
+    - role: install_packages
+    - role: gcp-docker-auth
+    - role: container_exec
+  vars:
+    container: "{{ containers.frontend }}" 

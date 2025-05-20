@@ -40,3 +40,6 @@ keys.json
 *.sln
 *.sw?
 .DS_Store
+
+# Ignore dump files
+*.dump
