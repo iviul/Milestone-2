@@ -29,6 +29,8 @@
         "ecr:CreateRepository",
         "ecr:DescribeRepositories",
         "ecr:PutImageTagMutability",
+        "ecr:ListTagsForResource",
+        "ecr:DeleteRepository",
         "ecr:PutLifecyclePolicy"
       ],
       "Resource": "*"
