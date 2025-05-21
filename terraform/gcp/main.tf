@@ -21,6 +21,11 @@ locals {
   db_username = data.google_secret_manager_secret_version_access.db_username.secret
   db_password = data.google_secret_manager_secret_version_access.db_password.secret
 
+  gcp_artifact_registry = one([
+    for ar in local.config.artifact_registry : ar
+    if ar.provider == "gcp"
+  ])
+  ssh_keys = local.config.project.keys
 }
 
 module "network" {
@@ -39,7 +44,7 @@ module "vm" {
   project_os            = local.config.project.os
   vm_instances          = local.config.vm_instances
   subnet_self_links_map = module.network.subnet_self_links_by_name
-
+  ssh_keys              = local.ssh_keys
   depends_on = [module.network]
 }
 
@@ -53,4 +58,12 @@ module "db_instance" {
   depends_on        = [module.network]
   db_pass           = local.db_password
   db_username       = local.db_username
+}
+
+module "artifact_registry" {
+  source                        = "./modules/artifact_registry"
+  region                        = local.gcp_artifact_registry.region
+  artifact_registry_id          = local.gcp_artifact_registry.name
+  artifact_registry_description = local.gcp_artifact_registry.repository_type
+  artifact_registry_format      = local.gcp_artifact_registry.format
 }

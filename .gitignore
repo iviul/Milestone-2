@@ -18,8 +18,9 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
-# Ignore test.tf and .gitignore
+# Ignore test.tf and inventory
 test.tf
+ansible/inventory/
 
 # Ignore CLI configuration files
 .terraformrc

@@ -52,13 +52,6 @@
   when: "'Login Succeeded' not in ecr_login.stdout"
   tags: ecr-auth
 
-# Confirm ECR credentials were stored in Docker config
-- name: Verify Docker authentication
-  command: cat /home/{{ ansible_user }}/.docker/config.json
-  register: docker_config
-  changed_when: false
-  tags: ecr-auth
-
 # Final confirmation message when authentication succeeds
 - name: Show successful auth confirmation
   debug:
