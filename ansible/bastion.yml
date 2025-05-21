@@ -2,11 +2,6 @@
   hosts: bastion
   become: true
 
-  vars_prompt:
-    - name: add_ssh_keys
-      prompt: "Add public keys? (yes/no)"
-      private: no
-
   roles:
     - role: ssh-users
     - role: bastion-restriction
