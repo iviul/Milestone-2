@@ -1,0 +1,15 @@
+- name: Configure Bastion Host
+  hosts: bastion
+  become: true
+
+  roles:
+    - role: ssh-users
+    - role: bastion-restriction
+
+
+- name: Configure local config file
+  hosts: localhost
+  become: false
+
+  roles:
+    - configure-ssh-config

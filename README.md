@@ -61,7 +61,3 @@ Ansible: For post-deployment configuration.
 A GCP Project: With appropriate APIs enabled (Compute Engine API, Cloud SQL Admin API, Service Usage API, IAM API).
 An AWS Account: With configured IAM user and permissions for creating resources.
 SSH Key Pair: A public SSH key is required for accessing the deployed VM instances in both clouds.
-
-
-
-

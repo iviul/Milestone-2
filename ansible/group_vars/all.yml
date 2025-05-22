@@ -1,0 +1,15 @@
+---
+# Default cloud provider (can be overridden)
+cloud_provider: "aws"  # Options: "aws", "gcp"
+aws_region: "{{ lookup('env', 'AWS_REGION') | default('eu-central-1') }}"
+
+# Container registry URLs
+registry_urls:
+  aws: "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com"
+  gcp: "gcr.io/{{ gcp_project_id }}"
+
+# Default AWS settings
+aws_account_id: "253490768279"  # Replace with actual account ID
+
+# Default GCP settings
+gcp_project_id: "my-project"  # Replace with actual project ID

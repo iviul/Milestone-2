@@ -1,0 +1,11 @@
+Host bastion
+  HostName {{ hostvars['bastion'].ansible_host }}
+  User {{ ansible_user }}
+  IdentityFile {{ ansible_private_key_ssh }}
+  ForwardAgent yes
+
+Host {{ private_subnet_prefix }}.*
+  User {{ ansible_user }}
+  IdentityFile {{ ansible_private_key_ssh }}
+  ProxyJump bastion
+  ForwardAgent yes

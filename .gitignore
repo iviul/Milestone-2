@@ -5,6 +5,10 @@
 *.tfstate
 *.tfstate.*
 
+# .terraform.lock files
+.terraform.lock.hcl
+**/.terraform.lock.hcl
+terraform/gcp/.terraform.lock.hcl
 # Crash log files
 crash.log
 
@@ -14,12 +18,17 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
+# Ignore test.tf and inventory
+test.tf
+ansible/inventory/
+
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
 
 # Ignore JSON files
-*.json
+config.json
+keys.json
 
 # Ignore IDE files
 .idea/
@@ -30,3 +39,7 @@ terraform.rc
 *.njsproj
 *.sln
 *.sw?
+.DS_Store
+
+# Ignore dump files
+*.dump
