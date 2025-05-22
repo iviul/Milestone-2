@@ -23,6 +23,19 @@
       "Resource": "*"
     },
     {
+      "Sid": "AllowECRCreateRepository",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:CreateRepository",
+        "ecr:DescribeRepositories",
+        "ecr:PutImageTagMutability",
+        "ecr:ListTagsForResource",
+        "ecr:DeleteRepository",
+        "ecr:PutLifecyclePolicy"
+      ],
+      "Resource": "*"
+    },
+    {
       "Sid": "AllowAssumeAnyRole",
       "Effect": "Allow",
       "Action": "sts:AssumeRole",

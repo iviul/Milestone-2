@@ -1,4 +1,0 @@
----
-admin_users:
-  - name: ubuntu
-    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINaAVdd0qt6pDi6SziVFNliMRWtBkqVArDI5Dl/D+wSb"

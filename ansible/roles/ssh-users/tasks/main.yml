@@ -1,10 +1,4 @@
 ---
-- name: Add SSH public keys
-  ansible.posix.authorized_key: 
-    user: "{{ item.name }}" 
-    key: "{{ item.key }}" 
-  loop: "{{ admin_users }}"  
-
 - name: Restrict root access
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
@@ -17,3 +11,4 @@
     regexp: '^AllowAgentForwarding'
     line: AllowAgentForwarding yes
   notify: Reload SSH
+

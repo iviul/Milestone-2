@@ -49,7 +49,7 @@ echo "Using user: $TF_VAR_aws_user"
 echo "Bucket: $TF_VAR_s3_bucket"
 echo "Region: $TF_VAR_aws_remote_region"
 
-./init.sh
+./init.sh -reconfigure
 
 echo "=== Run Terraform apply ==="
 terraform apply
