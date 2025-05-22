@@ -14,7 +14,7 @@ resource "aws_iam_role_policy" "policy" {
 resource "aws_iam_role" "role" {
   for_each = local.iam
 
-  name = "${each.value.name}-role"
+  name               = "${each.value.name}-role"
   assume_role_policy = jsonencode(each.value.trust_policy)
 }
 

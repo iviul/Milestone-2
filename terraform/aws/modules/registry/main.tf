@@ -4,13 +4,13 @@ locals {
     if r.provider == "aws"
   }
   docker_registries = {
-    for k, r in local.registry: k => r
+    for k, r in local.registry : k => r
     if r.repository_type == "docker" && r.enabled == true
   }
 }
 
 resource "aws_ecr_repository" "registry" {
-    for_each = local.docker_registries
-    
-    name = each.value.name
+  for_each = local.docker_registries
+
+  name = each.value.name
 }

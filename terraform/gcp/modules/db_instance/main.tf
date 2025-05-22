@@ -28,8 +28,8 @@ resource "google_sql_database" "databases" {
 resource "google_sql_user" "users" {
   for_each = { for db in var.databases : db.name => db }
 
-  name     = var.db_username
-  instance = google_sql_database_instance.instances[each.value.name].name
+  name        = var.db_username
+  instance    = google_sql_database_instance.instances[each.value.name].name
   password_wo = var.db_pass
 }
 

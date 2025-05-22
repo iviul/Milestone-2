@@ -9,7 +9,7 @@ output "subnets" {
 
 output "vpc_ids_by_name" {
   description = "Map of VPC keys to their IDs"
-  value = { for name, vpc in aws_vpc.terraform : name => vpc.id }
+  value       = { for name, vpc in aws_vpc.terraform : name => vpc.id }
 }
 
 output "subnet_ids_by_vpc_subnet_name" {
