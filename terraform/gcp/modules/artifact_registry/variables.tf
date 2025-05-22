@@ -12,5 +12,5 @@ variable "artifact_registry_description" {
 
 variable "artifact_registry_format" {
   description = "The format of the Artifact Registry, e.g., DOCKER."
-  default = "DOCKER"
+  default     = "DOCKER"
 } 

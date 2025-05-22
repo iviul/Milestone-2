@@ -45,7 +45,7 @@ module "vm" {
   vm_instances          = local.config.vm_instances
   subnet_self_links_map = module.network.subnet_self_links_by_name
   ssh_keys              = local.ssh_keys
-  depends_on = [module.network]
+  depends_on            = [module.network]
 }
 
 module "db_instance" {
