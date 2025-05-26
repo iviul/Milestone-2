@@ -4,8 +4,8 @@ provider "google" {
   credentials = file("${path.module}/keys.json")
 }
 
-terraform {
-  backend "gcs" {
-    prefix = "terraform/state"
-  }
-}
+# terraform {
+#   backend "gcs" {
+#     prefix = "terraform/state"
+#   }
+# }

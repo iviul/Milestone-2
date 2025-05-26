@@ -1,0 +1,92 @@
+{
+  "project": {
+    "name": "lofty-memento-458508-i1",
+    "environment": "dev",
+    "region": "europe-west3",
+    "os": "ubuntu",
+    "terraform_username": "terraform-user",
+    "keys":[  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCoEj7le3fP95ikaCaugmcUaH0tJ2Ff3Kfx1k88bR2FyUOyn+hk4KO2AdUaUkGTnOlRBwXzIP+6YVAA6XIIjlBuwDmNzRh7iw31MANMIFKMURxKROJiVo6Z9wnwAR0WRYqIiT9cadsBp6IfLT5XgvT90L+jbSmL63o8Cz03wGBnZpbjZ7lM/KVGN5sVEB56CmoVv7cK+zhHjDvG0LJpYSQJI+oXjAhCvM06jOJHALS/D+4e/E8JwG8CFaoFPZVVJLYgF160S9VRM/kdJ6Xyrv/D1+7HT8TKP0PRZCApbhpio0LxSFSmcKvrcNirbrLHcT5zQTxN+gBiBaANVcQ3w5R4ElKyMQLeJA3RZi9Cg4eM51ylHVwNkEIeWk/t9PfdkqhzJ6nZT4axAiw4PgDuWcU12KSlpAhZEg9+AtvCNY2iPlKy9D8CybufrbA+Bypz0Qa9NMvJTI6xBwycO84V1acf+DgJUZwOTA0M5YtrNUkUNScE6aCMh0N17OsK+QMJKkU9huwgwwqB/XKpyrwBzNT5MUG15WB2qtGZkgk/MHhLbbTibpfL7mEZX57/NIpbfLFe/A76D73rB2YObVJU4+++RRJQuFdqGiE3ea9TCoXmelkTn4mnRPbiVgrk9+47uohaSzElJuAyLLCzG1cjFKlBrPnEMsjeE3mWMk5dperedw== user@DESKTOP-4VAAU1J"  ]
+  },
+  "network": [
+    {
+      "name": "k3s-vpc",
+      "vpc_cidr": "10.1.0.0/16",
+      "subnets": [
+        {
+          "name": "k3s-subnet",
+          "cidr": "10.1.1.0/24",
+          "public": true,
+          "zone": "a"
+        }
+      ]
+    }
+  ],
+  "vm_instances": [
+    {
+      "name": "k3s-master",
+      "network": "k3s-vpc",
+      "size": "small",
+      "zone": "a",
+      "subnet": "k3s-subnet",
+      "public_ip": true,
+      "tags": ["k3s-master"],
+      "port": 6443,
+      "security_groups": ["k3s-sg"]
+    },
+    {
+      "name": "k3s-worker-1",
+      "network": "k3s-vpc",
+      "size": "small",
+      "zone": "a",
+      "subnet": "k3s-subnet",
+      "public_ip": true,
+      "tags": ["k3s-worker"],
+      "port": 10250,
+      "security_groups": ["k3s-sg"]
+    },
+    {
+      "name": "k3s-worker-2",
+      "network": "k3s-vpc",
+      "size": "small",
+      "zone": "a",
+      "subnet": "k3s-subnet",
+      "public_ip": true,
+      "tags": ["k3s-worker"],
+      "port": 10250,
+      "security_groups": ["k3s-sg"]
+    },
+    {
+      "name": "k3s-worker-3",
+      "network": "k3s-vpc",
+      "size": "small",
+      "zone": "a",
+      "subnet": "k3s-subnet",
+      "public_ip": true,
+      "tags": ["k3s-worker"],
+      "port": 10250,
+      "security_groups": ["k3s-sg"]
+    }
+  ],
+  "security_groups": [
+    {
+      "name": "k3s-sg",
+      "vpc": "k3s-vpc",
+      "description": "Allow K3s ports",
+      "attach_to": ["k3s-master", "k3s-worker-1", "k3s-worker-2", "k3s-worker-3"],
+      "ingress": [
+        { "protocol": "tcp", "port": 22, "source": "0.0.0.0/0" },
+        { "protocol": "tcp", "port": 6443, "source": "0.0.0.0/0" },
+        { "protocol": "tcp", "port": 10250, "source": "0.0.0.0/0" },
+        { "protocol": "udp", "port": 8472, "source": "0.0.0.0/0" },
+        { "protocol": "tcp", "port": 31111, "source": "0.0.0.0/0" }
+      ],
+      "egress": [
+        { "protocol": "tcp", "port": 22, "destination": "0.0.0.0/0" },
+        { "protocol": "tcp", "port": 6443, "destination": "0.0.0.0/0" },
+        { "protocol": "tcp", "port": 10250, "destination": "0.0.0.0/0" },
+        { "protocol": "udp", "port": 8472, "destination": "0.0.0.0/0" },
+        { "protocol": "tcp", "port": 31111, "destination": "0.0.0.0/0" }
+      ]
+    }
+  ]
+}
