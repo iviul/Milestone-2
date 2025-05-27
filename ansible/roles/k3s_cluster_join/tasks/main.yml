@@ -1,0 +1,6 @@
+- name: Include tasks for k3s install
+  include_tasks: install_k3s.yml
+
+- name: Include tasks for joining cluster
+  include_tasks: join_k3s.yml
+  when: inventory_hostname != groups['all'][0]

@@ -1,0 +1,3 @@
+k3s_url: "https://get.k3s.io"
+node_token_path: "/var/lib/rancher/k3s/server/node-token"
+k3s_binary_path: "/usr/local/bin/k3s"
