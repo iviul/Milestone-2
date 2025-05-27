@@ -6,9 +6,15 @@ locals {
     gcp = "europe-west3"
   }
 
-  region = local.fixed_region_map["gcp"]
-
+  region   = local.fixed_region_map["gcp"]
   ssh_keys = local.config.project.keys
+
+  load_balancer = {
+    name       = "k3s-lb"
+    region     = local.region
+    ip_address = "" # ephemeral if empty
+    port_range = "6443"
+  }
 }
 
 module "network" {
@@ -30,3 +36,14 @@ module "vm" {
   ssh_keys              = local.ssh_keys
   depends_on            = [module.network]
 }
+
+module "load_balancer" {
+  source                    = "./modules/load_balancer"
+  load_balancer_name        = local.load_balancer.name
+  region                    = local.load_balancer.region
+  instances                 = module.vm.instances_self_links
+  ip_address                = local.load_balancer.ip_address
+  load_balancer_port_range = local.load_balancer.port_range
+}
+
+
