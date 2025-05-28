@@ -25,7 +25,7 @@
     {
       "name": "k3s-master",
       "network": "k3s-vpc",
-      "size": "small",
+      "size": "medium",
       "zone": "a",
       "subnet": "k3s-subnet",
       "public_ip": true,
@@ -36,7 +36,7 @@
     {
       "name": "k3s-worker-1",
       "network": "k3s-vpc",
-      "size": "small",
+      "size": "medium",
       "zone": "a",
       "subnet": "k3s-subnet",
       "public_ip": true,
@@ -47,7 +47,7 @@
     {
       "name": "k3s-worker-2",
       "network": "k3s-vpc",
-      "size": "small",
+      "size": "medium",
       "zone": "a",
       "subnet": "k3s-subnet",
       "public_ip": true,
@@ -58,7 +58,7 @@
     {
       "name": "k3s-worker-3",
       "network": "k3s-vpc",
-      "size": "small",
+      "size": "medium",
       "zone": "a",
       "subnet": "k3s-subnet",
       "public_ip": true,

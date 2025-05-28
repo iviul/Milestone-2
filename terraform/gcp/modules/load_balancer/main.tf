@@ -1,7 +1,7 @@
 resource "google_compute_http_health_check" "hc" {
   name               = "${var.load_balancer_name}-hc"
-  request_path       = "/"
   port               = var.health_check_port
+  request_path       = "/healthz"
   check_interval_sec = 5
   timeout_sec        = 5
   healthy_threshold  = 2
@@ -9,11 +9,13 @@ resource "google_compute_http_health_check" "hc" {
 }
 
 resource "google_compute_target_pool" "k3s_target_pool" {
-  name         = "${var.load_balancer_name}-pool"
-  region       = var.region
-  instances    = var.instances
+  name          = "${var.load_balancer_name}-pool"
+  region        = var.region
+  instances     = var.instances
   health_checks = [google_compute_http_health_check.hc.self_link]
+
 }
+
 
 resource "google_compute_forwarding_rule" "k3s_forwarding_rule" {
   name                  = "${var.load_balancer_name}-fr"
@@ -22,3 +24,4 @@ resource "google_compute_forwarding_rule" "k3s_forwarding_rule" {
   port_range            = var.load_balancer_port_range
   ip_address            = var.ip_address != "" ? var.ip_address : null
 }
+

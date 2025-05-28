@@ -12,7 +12,7 @@ locals {
   load_balancer = {
     name       = "k3s-lb"
     region     = local.region
-    ip_address = "" # ephemeral if empty
+    ip_address = ""
     port_range = "6443"
   }
 }
