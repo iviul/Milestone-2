@@ -1,0 +1,6 @@
+---
+# Default configurations
+configmaps: []
+secrets: []
+services: []
+deployments: []
