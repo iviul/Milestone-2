@@ -1,0 +1,30 @@
+- name: Get k3s token from first node (run once)
+  slurp:
+    src: "{{ node_token_path }}"
+  register: slurped_token
+  run_once: true
+  delegate_to: "{{ groups['all'][0] }}"
+
+- name: Set global fact for shared_node_token
+  set_fact:
+    shared_node_token: "{{ (slurped_token.content | b64decode).rstrip() }}"
+  run_once: true
+
+- name: Show k3s_url
+  debug:
+    var: k3s_url
+
+- name: Show shared_node_token
+  debug:
+    var: shared_node_token
+
+- name: Show master node private IP
+  debug:
+    msg: "{{ hostvars[groups['all'][0]].ansible_host_private }}"  
+
+- name: Join k3s cluster as server
+  shell: curl -sfL {{ k3s_url }} | K3S_TOKEN={{ shared_node_token }} K3S_URL=https://{{ hostvars[groups['all'][0]].ansible_host_private }}:6443 sh -s - server
+  args:
+    creates: "{{ k3s_binary_path }}"
+  when: inventory_hostname != groups['all'][0]
+  become: false
