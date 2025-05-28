@@ -1,0 +1,23 @@
+- name: Get registry credentials for {{ cloud_provider }}
+  shell: |
+    {% if cloud_provider == 'aws' %}
+    aws ecr get-login-password --region {{ aws_region }}
+    {% elif cloud_provider == 'gcp' %}
+    gcloud auth print-access-token
+    {% endif %}
+  register: registry_credential
+  when: cloud_provider in ['aws', 'gcp', 'azure']
+
+- name: Create {{ cloud_provider }} registry secret
+  shell: |
+    kubectl create secret docker-registry {{ cloud_provider }}-registry-secret \
+      --docker-server={{ registry_urls[cloud_provider] }} \
+      --docker-username={{ registry_username }} \
+      --docker-password="{{ registry_password }}" \
+      --namespace=default --dry-run=client -o yaml | kubectl apply -f -
+  vars:
+    registry_username: >-
+      {%- if cloud_provider == 'aws' -%}AWS
+      {%- elif cloud_provider == 'gcp' -%}oauth2accesstoken
+      {%- endif -%}
+    registry_password: "{{ registry_credential.stdout }}"
