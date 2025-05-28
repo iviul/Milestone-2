@@ -1,11 +1,25 @@
 {
   "project": {
-    "name": "lofty-memento-458508-i1",
+    "name": "k3s-lab-461007",
     "environment": "dev",
     "region": "europe-west3",
     "os": "ubuntu",
     "terraform_username": "terraform-user",
-    "keys":[  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCoEj7le3fP95ikaCaugmcUaH0tJ2Ff3Kfx1k88bR2FyUOyn+hk4KO2AdUaUkGTnOlRBwXzIP+6YVAA6XIIjlBuwDmNzRh7iw31MANMIFKMURxKROJiVo6Z9wnwAR0WRYqIiT9cadsBp6IfLT5XgvT90L+jbSmL63o8Cz03wGBnZpbjZ7lM/KVGN5sVEB56CmoVv7cK+zhHjDvG0LJpYSQJI+oXjAhCvM06jOJHALS/D+4e/E8JwG8CFaoFPZVVJLYgF160S9VRM/kdJ6Xyrv/D1+7HT8TKP0PRZCApbhpio0LxSFSmcKvrcNirbrLHcT5zQTxN+gBiBaANVcQ3w5R4ElKyMQLeJA3RZi9Cg4eM51ylHVwNkEIeWk/t9PfdkqhzJ6nZT4axAiw4PgDuWcU12KSlpAhZEg9+AtvCNY2iPlKy9D8CybufrbA+Bypz0Qa9NMvJTI6xBwycO84V1acf+DgJUZwOTA0M5YtrNUkUNScE6aCMh0N17OsK+QMJKkU9huwgwwqB/XKpyrwBzNT5MUG15WB2qtGZkgk/MHhLbbTibpfL7mEZX57/NIpbfLFe/A76D73rB2YObVJU4+++RRJQuFdqGiE3ea9TCoXmelkTn4mnRPbiVgrk9+47uohaSzElJuAyLLCzG1cjFKlBrPnEMsjeE3mWMk5dperedw== user@DESKTOP-4VAAU1J"  ]
+    "keys":[
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINaAVdd0qt6pDi6SziVFNliMRWtBkqVArDI5Dl/D+wSb",
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYLUdSPOk00sjUNjHi53n0y6jnJndZS6GN6JbpKmaQRaBLZn8dHJf+vm1HedDiEf7zZL1gy9ILm6mISC5+wWFS4noxfd6p8Z15Ccsp0I2Z3eTVSceBHRhXSzIUo0YkILtIsW3TS6/IjJtAxKa8xc2aOLLiMIkkhVYZHlkYVGMY+8rgHKrjeipFHE6EgP0NF08NHZrvBjSv8CQneuT/C0G2Yz5f/Z83htFJ3ZfnYt8Yapc3hPVUbyzQ3xY3vW2tTp1X5voT2PkhcCGoVUgwH5sU3zcwruy760zKATHiZMzlKULRoCFGYH0CPWEpPOmEElAJCPyZNBUjbqyBHhsmsAsN peachka@anastasiias-MacBook-Pro.local",
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC1Y3jykJs6hKYDRJdAemfkB4L8Zn7xoHjJODV750K4L7gIl2BT/xpUi4u7Ekww7UJIysFIabUR/e3w45a3oA3dZTYkQyyW3CbMLqc0U9dJDTHIXqrSSm+/hPiycP3i9JlezgqzKcTOetb5BEqRGf8jIYhi2VDnz+KMlnXt8UDms5WdMP+QFLHbrh1uTq31nCUT84jKwXBs/ar9Rxzs9keSEYPkZE0aSpegp7XQsVSHMjCVylAm8TIUR6CMYaB10zKLJM99snPGdx9iokJESR8g9xBQMhRvVYxONR28ZWDfPYiO8zKwGSkibQ2L4IkgRZsghenD57wPIPWmTtHoSaA/JHLWR4a8FZBqY6FPysv2XNSwyxiHFaR8T7Zpj8kt9lUwEtityBWpC/2EXLJ3lGzIAVgyz/Yq0qD80x1ODvt/4MQgv235qxDXq0Y5AXIAIphjlENKh78YkM61OQ6LnIH7oisY+VJTz9jhHhL7y6hERF/J8rxPOMMZCTqJGW9Daq41zCqdNZ4ehG/+hgibh092jWMcxWGVbcJHp1bmFHu5tBaviuKVCLw2/0DlX9JC31+rTcUT2HDAqMmp+Ii3yXsZboGJ4Is2Er5qUArsHvo+LSmE8zw8yMpaSEv2V8ndRDwtolbHiKoxN1LFSffu0LYrbjzPIdZU3ua8glUti03yTQ== nikita@kali",
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdiu9SBkWcuG5x33ovVqpF4upq6BebdayKClGSgXIJn internship_julia",
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC/+yqQxQ//WlZNL5UcCWOUZfuG+qXCf9UaINWLoI349CqeED8dran8lcQ9rRiTdc93k6LgDskrz5R3Wiponv6ZeF+H4GwqNo7r0/p+1DWpraQyRAvDkHdHWC1tWesq9mSQkLZeAh1csbtRkW3EZsJ6W521iJS/oIVh1+tTMDjti3gpvJhuCr7IjFtixqJHRxkaVUSuQo8gImohtB9x3SstRyjw/olLPI2wnNjhaHZhSPlQZWXY2NBnzMcbGq6Uc6JvDal1Xl/aeOAe4qcZ2wd1DKd+vLD7E4LyNrJCBzQ7tMvqQEeK67x7l6gMJXG0/yyO3/p7DMsQwugKE+HF/SR5Z/4Ysp6xngoMOX2IutlMO4ZZa6CvQaNk+ArjPSmNHfvHBnw2f41abxV84b2umcp0yqW0yGiiRLpNxyaTJtBEXVqh4ld0ELvfdX4bxYzaYdT3zENOgGzcOO5aiqTIZyr72TyGiZI01LNve/toJL8c3cd/SHgDEIYE3wVa6sGE8WRInVDqPwvOmyd5DCFbyiYLGTh3Jipyi9T8NT4Pr9QnpNZVDTTVhLu/fNj79tUw7HvmkanO522WS66lZPavELC1eXKMcN0pYAPG25C8tgpe4frblnPrgqMEvOCVmTsLV911gQdBVtk+Eodyn7HPXQkMQgm0knPLxC4kqm0BhoySXw== khrystyna",
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDgWn+MkuVc3S985TAcD2jXcnIIHZsJOQLo1aXUt1hMNdz0tzjE/KLdnJ+UP3a2GmrRnBw/es1FQThZ/FiIAgDpbM7SY126pr2od9sZ3cFgO8TB3qOJAVy7UnxZgF0apJpTSbbz8a7lDJCal9FDHDetACw200RlFxy5NHRaaad5Tl1Gqw+3UtDKnTInOxIQDrYr5pz7u7uE0EQORQtP1Q+bDk2O7FK578l3z8h6g1HRAiN0cLeKQlLUKBvgaG7Wqkh5Z23GAnKMFKdWEDi607oayB7sz3x5Ardv/akF80LqNRVFuLBZdwRM4yuBvBCVyCoU0xYPbZ6PuPPeFez/2PbAFXzzVePapTJKS1dvquwcE+/8purf1oTEeran+mNP0eYsgt3rlnWpTm6L/SO2b6cVMwNNdGknGlsUO2JIKc26pzdGThJX+NK7NAVECwTYryF6TYK6fGsm1W/Ud9V7qNNhyTBH6CaE2ybWlpI9fG/og3btY8lN4eAmjPKU7xcvq967WeEGQ9IvbAdhFKgWLnJym2C8bZC8ds9HDRrBVwIax80y4MdZ2zHgvCTuwO8ttfxrRujkwXA+mbqn62sj0R7bXbcOyggVhsztMuXyYLEOoXlAhpuqbjiHtRvhZ/Nt/QNa4n3ChR2mOZv3BkyAkFZe/vHhpG0Zw4MzoKq431sjxw== fonzaye@fedora",
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDPCUEdXE9r/B7ulxwaIvtiAMl+xtmsjOpXmjYf94fFnkYD6rf1ggsqA1G180Xx8HV1P7rC4p7RXQu2vqA7gS6Lmo2ba1P1qzpdlXS/GyaU4/fgCeITsoykiPEKwAXLxOVEbzaaqSiFAustBaPt7R8yDIorsVTr0E7kCeh3b8jlOENV1Mt44AEe1R7RMlWAHNIxe1qzsadmC/2M6SH+z9QWYqKiA0DVutMjvkM/djRbOIGOrS86awsa6Uadft9VJXqir5aM0Li35YvWwwYymHwwf70SH51sTJN2G9/cZPa6YSOEss0q9l+xzUN7sP9sX+pUn9bItwQAonydVZtnMfhMiZ9mlqHGnz+e6DGraNkIlFcSiIG6m3++Rfw4swUf6NzIkFgod287mErSI0BQgOZH/yXYCR4HsVmX+XwFDHSbxI/ZJbZuDBbrV0BZhwiIy3xJ8H0MXJ1ap9Qx4P/reACfsNwaEqkJv12NKptjO60S6CAkbftV/jgfBt9ft19/PblTtlGOHVJODR7aGbbIjOnj131OFaLZyRf0NmUUOpK5k1hUhMURXLoVN1OPXF39PP14MWvkCkI+5mNOZLR2sUxltV7hJ0zwVwXf4v/4r38mes6ap8ZjwmiKDS8ydQdTA3AZm1ySOyaT91IVeXI+PqrxFcrUrMm1ZO48q5Xuq1lmTQ== pc@DESKTOP-SRAGJS3",
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC6A0w41fHziWMbn3xFLKtKxBhLuOTzqIwda9bm0MDZMbn3Hr7luk5v5tiAt0l4fGNJXjc4Rje3Tcwl3/3/xsJL3ifdfDRlAFsnQojgbTn0e0jHCfOg0/c3bY3UZ463d5blD+ALKiD5QxlDBKlgrDs+PjRmZbHvX+o0MUtXRq98RD4OqZwWFwreQBe+ARfMy/6tJQ8aTPLyv5pJvgYsjLPXvOw+xTz2hDCW3+O+Vv3hssp5PkIDoLD+MxgIhRNvYy2VFjekVg1oQg4eLIc6r6kJ0PuJMw8wvspuFae/RaHbHGsF1g03wQAZV6R02Wg+lWMSebruwNGP1gVb2IJAi/JaA8jdhimM1zEQLEKEoDkAsNSwudE2+erUviDqgtLfU238tcQ02n/kPkAsTDpl1gdt+OWABTL36MGgRu4WaLoYu+hFcPd+oIag+PSfUb0VKIqYSS51q7eODituC0cb3aBjAWEcozdRC4wmpG9+0rEdnYS+ySSpk8YVgYkORM1mt1FdQh9GyF3uV/7/74Lw1BQ9FRPABTureFjPX4iftPFDGst48TC0jY65LHgSv2TWRkB//3pBslpUnbGAzDMjFV1DhGjKzwxt+fYrYO+7avMgOVEiP/H2jIvOTuhQ8gFOKffIVcX8hDOkpQvo9JmjYzfF+fqqEZ8A4n/CaZOZQH2C+Q== mari-pc@MARI-PC",
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCoEj7le3fP95ikaCaugmcUaH0tJ2Ff3Kfx1k88bR2FyUOyn+hk4KO2AdUaUkGTnOlRBwXzIP+6YVAA6XIIjlBuwDmNzRh7iw31MANMIFKMURxKROJiVo6Z9wnwAR0WRYqIiT9cadsBp6IfLT5XgvT90L+jbSmL63o8Cz03wGBnZpbjZ7lM/KVGN5sVEB56CmoVv7cK+zhHjDvG0LJpYSQJI+oXjAhCvM06jOJHALS/D+4e/E8JwG8CFaoFPZVVJLYgF160S9VRM/kdJ6Xyrv/D1+7HT8TKP0PRZCApbhpio0LxSFSmcKvrcNirbrLHcT5zQTxN+gBiBaANVcQ3w5R4ElKyMQLeJA3RZi9Cg4eM51ylHVwNkEIeWk/t9PfdkqhzJ6nZT4axAiw4PgDuWcU12KSlpAhZEg9+AtvCNY2iPlKy9D8CybufrbA+Bypz0Qa9NMvJTI6xBwycO84V1acf+DgJUZwOTA0M5YtrNUkUNScE6aCMh0N17OsK+QMJKkU9huwgwwqB/XKpyrwBzNT5MUG15WB2qtGZkgk/MHhLbbTibpfL7mEZX57/NIpbfLFe/A76D73rB2YObVJU4+++RRJQuFdqGiE3ea9TCoXmelkTn4mnRPbiVgrk9+47uohaSzElJuAyLLCzG1cjFKlBrPnEMsjeE3mWMk5dperedw== user@DESKTOP-4VAAU1J",
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCW5FpRxZ6eoVCE40o62Ctux4DcTRaTwCaM+WiqI6jwPmsze6V1/uXVXYXNfxeRGlO8nocDr93JyOFr1e+vDovTxdc5oky5D/5yfWNMjb0NnbUUS26a0wXjxwrDKGqScRXQtfwBZY6T6Jr2+RV6DeW7+6X/DUbKc5HuIx/XG0r0Ks9C+CzQHFBSBiH2OdW80bHKnn6exO/VLAzcgNdXelFxI7z72E8VLOafTFXKe8iHmx2kuX0GFkDz21WaiD93LBr+G8p2rRyXe6wmhYgKWaK6yAlKMZ2hipr4CcHGwePs0bzH0uSdpeQVrIJEo4FbXZhGAT6aIi3WpqrqDlu/DaqN/ipIqMjPL7cBgEzi8eGzj0vzGk/boP+dcQD9tVaB1fBTq7bBlKYp1LpzpZMa4Gc4uHSRAxXhg+e6nevFtfW/n6FufkyOGOZX/Fej0F6qcuhgugCoQMfmCjNZh29dg8e8Z5t8ZXns9ACJCX9N4pd2Iw9vEHVsH+JvLH5fLSgwW33IlT2+ulvI/y3QQkuXTUhBDyJSwvP9yiWJpiPye+HdLAqQ09wbaXErYkEGYdhfFOzS7CaZ7hf6e8frJMavKQzScn1rPFHJy//EmqdP5PlaFXrPIzlu+LBcBvHfOlYNwTqYW+iK96OeK6Y+ByBz98L8r8mBJdp+VEx9iMJHD9GftQ== illusion@DESKTOP-7KVKBE6"
+    ],
+    "state_bucket_location_gcp": "europe-west3",
+    "state_bucket_location_aws": "eu-central-1",
+    "bucket_state_name": "state-bucket-name-1377"
   },
   "network": [
     {
@@ -23,47 +37,33 @@
   ],
   "vm_instances": [
     {
-      "name": "k3s-master",
+      "name": "k3s-node-1",
       "network": "k3s-vpc",
       "size": "small",
       "zone": "a",
       "subnet": "k3s-subnet",
       "public_ip": true,
-      "tags": ["k3s-master"],
-      "port": 6443,
+      "tags": ["k3s-node"],
       "security_groups": ["k3s-sg"]
     },
     {
-      "name": "k3s-worker-1",
+      "name": "k3s-node-2",
       "network": "k3s-vpc",
       "size": "small",
       "zone": "a",
       "subnet": "k3s-subnet",
       "public_ip": true,
-      "tags": ["k3s-worker"],
-      "port": 10250,
+      "tags": ["k3s-node"],
       "security_groups": ["k3s-sg"]
     },
     {
-      "name": "k3s-worker-2",
+      "name": "k3s-node-3",
       "network": "k3s-vpc",
       "size": "small",
       "zone": "a",
       "subnet": "k3s-subnet",
       "public_ip": true,
-      "tags": ["k3s-worker"],
-      "port": 10250,
-      "security_groups": ["k3s-sg"]
-    },
-    {
-      "name": "k3s-worker-3",
-      "network": "k3s-vpc",
-      "size": "small",
-      "zone": "a",
-      "subnet": "k3s-subnet",
-      "public_ip": true,
-      "tags": ["k3s-worker"],
-      "port": 10250,
+      "tags": ["k3s-node"],
       "security_groups": ["k3s-sg"]
     }
   ],
@@ -72,20 +72,13 @@
       "name": "k3s-sg",
       "vpc": "k3s-vpc",
       "description": "Allow K3s ports",
-      "attach_to": ["k3s-master", "k3s-worker-1", "k3s-worker-2", "k3s-worker-3"],
+      "attach_to": ["k3s-node"],
       "ingress": [
         { "protocol": "tcp", "port": 22, "source": "0.0.0.0/0" },
         { "protocol": "tcp", "port": 6443, "source": "0.0.0.0/0" },
         { "protocol": "tcp", "port": 10250, "source": "0.0.0.0/0" },
         { "protocol": "udp", "port": 8472, "source": "0.0.0.0/0" },
         { "protocol": "tcp", "port": 31111, "source": "0.0.0.0/0" }
-      ],
-      "egress": [
-        { "protocol": "tcp", "port": 22, "destination": "0.0.0.0/0" },
-        { "protocol": "tcp", "port": 6443, "destination": "0.0.0.0/0" },
-        { "protocol": "tcp", "port": 10250, "destination": "0.0.0.0/0" },
-        { "protocol": "udp", "port": 8472, "destination": "0.0.0.0/0" },
-        { "protocol": "tcp", "port": 31111, "destination": "0.0.0.0/0" }
       ]
     }
   ]
