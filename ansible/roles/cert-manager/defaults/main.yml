@@ -1,0 +1,15 @@
+---
+# email ACME- staging
+acme_email: "you@example.com"
+
+# Name Secret ACME Account Key
+staging_account_secret: "staging-acme-account-key"
+
+# ClusterIssuer
+staging_issuer_name: "letsencrypt-staging"
+
+# URL ACME
+acme_staging_server: "https://acme-staging-v02.api.letsencrypt.org/directory"
+
+# Ingress Controller type
+ingress_class: "nginx"

@@ -1,0 +1,23 @@
+---
+- name: CRD cert-manager
+  command: >
+    kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.0/cert-manager.crds.yaml
+  args:
+    warn: false
+
+- name: etstack 
+  command: >
+    helm repo add jetstack https://charts.jetstack.io && helm repo update
+
+- name: Install or update cert-manager Helm
+  command: >
+    helm upgrade --install cert-manager jetstack/cert-manager
+      --namespace cert-manager
+      --create-namespace
+      --version v1.12.0
+      --set installCRDs=false
+
+- name: ClusterIssuer (staging)
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'staging-issuer.yaml.j2') }}"
