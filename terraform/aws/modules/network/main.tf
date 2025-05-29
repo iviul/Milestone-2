@@ -38,12 +38,12 @@ resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.terraform[each.key].id
 }
 
-# resource "aws_eip" "nat" {
-#   for_each = local.vpcs
+resource "aws_eip" "nat" {
+  for_each = local.vpcs
 
-#   domain     = "vpc"
-#   depends_on = [aws_internet_gateway.gw]
-# }
+  domain     = "vpc"
+  depends_on = [aws_internet_gateway.gw]
+}
 
 locals {
   public_subnets      = { for k, sn in local.subnets : k => sn if sn.is_public }
@@ -51,14 +51,14 @@ locals {
   first_public_subnet = keys(local.public_subnets)[0]
 }
 
-# resource "aws_nat_gateway" "nt" {
-#   for_each = local.vpcs
+resource "aws_nat_gateway" "nt" {
+  for_each = local.vpcs
 
-#   allocation_id = aws_eip.nat[each.key].id
-#   subnet_id     = aws_subnet.subnets[local.first_public_subnet].id
-#   depends_on    = [aws_internet_gateway.gw]
-#   tags          = { Name = "nat-gateway" }
-# }
+  allocation_id = aws_eip.nat[each.key].id
+  subnet_id     = aws_subnet.subnets[local.first_public_subnet].id
+  depends_on    = [aws_internet_gateway.gw]
+  tags          = { Name = "nat-gateway" }
+}
 
 resource "aws_route_table" "public" {
   for_each = local.vpcs
@@ -78,20 +78,20 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public[each.value.vpc_id].id
 }
 
-# resource "aws_route_table" "private" {
-#   for_each = local.vpcs
+resource "aws_route_table" "private" {
+  for_each = local.vpcs
 
-#   vpc_id = aws_vpc.terraform[each.key].id
-#   route {
-#     cidr_block     = "0.0.0.0/0"
-#     nat_gateway_id = aws_nat_gateway.nt[each.key].id
-#   }
-#   tags = { Name = "private-rt" }
-# }
+  vpc_id = aws_vpc.terraform[each.key].id
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nt[each.key].id
+  }
+  tags = { Name = "private-rt" }
+}
 
-# resource "aws_route_table_association" "private" {
-#   for_each = local.private_subnets
+resource "aws_route_table_association" "private" {
+  for_each = local.private_subnets
 
-#   subnet_id      = aws_subnet.subnets[each.key].id
-#   route_table_id = aws_route_table.private[each.value.vpc_id].id
-# }
+  subnet_id      = aws_subnet.subnets[each.key].id
+  route_table_id = aws_route_table.private[each.value.vpc_id].id
+}
