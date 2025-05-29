@@ -1,0 +1,51 @@
+- name: Check if k3s is already installed
+  stat:
+    path: "{{ k3s_binary_path }}"
+  register: k3s_installed
+
+- name: Generate a shared k3s token (only on first node if not already set)
+  set_fact:
+    k3s_token: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
+  when:
+    - inventory_hostname == groups['all'][0]
+    - hostvars[inventory_hostname].get('k3s_token', '') == ''
+
+- name: Set k3s_token on all hosts
+  set_fact:
+    k3s_token: "{{ hostvars[groups['all'][0]].k3s_token }}"
+  when: inventory_hostname != groups['all'][0]
+
+- name: Show k3s_url
+  debug:
+    var: k3s_url
+
+- name: Show k3s_token
+  debug:
+    var: k3s_token
+
+- name: Show dns_name
+  debug:
+    var: dns_name
+
+- name: Initialize cluster on 1st node
+  shell: |
+    curl -sfL {{ k3s_url }} | INSTALL_K3S_CHANNEL=v1.31 sh -s - \
+      --cluster-init \
+      --token {{ k3s_token }} \
+      --tls-san {{ dns_name }} \
+      --tls-san {{ ansible_host }}
+  when:
+    - inventory_hostname == groups['all'][0]
+    - not k3s_installed.stat.exists
+
+- name: Join k3s cluster as server
+  shell: |
+    curl -sfL {{ k3s_url }} | INSTALL_K3S_CHANNEL=v1.31 sh -s - \
+      --server https://{{ dns_name }}:6443 \
+      --token {{ k3s_token }}
+  args:
+    creates: "{{ k3s_binary_path }}"
+  when:
+    - inventory_hostname != groups['all'][0]
+    - not k3s_installed.stat.exists
+  become: false
