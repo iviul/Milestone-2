@@ -49,7 +49,7 @@ module "vm" {
 }
 
 module "db_instance" {
-  source            = "./modules/db_instance"
+  source            = "./modules/db-instance"
   project_id        = local.config.project.name
   region            = local.region
   databases         = local.config.databases
@@ -60,8 +60,8 @@ module "db_instance" {
   db_username       = local.db_username
 }
 
-module "artifact_registry" {
-  source                        = "./modules/artifact_registry"
+module "artifact-registry" {
+  source                        = "./modules/artifact-registry"
   region                        = local.gcp_artifact_registry.region
   artifact_registry_id          = local.gcp_artifact_registry.name
   artifact_registry_description = local.gcp_artifact_registry.repository_type

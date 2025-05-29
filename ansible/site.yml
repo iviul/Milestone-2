@@ -2,7 +2,7 @@
   hosts: reverse-proxy
   become: yes
   roles:
-    - reverse-proxy
+    - reverse_proxy
 
 - name: Deploy Redis Service
   hosts: redis

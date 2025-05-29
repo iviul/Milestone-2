@@ -19,8 +19,8 @@ module "network" {
   vpcs   = local.config.network
 }
 
-module "security_groups" {
-  source           = "./modules/security_groups"
+module "security-groups" {
+  source           = "./modules/security-groups"
   security_groups  = local.security_groups
   networks_by_name = local.networks_by_name
   vpc_ids_by_name  = module.network.vpc_ids_by_name

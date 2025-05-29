@@ -11,4 +11,3 @@
     regexp: '^AllowAgentForwarding'
     line: AllowAgentForwarding yes
   notify: Reload SSH
-

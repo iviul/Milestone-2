@@ -1,8 +1,8 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT-0
 ---
 - name: Install NGINX Ingress Controller using Helm
-  become: yes
-  shell: |
+  become: true
+  ansible.builtin.shell: |
     helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
     helm repo update
     helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
