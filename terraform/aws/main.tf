@@ -9,7 +9,7 @@ terraform {
 
 provider "aws" {
   region  = var.region
-  profile = var.aws_user
+  # profile = var.aws_user
 }
 
 module "network" {
@@ -26,6 +26,30 @@ module "security_groups" {
   vpc_ids_by_name  = module.network.vpc_ids_by_name
 }
 
+module "target_groups" {
+  source           = "./modules/target_groups"
+
+  target_groups = local.target_groups
+  vpc_ids_by_name  = module.network.vpc_ids_by_name
+  vm_ids_by_name = module.vms.vm_ids_by_name
+}
+
+output "tgs" {
+  value = module.target_groups.tgs
+}
+
+output "vms_all" {
+  value = module.vms.vm_ids_by_name
+}
+
+output "vms" {
+  value = module.target_groups.vms
+}
+
+output "vms_test" {
+  value = module.target_groups.vms_test
+}
+
 module "vms" {
   source                        = "./modules/vms"
   vms                           = local.vms
@@ -34,23 +58,23 @@ module "vms" {
   subnet_ids_by_vpc_subnet_name = module.network.subnet_ids_by_vpc_subnet_name
 }
 
-module "db" {
-  source = "./modules/database"
+# module "db" {
+#   source = "./modules/database"
 
-  config                 = local.config
-  subnets                = module.network.subnets
-  vpc_security_group_ids = module.security_groups.sg_ids_by_name
-}
+#   config                 = local.config
+#   subnets                = module.network.subnets
+#   vpc_security_group_ids = module.security_groups.sg_ids_by_name
+# }
 
 
-module "iam" {
-  source = "./modules/iam"
+# module "iam" {
+#   source = "./modules/iam"
 
-  iam = local.config.iam.aws
-}
+#   iam = local.config.iam.aws
+# }
 
-module "registry" {
-  source = "./modules/registry"
+# module "registry" {
+#   source = "./modules/registry"
 
-  config = local.config
-}
+#   config = local.config
+# }
