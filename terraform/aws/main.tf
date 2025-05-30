@@ -34,22 +34,6 @@ module "target_groups" {
   vm_ids_by_name = module.vms.vm_ids_by_name
 }
 
-output "tgs" {
-  value = module.target_groups.tgs
-}
-
-output "vms_all" {
-  value = module.vms.vm_ids_by_name
-}
-
-output "vms" {
-  value = module.target_groups.vms
-}
-
-output "vms_test" {
-  value = module.target_groups.vms_test
-}
-
 module "vms" {
   source                        = "./modules/vms"
   vms                           = local.vms
