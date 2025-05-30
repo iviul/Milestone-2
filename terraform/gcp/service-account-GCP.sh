@@ -142,7 +142,7 @@ if [ -z "$NEW_BUCKET_NAME" ]; then
     echo "=== Enabling versioning on gs://$NEW_BUCKET_NAME ==="
     gsutil versioning set on "gs://$NEW_BUCKET_NAME" || echo "=== Versioning already enabled ==="
 	cat > "$ENV_FILE" <<EOL
-	export TF_VAR_cloud_bucket=$NEW_BUCKET_NAME
+export TF_VAR_cloud_bucket=$NEW_BUCKET_NAME
 EOL
 
 	GITIGNORE_FILE=".gitignore"

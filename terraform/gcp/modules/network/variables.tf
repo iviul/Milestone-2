@@ -41,11 +41,11 @@ variable "security_groups" {
       port     = number
       source   = string
     }))
-    egress = list(object({
-      protocol    = string
-      port        = number
-      destination = string
-    }))
+    # egress = list(object({
+    #   protocol    = string
+    #   port        = number
+    #   destination = string
+    # }))
   }))
   description = "Firewall definitions mapping tags → ingress/egress rules"
 }
