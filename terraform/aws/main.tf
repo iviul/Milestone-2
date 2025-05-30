@@ -27,7 +27,7 @@ module "security_groups" {
 }
 
 module "target_groups" {
-  source           = "./modules/target_groups"
+  source           = "./modules/target-groups"
 
   target_groups = local.target_groups
   vpc_ids_by_name  = module.network.vpc_ids_by_name
