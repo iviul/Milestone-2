@@ -50,4 +50,6 @@ locals {
 
   security_groups  = local.config.security_groups
   networks_by_name = { for n in local.config.networks : n.name => n.cidr }
+
+  target_groups = local.config.target_groups
 }
