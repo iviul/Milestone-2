@@ -1,0 +1,11 @@
+- name: Install K3s HA Cluster
+  import_tasks: install.yml
+
+- name: Handle K3s Master Setup
+  import_tasks: master.yml
+
+- name: Retrieve and distribute K3s Token
+  import_tasks: token.yml
+
+- name: Join Workers as Additional Masters
+  import_tasks: worker.yml

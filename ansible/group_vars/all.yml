@@ -13,3 +13,10 @@ aws_account_id: "253490768279"  # Replace with actual account ID
 
 # Default GCP settings
 gcp_project_id: "my-project"  # Replace with actual project ID
+
+#For group k3s
+
+k3s_group: "k3s_node"
+tls_san: "{{ hostvars[groups[k3s_group][0]].ansible_host }}"
+master_node: "{{ groups[k3s_group][0] }}"
+master_ip: "{{ hostvars[master_node].ansible_host }}"

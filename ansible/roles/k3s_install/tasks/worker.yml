@@ -1,0 +1,31 @@
+- block:
+    - name: Wait for API server availability before join
+      wait_for:
+        host: "{{ master_ip }}"
+        port: 6443
+        delay: 5
+        timeout: 300
+      run_once: true
+
+
+    - name: Join node as additional master
+      shell: |
+        curl -sfL https://get.k3s.io \
+          | INSTALL_K3S_EXEC="--tls-san {{ tls_san }}" \
+            K3S_TOKEN="{{ hostvars[master_node].k3s_token }}" \
+            sh -s - server \
+              --server https://{{ master_ip }}:6443
+      args:
+        creates: /etc/systemd/system/k3s.service
+      become: true
+  when: inventory_hostname != master_node
+
+
+- name: Ensure k3s is running on all nodes
+  systemd:
+    name: k3s
+    state: started
+    enabled: true
+  become: true
+
+

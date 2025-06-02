@@ -1,0 +1,3 @@
+# [Service]
+# ExecStart=/usr/local/bin/k3s server --tls-san {{ tls_san }} --server https://{{ cluster_master }}:6443
+# Environment="K3S_TOKEN={{ k3s_token }}"

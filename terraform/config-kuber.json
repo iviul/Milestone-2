@@ -41,7 +41,7 @@
       "subnet": "k3s-subnet",
       "public_ip": true,
       "tags": ["k3s-worker"],
-      "port": 10250,
+      "port": 6443,
       "security_groups": ["k3s-sg"]
     },
     {
@@ -52,7 +52,7 @@
       "subnet": "k3s-subnet",
       "public_ip": true,
       "tags": ["k3s-worker"],
-      "port": 10250,
+      "port": 6443,
       "security_groups": ["k3s-sg"]
     },
     {
@@ -63,7 +63,7 @@
       "subnet": "k3s-subnet",
       "public_ip": true,
       "tags": ["k3s-worker"],
-      "port": 10250,
+      "port": 6443,
       "security_groups": ["k3s-sg"]
     }
   ],
@@ -76,14 +76,15 @@
       "ingress": [
         { "protocol": "tcp", "port": 22, "source": "0.0.0.0/0" },
         { "protocol": "tcp", "port": 6443, "source": "0.0.0.0/0" },
-        { "protocol": "tcp", "port": 10250, "source": "0.0.0.0/0" },
+        { "protocol": "tcp", "port": 6443, "source": "130.211.0.0/22" },
+        { "protocol": "tcp", "port": 6443, "source": "35.191.0.0/16" },
         { "protocol": "udp", "port": 8472, "source": "0.0.0.0/0" },
-        { "protocol": "tcp", "port": 31111, "source": "0.0.0.0/0" }
+        { "protocol": "tcp", "port": 31111, "source": "0.0.0.0/0" },
+        { "protocol": "tcp", "port": 6443, "source": "34.107.125.103/32" }
       ],
       "egress": [
         { "protocol": "tcp", "port": 22, "destination": "0.0.0.0/0" },
         { "protocol": "tcp", "port": 6443, "destination": "0.0.0.0/0" },
-        { "protocol": "tcp", "port": 10250, "destination": "0.0.0.0/0" },
         { "protocol": "udp", "port": 8472, "destination": "0.0.0.0/0" },
         { "protocol": "tcp", "port": 31111, "destination": "0.0.0.0/0" }
       ]
