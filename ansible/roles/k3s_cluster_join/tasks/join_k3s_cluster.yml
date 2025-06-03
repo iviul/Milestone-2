@@ -12,7 +12,7 @@
 
 - name: Set k3s_token on all hosts
   set_fact:
-    k3s_token: "{{ hostvars[groups['all'][0]].k3s_token }}"
+    k3s_token_node: "{{ hostvars[groups['all'][0]].k3s_token }}"
   when: inventory_hostname != groups['all'][0]
 
 - name: Show k3s_url
@@ -32,17 +32,14 @@
     curl -sfL {{ k3s_url }} | INSTALL_K3S_CHANNEL=v1.31 sh -s - \
       --cluster-init \
       --token {{ k3s_token }} \
-      --tls-san {{ dns_name }} \
-      --tls-san {{ ansible_host }}
+      --tls-san {{ ansible_host_private }} \
   when:
     - inventory_hostname == groups['all'][0]
     - not k3s_installed.stat.exists
 
 - name: Join k3s cluster as server
   shell: |
-    curl -sfL {{ k3s_url }} | INSTALL_K3S_CHANNEL=v1.31 sh -s - \
-      --server https://{{ dns_name }}:6443 \
-      --token {{ k3s_token }}
+    curl -sfL {{ k3s_url }} | INSTALL_K3S_CHANNEL=v1.31 sh -s - --server https://{{ hostvars[groups['public'][0]]['ansible_host_private'] }}:6443 --token {{ k3s_token_node }} 
   args:
     creates: "{{ k3s_binary_path }}"
   when:
