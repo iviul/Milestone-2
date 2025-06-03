@@ -33,7 +33,6 @@
       --cluster-init \
       --token {{ k3s_token }} \
       --tls-san {{ dns_name }} \
-      --tls-san {{ ansible_host }}
   when:
     - inventory_hostname == groups['all'][0]
     - not k3s_installed.stat.exists
