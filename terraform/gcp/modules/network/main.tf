@@ -132,3 +132,25 @@ resource "google_compute_firewall" "lb_health_check" {
 
   target_tags = ["k3s-sg"]
 }
+
+# resource "google_compute_firewall" "allow_lb_to_vm" {
+#   name    = "allow-lb-to-vm-6443"
+#   network = "https://www.googleapis.com/compute/v1/projects/${local.config.project.name}/global/networks/lofty-memento-458508-i1-k3s-vpc-vpc"
+  
+#   direction     = "INGRESS"
+#   priority      = 1000
+#   source_ranges = [var.load_balancer_forwarding_rule_ip]
+
+#   target_tags = ["k3s-worker", "k3s-master"]  
+
+#   allow {
+#     protocol = "tcp"
+#     ports    = ["6443"]
+#   }
+
+#   description = "Allow incoming traffic from load balancer IP on port 6443 to the VMs."
+
+#   depends_on = [
+#     module.load_balancer
+#   ]
+# }
