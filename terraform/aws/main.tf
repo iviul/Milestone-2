@@ -9,7 +9,7 @@ terraform {
 
 provider "aws" {
   region  = var.region
-  # profile = var.aws_user
+  profile = var.aws_user
 }
 
 module "network" {
@@ -34,24 +34,12 @@ module "target_groups" {
   vm_ids_by_name = module.vms.vm_ids_by_name
 }
 
-# output "target_groups" {
-#   value = module.target_groups.tgs
-# }
-
-# output "target_groups_arns" {
-#   value = module.target_groups.tg_arns_by_name
-# }
-
 module "load_balancers" {
   source = "./modules/load-balancer"
 
   load_balancers = local.load_balancers
   subnets = module.network.subnets
   security_groups = module.security_groups.sg_ids_by_name
-}
-
-output "load_balancers" {
-  value = module.load_balancers.lb_arns_by_name
 }
 
 module "listeners" {
@@ -62,10 +50,6 @@ module "listeners" {
   lb_arns_by_name = module.load_balancers.lb_arns_by_name
 }
 
-output "listeners" {
-  value = module.listeners.listeners
-}
-
 module "vms" {
   source                        = "./modules/vms"
   vms                           = local.vms
@@ -74,23 +58,23 @@ module "vms" {
   subnet_ids_by_vpc_subnet_name = module.network.subnet_ids_by_vpc_subnet_name
 }
 
-# module "db" {
-#   source = "./modules/database"
+module "db" {
+  source = "./modules/database"
 
-#   config                 = local.config
-#   subnets                = module.network.subnets
-#   vpc_security_group_ids = module.security_groups.sg_ids_by_name
-# }
+  config                 = local.config
+  subnets                = module.network.subnets
+  vpc_security_group_ids = module.security_groups.sg_ids_by_name
+}
 
 
-# module "iam" {
-#   source = "./modules/iam"
+module "iam" {
+  source = "./modules/iam"
 
-#   iam = local.config.iam.aws
-# }
+  iam = local.config.iam.aws
+}
 
-# module "registry" {
-#   source = "./modules/registry"
+module "registry" {
+  source = "./modules/registry"
 
-#   config = local.config
-# }
+  config = local.config
+}
