@@ -1,2 +1,0 @@
-- name: Include tasks for joining k3s cluster
-  include_tasks: join_k3s_cluster.yml

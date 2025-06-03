@@ -43,7 +43,7 @@ resource "aws_vpc_security_group_egress_rule" "all" {
           destination = rule.destination
         }
       ]
-    ]) : "${item.sg_name}-${item.protocol}-${item.port}-${item.destination}" => item
+    ]) : "${item.sg_name}-${item.protocol}-${item.port == null ? "" : item.port}-${item.destination}" => item // to make all ports accessible
   }
 
   security_group_id = aws_security_group.all[each.value.sg_name].id
