@@ -15,7 +15,7 @@ locals {
 
   size_map = {
     aws = {
-      small  = "t3.micro"
+      small  = "t3.small"
       medium = "t3.medium"
       large  = "t3.large"
     },
@@ -51,5 +51,7 @@ locals {
   security_groups  = local.config.security_groups
   networks_by_name = { for n in local.config.networks : n.name => n.cidr }
 
-  target_groups = local.config.target_groups
+  target_groups  = local.config.target_groups
+  listeners      = local.config.listeners
+  load_balancers = local.config.load_balancers
 }

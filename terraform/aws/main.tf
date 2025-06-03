@@ -34,6 +34,22 @@ module "target_groups" {
   vm_ids_by_name = module.vms.vm_ids_by_name
 }
 
+module "load_balancers" {
+  source = "./modules/load-balancer"
+
+  load_balancers = local.load_balancers
+  subnets = module.network.subnets
+  security_groups = module.security_groups.sg_ids_by_name
+}
+
+module "listeners" {
+  source           = "./modules/listener"
+
+  listeners = local.listeners
+  tg_arns_by_name = module.target_groups.tg_arns_by_name
+  lb_arns_by_name = module.load_balancers.lb_arns_by_name
+}
+
 module "vms" {
   source                        = "./modules/vms"
   vms                           = local.vms
