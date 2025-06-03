@@ -1,5 +1,0 @@
-k3s_url: "https://get.k3s.io"
-node_token_path: "/var/lib/rancher/k3s/server/node-token"
-k3s_binary_path: "/usr/local/bin/k3s"
-dns_name: "k3s-nlb-703f3ed990fa0672.elb.eu-central-1.amazonaws.com" # Change with some var I guess
-k3s_token: ""
