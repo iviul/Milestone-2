@@ -15,7 +15,7 @@ locals {
 
   size_map = {
     aws = {
-      small  = "t2.micro"
+      small  = "t3.small"
       medium = "t3.medium"
       large  = "t3.large"
     },
