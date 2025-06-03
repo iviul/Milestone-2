@@ -85,7 +85,7 @@ module "network" {
   project_id      = local.config.project.name
   region          = local.region
   networks        = local.config.network
-  acls            = []
+  acls            = local.config.networks
   security_groups = local.config.security_groups
 }
 
