@@ -23,14 +23,15 @@
   debug:
     var: k3s_token
 
-- name: Show dns_name
+- name: Debug DNS name
   debug:
-    var: dns_name
+    var: dns_name  # Will output the ELB DNS name
 
 - name: Initialize cluster on 1st node
   shell: |
     curl -sfL {{ k3s_url }} | INSTALL_K3S_CHANNEL=v1.31 sh -s - \
       --cluster-init \
+      --disable=traefik \
       --token {{ k3s_token }} \
       --tls-san {{ dns_name }} \
   when:
@@ -40,7 +41,7 @@
 - name: Join k3s cluster as server
   shell: |
     curl -sfL {{ k3s_url }} | INSTALL_K3S_CHANNEL=v1.31 sh -s - \
-      --server https://{{ dns_name }}:6443 \
+      --server https://{{ hostvars[groups['all'][0]].ansible_host_private }}:6443 \
       --token {{ k3s_token }}
   args:
     creates: "{{ k3s_binary_path }}"
