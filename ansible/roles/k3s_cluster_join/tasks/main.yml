@@ -1,46 +1,53 @@
+# Check if k3s is already installed
 - name: Check if k3s is already installed
   stat:
     path: "{{ k3s_binary_path }}"
   register: k3s_installed
 
+# Generate a shared k3s token only on the first node, if not already set
 - name: Generate a shared k3s token (only on first node if not already set)
   set_fact:
     k3s_token: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
   when:
     - inventory_hostname == groups['all'][0]
-    - hostvars[inventory_hostname].get('k3s_token', '') == ''
+    - k3s_token is not defined
 
-- name: Set k3s_token on all hosts
+# Distribute the token to all other hosts
+- name: Set k3s_token on all non-first nodes
   set_fact:
     k3s_token: "{{ hostvars[groups['all'][0]].k3s_token }}"
-  when: inventory_hostname != groups['all'][0]
+  when:
+    - inventory_hostname != groups['all'][0]
+    - k3s_token is not defined
 
-- name: Show k3s_url
-  debug:
-    var: k3s_url
-
+# Debug the generated or assigned token (useful for troubleshooting)
 - name: Show k3s_token
   debug:
     var: k3s_token
 
-- name: Debug DNS name
+# Debug the private IP of the first node
+- name: Show first node's private IP
   debug:
-    var: dns_name  # Will output the ELB DNS name
+    msg: "First node private IP: {{ hostvars[groups['all'][0]].ansible_host_private }}"
 
+# Initialize the K3s cluster on the first node (if not already installed)
 - name: Initialize cluster on 1st node
   shell: |
-    curl -sfL {{ k3s_url }} | INSTALL_K3S_CHANNEL=v1.31 sh -s - \
+    curl -sfL {{ k3s_url }} | sh -s - \
       --cluster-init \
       --disable=traefik \
       --token {{ k3s_token }} \
-      --tls-san {{ dns_name }} \
+      --tls-san {{ dns_name }}
+  args:
+    creates: "{{ k3s_binary_path }}"
   when:
     - inventory_hostname == groups['all'][0]
     - not k3s_installed.stat.exists
 
+# Join the cluster as a server node (on other nodes, if not already installed)
 - name: Join k3s cluster as server
   shell: |
-    curl -sfL {{ k3s_url }} | INSTALL_K3S_CHANNEL=v1.31 sh -s - \
+    curl -sfL {{ k3s_url }} | sh -s - \
       --server https://{{ hostvars[groups['all'][0]].ansible_host_private }}:6443 \
       --token {{ k3s_token }}
   args:
