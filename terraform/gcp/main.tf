@@ -93,8 +93,6 @@ module "network" {
   networks        = local.config.network
   acls            = local.config.networks
   security_groups = local.config.security_groups
-
-  load_balancer_forwarding_rule_ip = module.load_balancer.forwarding_rule_ip
 }
 
 module "vm" {
@@ -117,4 +115,26 @@ module "load_balancer" {
   instances                 = module.vm.instances_self_links
   ip_address                = local.load_balancer.ip_address
   load_balancer_port_range  = local.load_balancer.port_range
+}
+
+resource "google_compute_firewall" "allow_lb_to_vm" {
+  name    = "allow-lb-to-vm-6443"
+  network = "https://www.googleapis.com/compute/v1/projects/${local.config.project.name}/global/networks/lofty-memento-458508-i1-k3s-vpc-vpc"
+
+  direction     = "INGRESS"
+  priority      = 1000
+  source_ranges = [module.load_balancer.forwarding_rule_ip]
+
+  target_tags = ["k3s-worker", "k3s-master"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["6443"]
+  }
+
+  description = "Allow incoming traffic from load balancer IP on port 6443 to the VMs."
+
+  depends_on = [
+    module.load_balancer
+  ]
 }
