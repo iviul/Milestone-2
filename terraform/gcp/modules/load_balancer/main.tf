@@ -73,3 +73,25 @@ resource "google_compute_forwarding_rule" "k3s_forwarding_rule" {
   load_balancing_scheme = "EXTERNAL"
   region = var.region
 }
+
+resource "google_compute_firewall" "allow_lb_to_vm" {
+  name    = "allow-lb-to-vm-6443"
+  network = var.network
+
+  direction     = "INGRESS"
+  priority      = 1000
+  source_ranges = [google_compute_forwarding_rule.k3s_forwarding_rule.ip_address]
+
+  target_tags = ["k3s-worker", "k3s-master"] # Adjust tags as needed
+
+  allow {
+    protocol = "tcp"
+    ports    = ["6443"]
+  }
+
+  description = "Allow incoming traffic from load balancer IP on port 6443 to the VMs."
+
+  depends_on = [
+    google_compute_forwarding_rule.k3s_forwarding_rule
+  ]
+}

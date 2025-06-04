@@ -1,3 +1,9 @@
+variable "project_id" {
+  description = "GCP project ID."
+  type        = string
+#  default       = "lofty-memento-458508-i1"
+}
+
 variable "load_balancer_name" {
   description = "Base name used for all load balancer-related resources"
   type        = string
@@ -44,4 +50,3 @@ variable "network" {
   description = "The self_link of the VPC network where the instances and instance group reside"
   type        = string
 }
-
