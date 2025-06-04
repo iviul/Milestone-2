@@ -74,6 +74,7 @@ resource "google_compute_forwarding_rule" "k3s_forwarding_rule" {
   region                = var.region
 }
 
+# Firewall rule to allow traffic from the load balancer to the VMs
 resource "google_compute_firewall" "allow_lb_to_vm" {
   name    = "allow-lb-to-vm-6443"
   network = var.network
