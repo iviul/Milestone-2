@@ -50,7 +50,7 @@ variable "security_groups" {
   description = "Firewall definitions mapping tags → ingress/egress rules"
 }
 
-# variable "load_balancer_forwarding_rule_ip" {
-#   type        = string
-#   description = "The forwarding rule IP returned by the load_balancer module"
-# }
+variable "load_balancer_forwarding_rule_ip" {
+  description = "The forwarding rule IP from the load balancer module."
+  type        = string
+}

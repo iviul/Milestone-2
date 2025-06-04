@@ -76,11 +76,9 @@
       "ingress": [
         { "protocol": "tcp", "port": 22, "source": "0.0.0.0/0" },
         { "protocol": "tcp", "port": 6443, "source": "0.0.0.0/0" },
-        { "protocol": "tcp", "port": 6443, "source": "130.211.0.0/22" },
-        { "protocol": "tcp", "port": 6443, "source": "35.191.0.0/16" },
         { "protocol": "udp", "port": 8472, "source": "0.0.0.0/0" },
-        { "protocol": "tcp", "port": 31111, "source": "0.0.0.0/0" },
-        { "protocol": "tcp", "port": 6443, "source": "34.107.125.103/32" }
+        { "protocol": "tcp", "port": 31111, "source": "0.0.0.0/0" }
+
       ],
       "egress": [
         { "protocol": "tcp", "port": 22, "destination": "0.0.0.0/0" },
