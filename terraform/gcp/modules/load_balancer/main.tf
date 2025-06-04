@@ -18,10 +18,10 @@ resource "google_compute_health_check" "tcp_hc" {
     port = 6443
   }
 
-  check_interval_sec    = 5
-  timeout_sec           = 5
-  healthy_threshold     = 2
-  unhealthy_threshold   = 2
+  check_interval_sec  = 5
+  timeout_sec         = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 2
 }
 
 # Regional Health Check
@@ -30,7 +30,7 @@ resource "google_compute_region_health_check" "tcp_hc" {
   region = var.region
 
   tcp_health_check {
-    port = 6443       // use the same port as the instance group
+    port = 6443 // use the same port as the instance group
   }
 
   check_interval_sec  = 5
@@ -50,8 +50,8 @@ resource "google_compute_region_backend_service" "k3s_backend" {
   load_balancing_scheme = "EXTERNAL"
 
   backend {
-    group           = google_compute_instance_group.k3s_group.self_link
-    balancing_mode  = "CONNECTION"
+    group          = google_compute_instance_group.k3s_group.self_link
+    balancing_mode = "CONNECTION"
     #max_connections = 100
   }
 }
@@ -59,19 +59,19 @@ resource "google_compute_region_backend_service" "k3s_backend" {
 
 # Global static IP (if needed)
 resource "google_compute_address" "lb_static_ip" {
-  name = "${var.load_balancer_name}-static-ip"
+  name   = "${var.load_balancer_name}-static-ip"
   region = var.region
 }
 
 # Forwarding Rule for Network Load Balancer
 resource "google_compute_forwarding_rule" "k3s_forwarding_rule" {
-  name        = "${var.load_balancer_name}-fr"
-  ip_address  = google_compute_address.lb_static_ip.address
-  ip_protocol = "TCP"
-  port_range  = "6443"
-  backend_service = google_compute_region_backend_service.k3s_backend.self_link
+  name                  = "${var.load_balancer_name}-fr"
+  ip_address            = google_compute_address.lb_static_ip.address
+  ip_protocol           = "TCP"
+  port_range            = "6443"
+  backend_service       = google_compute_region_backend_service.k3s_backend.self_link
   load_balancing_scheme = "EXTERNAL"
-  region = var.region
+  region                = var.region
 }
 
 resource "google_compute_firewall" "allow_lb_to_vm" {

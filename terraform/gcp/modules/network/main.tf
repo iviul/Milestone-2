@@ -116,8 +116,8 @@ resource "google_compute_router_nat" "cloud_nat" {
 }
 
 resource "google_compute_firewall" "lb_health_check" {
-  name    = "${var.project_id}-k3s-vpc-lb-health-check"
-  network = google_compute_network.vpc["k3s-vpc"].self_link
+  name      = "${var.project_id}-k3s-vpc-lb-health-check"
+  network   = google_compute_network.vpc["k3s-vpc"].self_link
   direction = "INGRESS"
 
   allow {

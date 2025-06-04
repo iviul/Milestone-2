@@ -1,5 +1,0 @@
----
-k3s_group: "k3s_node"
-tls_san: "{{ hostvars[groups[k3s_group][0]].ansible_host }}"
-master_node: "{{ groups[k3s_group][0] }}"
-master_ip: "{{ hostvars[master_node].ansible_host }}"
