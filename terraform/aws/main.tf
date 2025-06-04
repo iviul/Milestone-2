@@ -42,6 +42,10 @@ module "load_balancers" {
   security_groups = module.security_groups.sg_ids_by_name
 }
 
+output "lbs" {
+  value = module.load_balancers.load_balancers
+}
+
 module "listeners" {
   source           = "./modules/listener"
 
