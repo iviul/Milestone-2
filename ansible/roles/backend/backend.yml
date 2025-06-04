@@ -1,0 +1,67 @@
+    # raw version needs to be checked
+
+    - name: Create namespace for backend
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Namespace
+        name: backend
+        state: present
+
+    - name: Deploy Backend Deployment
+      kubernetes.core.k8s:
+        state: present
+        namespace: backend
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: backend
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: backend
+            template:
+              metadata:
+                labels:
+                  app: backend
+              spec:
+                containers:
+                  - name: backend
+                    image:  # checkname
+                    env:
+                      - name: REDIS_HOST
+                        value: redis-master.redis.svc.cluster.local
+                    ports:
+                      - containerPort: 5000
+
+    - name: Deploy Backend Service
+      kubernetes.core.k8s:
+        state: present
+        namespace: backend
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: backend-service
+          spec:
+            selector:
+              app: backend
+            ports:
+              - protocol: TCP
+                port: 80
+                targetPort: 5000
+            type: ClusterIP
+
+    - name: Wait for backend pod to be ready
+      shell: kubectl wait --for=condition=ready pod -l app=backend -n backend --timeout=60s
+      register: backend_ready
+      failed_when: backend_ready.rc != 0
+
+    - name: Show backend logs
+      shell: kubectl logs -l app=backend -n backend
+      register: backend_logs
+
+    - name: Display backend logs
+      debug:
+        var: backend_logs.stdout

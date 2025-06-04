@@ -2,17 +2,17 @@
 set -euo pipefail
 #########################################################################
 CONFIG_PATH=$1
+ENV_FILE="gcp_cloud_env.sh"
 SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' "$CONFIG_PATH")
 PROJECT_ID=$(gcloud config get-value project)
 DESCRIPTION="The service account for the Terraform"
 KEY_FILE="${2%.json}.json"
-BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' $CONFIG_PATH)
-NEW_BUCKET_NAME=$BUCKET_NAME-$(date +'%Y-%m-%d-%H-%M-%S')
 BUCKET_LOCATION=$(grep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' "$CONFIG_PATH")
 DB_USERNAME=postgres # will be taken by grep
 DB_PASS=postgres # will be taken by grep
 SECRET_NAME_DB_USERNAME=db_username # will be taken by grep
 SECRET_NAME_DB_PASS=db_pass # will be taken by grep
+NEW_BUCKET_NAME=""
 #########################################################################
 if [[ -z "$PROJECT_ID" ]]; then
 	echo "=== Error: Unable to retrieve GCP project ID. Use 'gcloud config set project YOUR_PROJECT_ID' ==="
@@ -119,27 +119,49 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --role="roles/secretmanager.secretAccessor"
 
 
-echo "=== Creating the bucket gs://$NEW_BUCKET_NAME ==="
+echo "=== Creating the bucket ==="
 export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
-if gsutil ls "gs://$NEW_BUCKET_NAME"; then
-	echo "=== The bucket: gs://$NEW_BUCKET_NAME already exists. ==="
-	exit 1
-else
-	gcloud storage buckets create "gs://$NEW_BUCKET_NAME" \
-			--location="$BUCKET_LOCATION" \
-			--uniform-bucket-level-access
-	echo "=== Enabling versioning on the bucket: gs://$NEW_BUCKET_NAME ==="
-	gsutil versioning set on "gs://$NEW_BUCKET_NAME" || echo "=== Versioning already enabled ==="
-	echo
+if [ -f "$ENV_FILE" ]; then
+    source "$ENV_FILE"
+
+    if gsutil ls -b "gs://$TF_VAR_cloud_bucket" > /dev/null 2>&1; then
+        echo "=== The bucket: gs://$TF_VAR_cloud_bucket already exists. ==="
+        NEW_BUCKET_NAME="$TF_VAR_cloud_bucket"
+	fi
 fi
 
+if [ -z "$NEW_BUCKET_NAME" ]; then
+    BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' "$CONFIG_PATH")
+    NEW_BUCKET_NAME="${BUCKET_NAME}-$(date +'%Y-%m-%d-%H-%M-%S')"
+
+    echo "=== Creating bucket: gs://$NEW_BUCKET_NAME ==="
+    gcloud storage buckets create "gs://$NEW_BUCKET_NAME" \
+        --location="$BUCKET_LOCATION" \
+        --uniform-bucket-level-access
+
+    echo "=== Enabling versioning on gs://$NEW_BUCKET_NAME ==="
+    gsutil versioning set on "gs://$NEW_BUCKET_NAME" || echo "=== Versioning already enabled ==="
+	cat > "$ENV_FILE" <<EOL
+export TF_VAR_cloud_bucket=$NEW_BUCKET_NAME
+EOL
+
+	GITIGNORE_FILE=".gitignore"
+	if [ ! -f "$GITIGNORE_FILE" ]; then
+		touch "$GITIGNORE_FILE"
+	fi
+	if ! grep -Fxq "$ENV_FILE" "$GITIGNORE_FILE"; then
+		echo "$ENV_FILE" >> "$GITIGNORE_FILE"
+		echo "Added $ENV_FILE to $GITIGNORE_FILE"
+	fi
+fi
 
 
 #########################################################################
 startTerraform() {
 	echo "🚀 STARTING TERRAFORM"
 	terraform init \
-		-backend-config="bucket=$1"
+		-backend-config="bucket=$1" \
+		-reconfigure
 }
 startTerraform "$NEW_BUCKET_NAME"
 #########################################################################

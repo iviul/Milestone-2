@@ -69,33 +69,33 @@ resource "google_compute_firewall" "ingress" {
 }
 
 # 4) Egress firewalls
-resource "google_compute_firewall" "egress" {
-  for_each = {
-    for sg in var.security_groups : sg.name => sg
-    if length(sg.egress) > 0
-  }
+# resource "google_compute_firewall" "egress" {
+#   for_each = {
+#     for sg in var.security_groups : sg.name => sg
+#     if length(sg.egress) > 0
+#   }
 
-  name        = "${each.key}-egress"
-  network     = google_compute_network.vpc[each.value.vpc].self_link
-  target_tags = each.value.attach_to
-  direction   = "EGRESS"
+#   name        = "${each.key}-egress"
+#   network     = google_compute_network.vpc[each.value.vpc].self_link
+#   target_tags = each.value.attach_to
+#   direction   = "EGRESS"
 
-  dynamic "allow" {
-    for_each = each.value.egress
-    content {
-      protocol = allow.value.protocol
-      ports    = [tostring(allow.value.port)]
-    }
-  }
+#   dynamic "allow" {
+#     for_each = each.value.egress
+#     content {
+#       protocol = allow.value.protocol
+#       ports    = [tostring(allow.value.port)]
+#     }
+#   }
 
-  # Handle destination ranges properly - either use CIDR from ACLs or leave empty for all destinations
-  destination_ranges = distinct(flatten([
-    for rule in each.value.egress :
-    contains(keys(local.acls_map), rule.destination) ? [local.acls_map[rule.destination]] : ["0.0.0.0/0"]
-    if !contains(keys(local.sg_to_instances_map), rule.destination)
-  ]))
+#   # Handle destination ranges properly - either use CIDR from ACLs or leave empty for all destinations
+#   destination_ranges = distinct(flatten([
+#     for rule in each.value.egress :
+#     contains(keys(local.acls_map), rule.destination) ? [local.acls_map[rule.destination]] : ["0.0.0.0/0"]
+#     if !contains(keys(local.sg_to_instances_map), rule.destination)
+#   ]))
 
-}
+# }
 resource "google_compute_router" "nat_router" {
   for_each = google_compute_network.vpc
 

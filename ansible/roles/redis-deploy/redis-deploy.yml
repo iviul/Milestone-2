@@ -1,0 +1,63 @@
+- name: Install Helm and deploy Redis
+  hosts: all
+  become: yes
+
+  vars:
+    kubeconfig_path: /etc/rancher/k3s/k3s.yaml
+
+  tasks:
+    - name: Ensure curl is installed
+      package:
+        name: curl
+        state: present
+
+    - name: Check if Helm is already installed
+      command: helm version --short
+      register: helm_check
+      ignore_errors: true
+
+    - name: Download Helm install script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: '0755'
+      when: helm_check.rc != 0
+
+    - name: Install Helm
+      shell: /tmp/get_helm.sh
+      when: helm_check.rc != 0
+
+    - name: Add Bitnami Helm repo (with Redis)
+      shell: helm repo add bitnami https://charts.bitnami.com/bitnami
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+      args:
+        creates: ~/.cache/helm/repository/bitnami-index.yaml
+
+    - name: Update Helm repos
+      shell: helm repo update
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
+    - name: Install Redis via Helm
+      kubernetes.core.helm:
+        name: redis
+        chart_ref: bitnami/redis
+        namespace: redis
+        create_namespace: true
+        values:
+          auth:
+            enabled: false
+        wait: true
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
+    - name: Check Redis pods
+      shell: kubectl get pods -n redis
+      register: redis_pods
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
+    - name: Show Redis pods
+      debug:
+        var: redis_pods.stdout
