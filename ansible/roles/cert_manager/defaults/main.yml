@@ -1,0 +1,18 @@
+---
+cert_manager_namespace: cert-manager
+cert_manager_version: "v1.12.0"
+cert_manager_crds_url: >-
+  https://github.com/cert-manager/cert-manager/releases/download/{{ cert_manager_version }}/cert-manager.crds.yaml
+cert_manager_acme_email: "foxandwolf1111@gmail.com"
+kubeconfig_path: /etc/rancher/k3s/k3s.yaml
+helm_repo_name: jetstack
+helm_repo_url: https://charts.jetstack.io
+helm_chart_name: jetstack/cert-manager
+cert_manager_release_name: cert-manager
+cert_namespace: nginx-h
+certificate_name: nginx-hello-cert
+certificate_secret: nginx-hello-tls-secret
+domains:
+  - anfox.pp.ua
+  - hello.anfox.pp.ua
+ingress_class_name: nginx
