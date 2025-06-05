@@ -1,0 +1,39 @@
+---
+# - name: Ensure Python 3, pip3 and kubernetes library are installed
+#   hosts: k3s_control_plane
+#   become: true
+#   gather_facts: true
+
+# - name: "Install Ingress Controller (NGINX) K3s"
+#   hosts: node1
+#   become: true
+#   tags: ingress
+#   roles:
+#     - role: k3s_ingress
+
+- name: "Install Cert-Manager and create ClusterIssuer"
+  hosts: k3s_control_plane
+  tags: certmanager
+  become: true
+  vars_prompt:
+    - name: "env"
+      prompt: "Choose the environment (staging or production)"
+      private: false
+      default: "staging"
+  vars_files:
+    - group_vars/{{ env }}.yml
+  roles:
+    - role: cert_manager
+
+- name: Deploy Certificate cert-manager
+  hosts: k3s-node-1
+  gather_facts: false
+  vars_files:
+    - roles/cert_manager/defaults/main.yml
+
+  tasks:
+    - name: "Include role cert_manager"
+      ansible.builtin.include_role:
+        name: cert_manager
+      tags:
+        - certificate

@@ -1,0 +1,31 @@
+---
+- name: Debug cluster_issuer_name
+  ansible.builtin.debug:
+    var: cluster_issuer_name
+
+- name: "Render ClusterIssuer template to a file"
+  when: inventory_hostname == groups['k3s_control_plane'][0]
+  # become: false
+  run_once: true
+  delegate_to: k3s-node-1
+  ansible.builtin.template:
+    src: cluster_issuer.yml.j2
+    dest: "/tmp/{{ cluster_issuer_name }}-clusterissuer.yaml"
+    mode: '0644'
+  tags:
+    - clusterissuer
+
+- name: Debug cluster_issuer_name (raw output)
+  ansible.builtin.debug:
+    var: cluster_issuer_name
+
+
+- name: "Create ClusterIssuer ({{ cluster_issuer_name }}) in Kubernetes"
+  become: false
+  delegate_to: k3s-node-1
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/{{ cluster_issuer_name }}-clusterissuer.yaml"
+    kubeconfig: "{{ kubeconfig_path }}"
+  tags:
+    - clusterissuer
