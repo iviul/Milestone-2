@@ -41,3 +41,9 @@
     - role: container_exec
   vars:
     container: "{{ containers.frontend }}" 
+
+- name: K3s cluster join
+  hosts: public
+  become: yes
+  roles: 
+    - k3s_cluster_join

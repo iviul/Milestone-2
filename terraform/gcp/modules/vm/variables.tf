@@ -21,7 +21,6 @@ variable "vm_instances" {
     zone            = string
     subnet          = string
     tags            = set(string)
-    port            = number
     security_groups = optional(list(string), [])
     public_ip       = bool
   }))

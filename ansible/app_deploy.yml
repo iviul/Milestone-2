@@ -1,0 +1,6 @@
+---
+- name: Deploy application
+  hosts: k3s-node-1
+  become: true
+  roles:
+    - app_deploy
