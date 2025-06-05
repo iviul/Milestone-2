@@ -12,7 +12,7 @@ resource "aws_lb" "this" {
   load_balancer_type = each.value.load_balancer_type
 
   subnets = [
-    for subnet_key in each.value.subnets : var.subnets["main-${subnet_key}"].id
+    for subnet_key in each.value.subnets : var.subnets["${each.value.vpc}-${subnet_key}"].id
   ]
 
   security_groups = [

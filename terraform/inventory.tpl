@@ -4,5 +4,8 @@ ${name} ansible_host=${ip} ansible_host_private=${private_ips[name]}
 %{ endfor ~}
 
 [all:vars]
-ansible_user=ubuntu
-ansible_ssh_private_key_file=${private_key_path}
+ansible_user = ubuntu
+ansible_private_key_ssh=${private_key_path}
+%{ for name, dns in lb_dns_names ~}
+dns_name=${dns}
+%{ endfor ~}
