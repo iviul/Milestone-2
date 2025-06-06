@@ -24,29 +24,8 @@
     - certificate
     - create_namespace
 
-# - name: Ensure namespace for Certificate exists
-#   when: inventory_hostname in groups['k3s_control_plane'][0]
-#   become: true
-#   kubernetes.core.k8s:
-#     api_version: v1
-#     kind: Namespace
-#     name: "{{ cert_namespace }}"
-#     state: present
-#     kubeconfig: /etc/rancher/k3s/k3s.yaml
-#   run_once: true
-#   delegate_to: k3s-node-1
-#   tags:
-#     - certificate
-
-# - name: Debug
-#   debug:
-#     msg:
-#       - "domains={{ domains | default('<<not defined>>') }}"
-#       - "type(domains)={{ domains is defined and (domains | type_debug) or 'undefined' }}"
-
 - name: Render Certificate manifest on controller
   when: inventory_hostname == groups['k3s_control_plane'][0]
-  # become: false
   run_once: true
   delegate_to: k3s-node-1
   ansible.builtin.template:
@@ -55,50 +34,6 @@
     mode: '0644'
   tags:
     - certificate
-
-# - name: Render Certificate manifest
-#   when: inventory_hostname == groups['k3s_control_plane'][0]
-#   run_once: true
-#   become: true
-#   when: inventory_hostname in groups['k3s_control_plane'][0]
-#   ansible.builtin.template:
-#     src: certificate.yml.j2
-#     dest: "/tmp/{{ certificate_name }}.yaml"
-#     mode: '0644'
-# vars:
-  #   cert_name: "{{ certificate_name }}"
-  #   cert_ns: "{{ cert_namespace }}"
-  #   cert_secret: "{{ certificate_secret }}"
-  #   issuer_name: "{{ cluster_issuer_name }}"
-  #   ingress_class: "{{ ingress_class_name }}"
-  # tags:
-  #   - certificate
-
-# - name: Copy Certificate manifest to node1
-#   ansible.builtin.copy:
-#     src: "/tmp/{{ certificate_name }}.yaml"
-#     dest: "/tmp/{{ certificate_name }}.yaml"
-#     mode: '0644'
-#   delegate_to: localhost
-#   run_once: true
-
-# - name: Distribute Certificate manifest to k3s control-plane
-#   ansible.builtin.copy:
-#     src: "/tmp/{{ certificate_name }}.yaml"
-#     dest: "/tmp/{{ certificate_name }}.yaml"
-#     mode: '0644'
-#   when: inventory_hostname in groups['k3s_control_plane'][0]
-#   tags:
-#     - certificate
-
-# - name: Apply Certificate manifest
-#   when: inventory_hostname in groups['k3s_control_plane'][0]
-#   become: true
-#   kubernetes.core.k8s:
-#     state: present
-#     definition: "{{ lookup('file', '/tmp/' + certificate_name + '.yaml') }}"
-#   tags:
-#     - certificate
 
 - name: Debug rendered certificate manifest
   ansible.builtin.debug:

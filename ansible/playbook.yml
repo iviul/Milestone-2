@@ -5,7 +5,7 @@
 #   gather_facts: true
 
 # - name: "Install Ingress Controller (NGINX) K3s"
-#   hosts: node1
+#   hosts: k3s-node-1
 #   become: true
 #   tags: ingress
 #   roles:
@@ -15,21 +15,27 @@
   hosts: k3s_control_plane
   tags: certmanager
   become: true
-  vars_prompt:
-    - name: "env"
-      prompt: "Choose the environment (staging or production)"
-      private: false
-      default: "staging"
-  vars_files:
-    - group_vars/{{ env }}.yml
+  # vars_prompt:
+  #   - name: "env"
+  #     prompt: "Choose the environment (staging or production)"
+  #     private: false
+  #     default: "staging"
+  # vars_files:
+  #   - "group_vars/{{ env }}.yml"
   roles:
     - role: cert_manager
 
 - name: Deploy Certificate cert-manager
   hosts: k3s-node-1
   gather_facts: false
-  vars_files:
-    - roles/cert_manager/defaults/main.yml
+
+  # pre_tasks:
+  #   - name: "🔍 Перевірка env та cluster_issuer_name"
+  #     debug:
+  #       msg:
+  #         - "env = {{ env | default('undefined') }}"
+  #         - "cluster_issuer_name = {{ cluster_issuer_name | default('undefined') }}"
+  #     run_once: true
 
   tasks:
     - name: "Include role cert_manager"
