@@ -49,3 +49,4 @@ variable "security_groups" {
   }))
   description = "Firewall definitions mapping tags → ingress/egress rules"
 }
+
