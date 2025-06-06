@@ -38,8 +38,9 @@ certificate_secret: nginx-hello-tls-secret
 
 # List of domain names included in the certificate
 domains:
-  - anfox.pp.ua
-  - hello.anfox.pp.ua
+    - app.anfox.pp.ua
+  # - anfox.pp.ua
+  # - hello.anfox.pp.ua
 
 # Ingress class used for certificate issuance via ACME challenges
 ingress_class_name: nginx
