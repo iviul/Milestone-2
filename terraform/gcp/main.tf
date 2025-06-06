@@ -66,3 +66,15 @@ module "load_balancer" {
   ip_address                = local.load_balancer.ip_address
   load_balancer_port_range  = local.load_balancer.port_range
 }
+
+# module "db_instance" {
+#   source            = "./modules/db_instance"
+#   project_id        = local.config.project.name
+#   region            = local.region
+#   databases         = local.config.databases
+#   private_networks  = module.network.vpc_self_links
+#   subnet_self_links = module.network.subnet_self_links_by_name
+#   depends_on        = [module.network]
+#   db_pass           = local.db_password
+#   db_username       = local.db_username
+# }
