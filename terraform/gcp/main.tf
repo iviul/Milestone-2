@@ -98,4 +98,16 @@ module "vm" {
   subnet_self_links_map = module.network.subnet_self_links_by_name
   ssh_keys              = local.ssh_keys
   depends_on            = [module.network]
+  service_account_email = local.config.project.service_account_email
+}
+
+resource "google_project_service" "monitoring" {
+  service = "monitoring.googleapis.com"
+  project = local.config.project.name
+  disable_dependent_services  = true
+}
+
+module "monitoring" {
+  source      = "./modules/monitoring"
+  alert_email = "iviulich@gmail.com"
 }

@@ -12,3 +12,10 @@ EOF
 # Rights
 chown ubuntu:ubuntu /home/ubuntu/.ssh/authorized_keys
 chmod 600 /home/ubuntu/.ssh/authorized_keys
+
+# Update & install the Ops Agent
+curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
+scopes= [
+ "https://www.googleapis.com/auth/monitoring.write",
+ "https://www.googleapis.com/auth/logging.write"
+]

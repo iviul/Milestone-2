@@ -40,8 +40,15 @@ resource "google_compute_instance" "vm" {
     })
   }
 
-  tags = concat(
-    tolist(each.value.tags),
-    lookup(each.value, "security_groups", [])
-  )
+    tags = concat(
+        tolist(each.value.tags),
+        lookup(each.value, "security_groups", []),
+        ["monitoring"]
+    )
+
+    service_account {
+        email  = var.service_account_email
+        scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+    }
 }
+

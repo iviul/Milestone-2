@@ -60,6 +60,9 @@ IAM_ROLES=(
 	"editor"
 	"secretmanager.secretAccessor"
     "iam.serviceAccountViewer"
+	"iam.monitoring.metricsWriter"
+	"iam.logging.logWriter"
+
 )
 for iam_role in "${IAM_ROLES[@]}"; do
 	echo "=== Binding role '$iam_role' to service account... ==="
