@@ -23,7 +23,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: 
+                name: {{ service_name }}
                 port:
                   number: 80
 {% endfor %}

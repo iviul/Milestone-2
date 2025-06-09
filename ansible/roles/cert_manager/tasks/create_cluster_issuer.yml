@@ -1,8 +1,4 @@
 ---
-- name: Debug cluster_issuer_name
-  ansible.builtin.debug:
-    var: cluster_issuer_name
-
 - name: "Render ClusterIssuer template to a file"
   when: inventory_hostname == groups['k3s_control_plane'][0]
   run_once: true
