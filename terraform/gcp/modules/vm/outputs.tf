@@ -21,3 +21,12 @@ output "private_ips" {
 #     for vm in var.vm_instances : vm.name => vm.port
 #   }
 # }
+
+output "instances_self_links" {
+  value = [
+    for inst in google_compute_instance.vm :
+    inst.self_link
+  ]
+}
+
+
