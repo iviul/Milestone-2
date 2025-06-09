@@ -6,13 +6,13 @@ variable "alert_email" {
 variable "disk_usage_threshold" {
   description = "Disk usage threshold in percentage"
   type        = number
-  default     = 80
+  default     = 0.50
 }
 
 variable "memory_usage_threshold" {
   description = "Memory usage threshold in percentage"
   type        = number
-  default     = 80
+  default     = 0.50
 }
 
 variable "network_outbound_threshold" {
@@ -24,5 +24,5 @@ variable "network_outbound_threshold" {
 variable "cpu_usage_threshold" {
   description = "CPU usage threshold in percentage"
   type        = number
-  default     = 80
+  default     = 0.40
 }

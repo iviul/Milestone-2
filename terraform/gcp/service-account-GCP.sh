@@ -32,6 +32,7 @@ REQUIRED_APIS=(
     "secretmanager.googleapis.com"
     "sqladmin.googleapis.com"
     "monitoring.googleapis.com"
+    "cloudmonitoring.googleapis.com"
     "logging.googleapis.com"
 )
 
