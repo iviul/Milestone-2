@@ -2,5 +2,22 @@
 - name: Deploy application
   hosts: k3s-node-1
   become: true
+  vars_files:
+    - ../terraform/config.json
   roles:
     - app_deploy
+  vars:
+    secrets: "{{ secrets }}"
+    configmaps: "{{ configmaps }}"
+    services: "{{ services }}"
+    deployments: "{{ deployments }}"
+
+- name: Deploy ingress
+  hosts: k3s-node-1
+  become: true
+  vars_files:
+    - ../terraform/config.json
+  roles:
+    - cert_manager
+    - k3s_ingress
+

@@ -38,7 +38,7 @@
       --disable=traefik \
       --disable=servicelb \
       --token {{ k3s_token }} \
-      --tls-san {{ dns_name }}
+      --tls-san {{ vars['k3s-nlb-kubeapi'] }}
   args:
     creates: "{{ k3s_binary_path }}"
   when:
@@ -56,4 +56,3 @@
   when:
     - inventory_hostname != groups['all'][0]
     - not k3s_installed.stat.exists
-  become: false

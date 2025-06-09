@@ -2,6 +2,5 @@
 - name: Configure K3s Cluster
   hosts: public
   become: true
-
   roles:
     - role: k3s_cluster_join

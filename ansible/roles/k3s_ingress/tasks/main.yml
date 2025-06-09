@@ -1,0 +1,30 @@
+- name: Add ingress-nginx Helm repo
+  community.kubernetes.helm_repository:
+    name: ingress-nginx
+    repo_url: https://kubernetes.github.io/ingress-nginx
+
+- name: Install ingress-nginx controller with NodePort service
+  community.kubernetes.helm:
+    name: ingress-nginx
+    chart_ref: ingress-nginx/ingress-nginx
+    release_namespace: "{{ ingress_namespace }}"
+    create_namespace: true
+    values:
+      controller:
+        service:
+          type: NodePort
+          nodePorts:
+            http: "{{ node_ports.http }}"
+            https: "{{ node_ports.https }}"
+        ingressClassResource:
+          name: "{{ ingress_class_name }}"
+          enabled: true
+          default: true
+    wait: true
+    update_repo_cache: true
+
+- name: Create backend ingress resource
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'backend-ingress.yml.j2') }}"
+
