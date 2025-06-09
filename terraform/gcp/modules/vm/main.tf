@@ -45,3 +45,4 @@ resource "google_compute_instance" "vm" {
     lookup(each.value, "security_groups", [])
   )
 }
+

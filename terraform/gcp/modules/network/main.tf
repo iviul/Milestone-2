@@ -114,3 +114,21 @@ resource "google_compute_router_nat" "cloud_nat" {
   nat_ip_allocate_option             = "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
+
+resource "google_compute_firewall" "lb_health_check" {
+  name      = "${var.project_id}-k3s-vpc-lb-health-check"
+  network   = google_compute_network.vpc["k3s-vpc"].self_link
+  direction = "INGRESS"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["6443"]
+  }
+
+  source_ranges = [
+    "130.211.0.0/22",
+    "35.191.0.0/16"
+  ]
+
+  target_tags = ["k3s-sg"]
+}
