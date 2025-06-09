@@ -29,14 +29,6 @@
   hosts: k3s-node-1
   gather_facts: false
 
-  # pre_tasks:
-  #   - name: "🔍 Перевірка env та cluster_issuer_name"
-  #     debug:
-  #       msg:
-  #         - "env = {{ env | default('undefined') }}"
-  #         - "cluster_issuer_name = {{ cluster_issuer_name | default('undefined') }}"
-  #     run_once: true
-
   tasks:
     - name: "Include role cert_manager"
       ansible.builtin.include_role:
