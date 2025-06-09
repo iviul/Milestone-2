@@ -3,7 +3,7 @@
   hosts: reverse-proxy
   become: yes
   roles:
-    - reverse-proxy
+    - reverse_proxy
 
 - name: Deploy Redis Service
   hosts: redis
@@ -24,7 +24,7 @@
     - ../terraform/config.json
   roles:
     - role: install_packages
-    - role: gcp-docker-auth
+    - role: gcp_docker_auth
     - role: container_exec
   vars:
     container: "{{ containers.backend }}" 
@@ -36,7 +36,7 @@
     - ../terraform/config.json
   roles:
     - role: install_packages
-    - role: gcp-docker-auth
+    - role: gcp_docker_auth
     - role: container_exec
   vars:
     container: "{{ containers.frontend }}" 

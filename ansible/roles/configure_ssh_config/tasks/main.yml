@@ -13,5 +13,5 @@
     path: "{{ lookup('env', 'HOME') }}/.ssh/config"
     block: "{{ lookup('template', 'config-template.j2') }}"
     marker: "# {mark} ANSIBLE MANAGED BLOCK - BASTION CONFIG"
-    create: yes
+    create: true
     mode: '0600'

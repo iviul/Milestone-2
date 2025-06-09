@@ -1,14 +1,14 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT-0
 ---
 # tasks file for install_packages
 - name: Install aptitude
-  apt:
+  ansible.builtin.apt:
     name: aptitude
     state: latest
     update_cache: true
 
 - name: Install required system packages
-  apt:
+  ansible.builtin.apt:
     pkg:
       - apt-transport-https
       - ca-certificates
@@ -22,36 +22,35 @@
     update_cache: true
 
 - name: Add Docker GPG apt Key
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
 - name: Add Docker Repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: deb https://download.docker.com/linux/ubuntu focal stable
     state: present
 
 - name: Update apt and install docker-ce
-  apt:
+  ansible.builtin.apt:
     name: docker-ce
     state: latest
     update_cache: true
 
 - name: Allow running Docker without sudo
-  user:
+  ansible.builtin.user:
     name: "{{ ansible_user | default('ubuntu') }}"
     groups: docker
-    append: yes
+    append: true
 
 - name: Restart docker to apply group changes
-  systemd:
+  ansible.builtin.systemd:
     name: docker
     state: restarted
-    enabled: yes
+    enabled: true
 
 - name: Ensure Docker service is started and enabled
-  systemd:
+  ansible.builtin.systemd:
     name: docker
     enabled: true
     state: started
-

@@ -36,6 +36,7 @@
     curl -sfL {{ k3s_url }} | sh -s - \
       --cluster-init \
       --disable=traefik \
+      --disable=servicelb \
       --token {{ k3s_token }} \
       --tls-san {{ dns_name }}
   args:

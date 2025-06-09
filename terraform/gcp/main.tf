@@ -55,6 +55,27 @@ module "vm" {
   depends_on            = [module.network]
 }
 
+<<<<<<< HEAD
+module "db_instance" {
+  source            = "./modules/db-instance"
+  project_id        = local.config.project.name
+  region            = local.region
+  databases         = local.config.databases
+  private_networks  = module.network.vpc_self_links
+  subnet_self_links = module.network.subnet_self_links_by_name
+  depends_on        = [module.network]
+  db_pass           = local.db_password
+  db_username       = local.db_username
+}
+
+module "artifact-registry" {
+  source                        = "./modules/artifact-registry"
+  region                        = local.gcp_artifact_registry.region
+  artifact_registry_id          = local.gcp_artifact_registry.name
+  artifact_registry_description = local.gcp_artifact_registry.repository_type
+  artifact_registry_format      = local.gcp_artifact_registry.format
+}
+=======
 module "load_balancer" {
   source                    = "./modules/load_balancer"
   project_id                = local.config.project.name
@@ -78,3 +99,4 @@ module "load_balancer" {
 #   db_pass           = local.db_password
 #   db_username       = local.db_username
 # }
+>>>>>>> 83527c1e14ad7930f82b79aae018c083068f8f7c
