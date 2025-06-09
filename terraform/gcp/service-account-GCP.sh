@@ -15,74 +15,76 @@ SECRET_NAME_DB_PASS=db_pass # will be taken by grep
 NEW_BUCKET_NAME=""
 #########################################################################
 if [[ -z "$PROJECT_ID" ]]; then
-	echo "=== Error: Unable to retrieve GCP project ID. Use 'gcloud config set project YOUR_PROJECT_ID' ==="
-	exit 1
+    echo "=== Error: Unable to retrieve GCP project ID. Use 'gcloud config set project YOUR_PROJECT_ID' ==="
+    exit 1
 else
-	echo "=== Project's ID: '$PROJECT_ID' ==="
-	echo
+    echo "=== Project's ID: '$PROJECT_ID' ==="
+    echo
 fi
 #########################################################################
 REQUIRED_APIS=(
-	"iamcredentials.googleapis.com"
-	"compute.googleapis.com"
-	"cloudresourcemanager.googleapis.com"
-	"serviceusage.googleapis.com"
-	"storage.googleapis.com"
-	"artifactregistry.googleapis.com"
-	"secretmanager.googleapis.com"
-	"sqladmin.googleapis.com"
+    "iamcredentials.googleapis.com"
+    "compute.googleapis.com"
+    "cloudresourcemanager.googleapis.com"
+    "serviceusage.googleapis.com"
+    "storage.googleapis.com"
+    "artifactregistry.googleapis.com"
+    "secretmanager.googleapis.com"
+    "sqladmin.googleapis.com"
+    "monitoring.googleapis.com"
+    "logging.googleapis.com"
 )
 
 echo "=== Enabling required APIs for project: $PROJECT_ID ==="
 for api in "${REQUIRED_APIS[@]}"; do
-	echo "- Enabling '$api'..."
-	gcloud services enable "$api" --project="$PROJECT_ID" || echo "=== Failed to enable $api ==="
+    echo "- Enabling '$api'..."
+    gcloud services enable "$api" --project="$PROJECT_ID" || echo "=== Failed to enable $api ==="
 done
 echo "=== All required APIs were enabled ==="
 echo
 #########################################################################
 echo "=== Checking for service account $SERVICE_ACCOUNT_NAME... ==="
-if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" > /dev/null 2>&1; 
-
-then
-	echo "=== Service account: $SERVICE_ACCOUNT_NAME already exists. ==="
-	
-	echo
+if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" > /dev/null 2>&1; then
+    echo "=== Service account: $SERVICE_ACCOUNT_NAME already exists. ==="
+    echo
 else
-	echo "=== Creating service account: $SERVICE_ACCOUNT_NAME ==="
-	gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" \
-		--description="$DESCRIPTION" \
-		--display-name="$SERVICE_ACCOUNT_NAME"
-	echo
+    echo "=== Creating service account: $SERVICE_ACCOUNT_NAME ==="
+    gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" \
+        --description="$DESCRIPTION" \
+        --display-name="$SERVICE_ACCOUNT_NAME"
+    echo
 fi
 #########################################################################
 IAM_ROLES=(
-	"editor"
-	"secretmanager.secretAccessor"
+    "editor"
+    "secretmanager.secretAccessor"
     "iam.serviceAccountViewer"
-	"iam.monitoring.metricsWriter"
-	"iam.logging.logWriter"
-
+    "monitoring.metricWriter"
+    "logging.logWriter"
+    "compute.networkAdmin"
+    "monitoring.admin"
+    "monitoring.editor"
 )
+
 for iam_role in "${IAM_ROLES[@]}"; do
-	echo "=== Binding role '$iam_role' to service account... ==="
-	gcloud projects add-iam-policy-binding "$PROJECT_ID" \
-		--member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
-		--role="roles/$iam_role" || echo "=== Role binding may already exist ==="
-	echo
+    echo "=== Binding role '$iam_role' to service account... ==="
+    gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+        --member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
+        --role="roles/$iam_role" || echo "=== Role binding may already exist ==="
+    echo
 done
 echo "=== All iam roles were enabled ==="
 echo
 #########################################################################
 echo "=== Checking if key file: $KEY_FILE already exists ==="
 if [[ -f "$KEY_FILE" ]]; then
-	echo "=== Key file: $KEY_FILE already exists. ==="
-	echo
+    echo "=== Key file: $KEY_FILE already exists. ==="
+    echo
 else
-	echo "=== Creating key file: $KEY_FILE ==="
-	gcloud iam service-accounts keys create "$KEY_FILE" \
-		--iam-account="$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com"
-	echo
+    echo "=== Creating key file: $KEY_FILE ==="
+    gcloud iam service-accounts keys create "$KEY_FILE" \
+        --iam-account="$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com"
+    echo
 fi
 #########################################################################
 
@@ -121,7 +123,6 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
   --role="roles/secretmanager.secretAccessor"
 
-
 echo "=== Creating the bucket ==="
 export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
 if [ -f "$ENV_FILE" ]; then
@@ -130,7 +131,7 @@ if [ -f "$ENV_FILE" ]; then
     if gsutil ls -b "gs://$TF_VAR_cloud_bucket" > /dev/null 2>&1; then
         echo "=== The bucket: gs://$TF_VAR_cloud_bucket already exists. ==="
         NEW_BUCKET_NAME="$TF_VAR_cloud_bucket"
-	fi
+    fi
 fi
 
 if [ -z "$NEW_BUCKET_NAME" ]; then
@@ -144,27 +145,25 @@ if [ -z "$NEW_BUCKET_NAME" ]; then
 
     echo "=== Enabling versioning on gs://$NEW_BUCKET_NAME ==="
     gsutil versioning set on "gs://$NEW_BUCKET_NAME" || echo "=== Versioning already enabled ==="
-	cat > "$ENV_FILE" <<EOL
+    cat > "$ENV_FILE" <<EOL
 export TF_VAR_cloud_bucket=$NEW_BUCKET_NAME
 EOL
 
-	GITIGNORE_FILE=".gitignore"
-	if [ ! -f "$GITIGNORE_FILE" ]; then
-		touch "$GITIGNORE_FILE"
-	fi
-	if ! grep -Fxq "$ENV_FILE" "$GITIGNORE_FILE"; then
-		echo "$ENV_FILE" >> "$GITIGNORE_FILE"
-		echo "Added $ENV_FILE to $GITIGNORE_FILE"
-	fi
+    GITIGNORE_FILE=".gitignore"
+    if [ ! -f "$GITIGNORE_FILE" ]; then
+        touch "$GITIGNORE_FILE"
+    fi
+    if ! grep -Fxq "$ENV_FILE" "$GITIGNORE_FILE"; then
+        echo "$ENV_FILE" >> "$GITIGNORE_FILE"
+        echo "Added $ENV_FILE to $GITIGNORE_FILE"
+    fi
 fi
-
-
 #########################################################################
 startTerraform() {
-	echo "🚀 STARTING TERRAFORM"
-	terraform init \
-		-backend-config="bucket=$1" \
-		-reconfigure
+    echo "🚀 STARTING TERRAFORM"
+    terraform init \
+        -backend-config="bucket=$1" \
+        -reconfigure
 }
 startTerraform "$NEW_BUCKET_NAME"
 #########################################################################

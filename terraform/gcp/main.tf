@@ -78,6 +78,7 @@ locals {
   region = local.fixed_region_map["gcp"]
 
   ssh_keys = local.config.project.keys
+  service_account_email = local.config.project.service_account_email # ADD THIS LINE
 }
 
 module "network" {
@@ -98,7 +99,7 @@ module "vm" {
   subnet_self_links_map = module.network.subnet_self_links_by_name
   ssh_keys              = local.ssh_keys
   depends_on            = [module.network]
-  service_account_email = local.config.project.service_account_email
+  service_account_email = local.service_account_email # CHANGE THIS LINE
 }
 
 resource "google_project_service" "monitoring" {
@@ -109,5 +110,5 @@ resource "google_project_service" "monitoring" {
 
 module "monitoring" {
   source      = "./modules/monitoring"
-  alert_email = "iviulich@gmail.com"
+  alert_email = "olegkuzo23@gmail.com"
 }
