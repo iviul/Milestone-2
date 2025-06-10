@@ -50,7 +50,8 @@
   ansible.builtin.shell: |
     curl -sfL {{ k3s_url }} | sh -s - \
       --server https://{{ hostvars[groups['all'][0]].ansible_host_private }}:6443 \
-      --token {{ k3s_token }}
+      --token {{ k3s_token }} \
+      --disable=traefik 
   args:
     creates: "{{ k3s_binary_path }}"
   when:
