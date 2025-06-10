@@ -3,7 +3,7 @@
   hosts: k3s-node-1
   become: true
   vars_files:
-    - ../terraform/config.json
+    - "{{ config_path }}"
   roles:
     - app_deploy
   vars:
@@ -15,8 +15,6 @@
 - name: Deploy ingress
   hosts: k3s-node-1
   become: true
-  vars_files:
-    - ../terraform/config.json
   roles:
     - cert_manager
     - k3s_ingress
