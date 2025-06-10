@@ -11,15 +11,17 @@
     create_namespace: true
     values:
       controller:
+        kind: DaemonSet
+        hostNetwork: true
+        dnsPolicy: ClusterFirstWithHostNet
         service:
-          type: NodePort
-          nodePorts:
-            http: "{{ node_ports.http }}"
-            https: "{{ node_ports.https }}"
+          type: ClusterIP
         ingressClassResource:
           name: "{{ ingress_class_name }}"
           enabled: true
           default: true
+        admissionWebhooks:
+          enabled: false
     wait: true
     update_repo_cache: true
 

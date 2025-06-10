@@ -1,21 +1,11 @@
 ---
-# Namespace configuration
 ingress_namespace: intproject
 
-# Ingress class configuration
 ingress_class_name: nginx
 
-# TLS configuration
 tls_secret_name: nginx-hello-tls-secret
 
-# Domain configuration
 domains:
-  - "{{ vars['k3s-nlb-ingress'] }}"
+  - "example.com"
 
-# Service configuration
-node_ports:
-  http: 30080
-  https: 30443
-
-# Ingress configuration
 ingress_name: backend-ingress
