@@ -3,6 +3,7 @@ resource "google_compute_instance_group" "k3s_group" {
   name      = "${var.load_balancer_name}-ig"
   zone      = var.zone
   instances = var.instances
+  network   = var.network
 
   named_port {
     name = "k3s"
@@ -82,7 +83,7 @@ resource "google_compute_firewall" "allow_lb_to_vm" {
   priority      = 1000
   source_ranges = [google_compute_forwarding_rule.k3s_forwarding_rule.ip_address]
 
-  target_tags = ["k3s-worker", "k3s-master"] # Adjust tags as needed
+  target_tags = ["k3s-worker", "k3s-master"] 
 
   allow {
     protocol = "tcp"
