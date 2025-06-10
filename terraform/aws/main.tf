@@ -80,8 +80,8 @@ module "iam" {
   iam = local.config.iam.aws
 }
 
-# module "registry" {
-#   source = "./modules/registry"
+module "registry" {
+  source = "./modules/registry"
 
-#   config = local.config
-# }
+  config = local.config
+}
