@@ -4,13 +4,13 @@
     cmd: kubectl get ns "{{ cert_namespace }}"
   register: cert_ns_check
   changed_when: false
-  ignore_errors: true
+  failed_when: cert_ns_check.rc not in [0, 1]
   tags:
     - certificate
     - check_namespace
 
 - name: "Create namespace for Certificates ({{ cert_namespace }})"
-  when: cert_ns_check.rc != 0 and inventory_hostname == groups['k3s_control_plane'][0]
+  when: cert_ns_check.rc != 0
   become: true
   kubernetes.core.k8s:
     api_version: v1
@@ -25,7 +25,6 @@
     - create_namespace
 
 - name: Render Certificate manifest on controller
-  when: inventory_hostname == groups['k3s_control_plane'][0]
   run_once: true
   delegate_to: k3s-node-1
   ansible.builtin.template:
@@ -38,15 +37,12 @@
 - name: Debug rendered certificate manifest
   ansible.builtin.debug:
     msg: "{{ lookup('template', 'certificate.yml.j2') }}"
-  when: inventory_hostname == groups['k3s_control_plane'][0]
 
 - name: Apply Certificate via k8s module
-  when: inventory_hostname == groups['k3s_control_plane'][0]
   become: true
   kubernetes.core.k8s:
     state: present
     src: "/tmp/{{ certificate_name }}.yaml"
-    # definition: "{{ lookup('template', 'certificate.yml.j2') }}"
     kubeconfig: /etc/rancher/k3s/k3s.yaml
   tags:
     - certificate

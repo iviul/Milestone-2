@@ -3,36 +3,23 @@
   ansible.builtin.include_tasks:
     file: install_helm.yml
 
-- name: Check if Cert-Manager namespace exists
-  ansible.builtin.command:
-    cmd: kubectl get ns "{{ cert_manager_namespace }}"
-  register: ns_check
-  changed_when: false
-  ignore_errors: true
+- name: Add cert-manager Helm repository
+  kubernetes.core.helm_repository:
+    name: jetstack
+    repo_url: https://charts.jetstack.io
 
-- name: "Create namespace for Cert-Manager"
-  kubernetes.core.k8s:
-    api_version: v1
-    kind: Namespace
-    name: "{{ cert_manager_namespace }}"
-    state: present
-    kubeconfig: "{{ kubeconfig_path }}"
-  become: true
-  when: ns_check.rc != 0
-  delegate_to: k3s-node-1
-  tags:
-    - certmanager
-    - create_ns
-
-- name: "Apply Cert-Manager CRDs"
-  become: true
-  kubernetes.core.k8s:
-    state: present
-    definition: "{{ lookup('url', cert_manager_crds_url) }}"
-    kubeconfig: "{{ kubeconfig_path }}"
-  when: inventory_hostname == groups['k3s_control_plane'][0]
-  tags:
-    - certmanager
+- name: Install cert-manager with Helm
+  kubernetes.core.helm:
+    name: cert-manager
+    chart_ref: jetstack/cert-manager
+    release_namespace: "{{ cert_manager_namespace }}"
+    create_namespace: true
+    values:
+      installCRDs: true
+      webhook:
+        timeoutSeconds: 30
+    wait: true
+    wait_timeout: 600s
 
 - name: "Create ClusterIssuer"
   import_tasks: create_cluster_issuer.yml
