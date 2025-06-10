@@ -9,7 +9,6 @@ cert_manager_crds_url: >-
 
 cert_manager_acme_email: "foxandwolf1111@gmail.com"
 
-# Path to the kubeconfig file used to authenticate with the Kubernetes cluster
 kubeconfig_path: /etc/rancher/k3s/k3s.yaml
 
 helm_repo_name: jetstack
@@ -23,17 +22,13 @@ cert_manager_release_name: cert-manager
 # Namespace where the certificate will be deployed
 cert_namespace: intproject
 
-# Name of the certificate to be created
 certificate_name: nginx-hello-cert
 
-# Secret name where the generated TLS certificate will be stored
 certificate_secret: nginx-hello-tls-secret
 
-# List of domain names included in the certificate
 domains:
   - "{{ vars['k3s-nlb-ingress'] }}"
 
-# Ingress class used for certificate issuance via ACME challenges
 ingress_class_name: nginx
 
 ingress_name: "nginx"
