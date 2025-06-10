@@ -19,7 +19,7 @@ module "network" {
   vpcs   = local.config.network
 }
 
-module "security-groups" {
+module "security_groups" {
   source           = "./modules/security-groups"
   security_groups  = local.security_groups
   networks_by_name = local.networks_by_name
@@ -80,8 +80,8 @@ module "iam" {
   iam = local.config.iam.aws
 }
 
-module "registry" {
-  source = "./modules/registry"
+# module "registry" {
+#   source = "./modules/registry"
 
-  config = local.config
-}
+#   config = local.config
+# }
