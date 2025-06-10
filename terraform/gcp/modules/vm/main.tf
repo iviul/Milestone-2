@@ -34,11 +34,11 @@ resource "google_compute_instance" "vm" {
     }
   }
 
-  metadata = {
-    startup-script = templatefile("${path.root}/metadata.sh", {
-      ssh_keys = join("\n", var.ssh_keys)
-    })
-  }
+metadata = {
+  startup-script = templatefile("${path.root}/metadata.sh", {
+    ssh_keys = join("\n", var.ssh_keys)
+  })
+}
 
     tags = concat(
         tolist(each.value.tags),

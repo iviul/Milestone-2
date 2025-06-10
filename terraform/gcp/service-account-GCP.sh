@@ -99,7 +99,7 @@ create_secret() {
     SECRET_VALUE=$3
 
     if check_secret_exists "$SECRET_NAME" "$PROJECT_ID"; then
-        echo "✅ Secret '$SECRET_NAME' already exists."
+        echo "Secret '$SECRET_NAME' already exists."
     else
         echo "Creating secret '$SECRET_NAME'..."
         if gcloud secrets create "$SECRET_NAME" \
@@ -108,9 +108,9 @@ create_secret() {
             echo -n "$SECRET_VALUE" | gcloud secrets versions add "$SECRET_NAME" \
                 --data-file=- \
                 --project="$PROJECT_ID"
-            echo "✅ Secret '$SECRET_NAME' created and value added."
+            echo "Secret '$SECRET_NAME' created and value added."
         else
-            echo "❌ Failed to create secret '$SECRET_NAME'."
+            echo "Failed to create secret '$SECRET_NAME'."
             exit 1
         fi
     fi
@@ -161,7 +161,7 @@ EOL
 fi
 #########################################################################
 startTerraform() {
-    echo "🚀 STARTING TERRAFORM"
+    echo "STARTING TERRAFORM"
     terraform init \
         -backend-config="bucket=$1" \
         -reconfigure
