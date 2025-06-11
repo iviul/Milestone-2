@@ -9,3 +9,6 @@ ansible_private_key_ssh=${private_key_path}
 %{ for name, dns in lb_dns_names ~}
 dns_name=${dns}
 %{ endfor ~}
+
+[db]
+db_private ansible_host=${db_private}

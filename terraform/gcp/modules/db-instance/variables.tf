@@ -11,6 +11,7 @@ variable "databases" {
     port            = number
     security_groups = list(string)
     region          = optional(string)
+    secondary_zone  = optional(string)
   }))
 }
 

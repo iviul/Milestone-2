@@ -1,9 +1,14 @@
 locals {
-  # map ACL name → cidr
   acls_map = { for a in var.acls : a.name => a.cidr }
 
-  # Create a map of VPC name to VPC for easier lookup
   vpcs_map = { for vpc in var.networks : vpc.name => vpc }
+  psa_ranges_map = {
+    for net in var.networks :
+    net.name => {
+      name  = "psa-range-${net.name}"
+      cidr  = "${net.psa_range}"
+    }
+  }
 
   # Create a map of security group name to the instances it's attached to
   sg_to_instances_map = { for sg in var.security_groups : sg.name => sg.attach_to }
@@ -114,7 +119,6 @@ resource "google_compute_router_nat" "cloud_nat" {
   nat_ip_allocate_option             = "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
-
 resource "google_compute_firewall" "lb_health_check" {
   name      = "${var.project_id}-k3s-vpc-lb-health-check"
   network   = google_compute_network.vpc["k3s-vpc"].self_link
@@ -132,3 +136,30 @@ resource "google_compute_firewall" "lb_health_check" {
 
   target_tags = ["k3s-worker", "k3s-master"] 
 }
+
+resource "google_compute_global_address" "default" {
+  for_each = local.psa_ranges_map
+
+  name          = each.value.name
+  project       = var.project_id
+  provider      = google-beta
+  ip_version    = "IPV4"
+  prefix_length = 16
+  address_type  = "INTERNAL"
+  purpose       = "VPC_PEERING"
+  network       = google_compute_network.vpc[each.key].self_link
+  address       = each.value.cidr
+}
+
+resource "google_service_networking_connection" "private_vpc_connection" {
+  for_each = local.psa_ranges_map
+
+  provider                = google-beta
+  network                 = google_compute_network.vpc[each.key].self_link
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.default[each.key].name]
+  update_on_creation_fail = true
+}
+
+
+

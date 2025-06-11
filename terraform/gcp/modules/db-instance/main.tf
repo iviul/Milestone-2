@@ -1,35 +1,47 @@
-resource "google_sql_database_instance" "instances" {
-  for_each = { for db in var.databases : db.name => db }
-
+resource "google_sql_database_instance" "primary" {
+  for_each         = { for db in var.databases : db.name => db }
   name             = each.value.name
-  database_version = "${upper(each.value.type)}_${each.value.version}"
   region           = var.region
+  database_version = "${upper(each.value.type)}_${each.value.version}"
 
   settings {
     tier              = "db-g1-${each.value.size}"
-    availability_type = length(each.value.zone) > 1 ? "REGIONAL" : "ZONAL"
+    availability_type = each.value.secondary_zone >= 1 ? "REGIONAL" : "ZONAL" 
+
+    dynamic "location_preference" {
+      for_each = [1]
+      content {
+        zone           = "${var.region}-${each.value.zone[0]}"  
+        secondary_zone = each.value.secondary_zone != null ? "${var.region}-${each.value.secondary_zone}" : null
+      }
+    }
+
+    backup_configuration {
+      enabled                        = true
+      start_time                     = "20:55"
+      point_in_time_recovery_enabled = true
+    }
 
     ip_configuration {
-      ipv4_enabled = true
+      ipv4_enabled    = false
+      private_network = lookup(var.private_networks, each.value.network)
     }
   }
 
   deletion_protection = false
 }
 
-resource "google_sql_database" "databases" {
-  for_each = { for db in var.databases : db.name => db }
 
-  name     = each.value.name
-  instance = google_sql_database_instance.instances[each.value.name].name
+
+resource "google_sql_database" "databases" {
+  for_each = google_sql_database_instance.primary
+  name     = each.key
+  instance = each.value.name
 }
 
-# Create default user for each database
 resource "google_sql_user" "users" {
-  for_each = { for db in var.databases : db.name => db }
-
+  for_each = google_sql_database_instance.primary
   name        = var.db_username
   instance    = google_sql_database_instance.instances[each.value.name].name
   password = var.db_pass
 }
-
