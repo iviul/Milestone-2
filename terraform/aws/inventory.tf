@@ -3,7 +3,7 @@ locals {
 
   inventory = templatefile("${path.module}/../inventory.tpl", {
     private_ips      = module.vms.private_ips
-    public_ips       = module.vms.public_ips
+    bastion_ip       = module.vms.public_ips["bastion"]
     private_key_path = var.private_key_path
     lb_dns_names     = module.load_balancers.lb_dns_names
 

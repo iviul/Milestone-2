@@ -17,5 +17,5 @@
   become: true
   roles:
     - cert_manager
-    - k3s_ingress
+    - nginx_ingress_controller
 
