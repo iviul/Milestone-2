@@ -42,6 +42,7 @@ module "network" {
   networks        = local.config.network
   acls            = local.config.network[0].subnets
   security_groups = local.config.security_groups
+  health_check_port = var.health_check_port
 }
 
 module "vm" {
@@ -65,6 +66,7 @@ module "load_balancer" {
   instances                 = module.vm.instances_self_links
   ip_address                = local.load_balancer.ip_address
   load_balancer_port_range  = local.load_balancer.port_range
+  health_check_port         = var.health_check_port
 }
 
 # module "db_instance" {

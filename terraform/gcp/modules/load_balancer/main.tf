@@ -7,7 +7,7 @@ resource "google_compute_instance_group" "k3s_group" {
 
   named_port {
     name = "k3s"
-    port = 6443
+    port = var.health_check_port
   }
 }
 
@@ -16,7 +16,7 @@ resource "google_compute_health_check" "tcp_hc" {
   name = "${var.load_balancer_name}-tcp-hc"
 
   tcp_health_check {
-    port = 6443
+    port = var.health_check_port
   }
 
   check_interval_sec  = 5
@@ -31,7 +31,7 @@ resource "google_compute_region_health_check" "tcp_hc" {
   region = var.region
 
   tcp_health_check {
-    port = 6443 // use the same port as the instance group
+    port = var.health_check_port // use the same port as the instance group
   }
 
   check_interval_sec  = 5
@@ -57,7 +57,6 @@ resource "google_compute_region_backend_service" "k3s_backend" {
   }
 }
 
-
 # Global static IP (if needed)
 resource "google_compute_address" "lb_static_ip" {
   name   = "${var.load_balancer_name}-static-ip"
@@ -69,7 +68,7 @@ resource "google_compute_forwarding_rule" "k3s_forwarding_rule" {
   name                  = "${var.load_balancer_name}-fr"
   ip_address            = google_compute_address.lb_static_ip.address
   ip_protocol           = "TCP"
-  port_range            = "6443"
+  port_range            = var.load_balancer_port_range
   backend_service       = google_compute_region_backend_service.k3s_backend.self_link
   load_balancing_scheme = "EXTERNAL"
   region                = var.region
@@ -87,7 +86,7 @@ resource "google_compute_firewall" "allow_lb_to_vm" {
 
   allow {
     protocol = "tcp"
-    ports    = ["6443"]
+    ports    = [tostring(var.health_check_port)]
   }
 
   description = "Allow incoming traffic from load balancer IP on port 6443 to the VMs."

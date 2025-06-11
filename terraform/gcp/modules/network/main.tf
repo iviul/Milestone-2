@@ -122,7 +122,7 @@ resource "google_compute_firewall" "lb_health_check" {
 
   allow {
     protocol = "tcp"
-    ports    = ["6443"]
+    ports    = [tostring(var.health_check_port)]
   }
 
   source_ranges = [
@@ -130,5 +130,5 @@ resource "google_compute_firewall" "lb_health_check" {
     "35.191.0.0/16"
   ]
 
-  target_tags = ["k3s-sg"]
+  target_tags = ["k3s-worker", "k3s-master"] 
 }
