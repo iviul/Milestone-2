@@ -50,3 +50,9 @@ variable "security_groups" {
   description = "Firewall definitions mapping tags → ingress/egress rules"
 }
 
+variable "health_check_port" {
+  description = "Port used for health checks (default: 6443 for K3s)"
+  type        = number
+  default     = 6443
+}
+

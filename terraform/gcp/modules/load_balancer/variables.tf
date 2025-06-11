@@ -1,7 +1,7 @@
 variable "project_id" {
   description = "GCP project ID."
   type        = string
-  #  default       = "lofty-memento-458508-i1"
+  #  default       = "micro-avenue-459114-p8"
 }
 
 variable "load_balancer_name" {

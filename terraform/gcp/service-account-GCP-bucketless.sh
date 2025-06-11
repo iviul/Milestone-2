@@ -2,7 +2,7 @@
 set -euo pipefail
 #########################################################################
 CONFIG_PATH=$1
-SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' "$CONFIG_PATH")
+SERVICE_ACCOUNT_NAME=$(ggrep -oP '"terraform_username":\s*"\K[^"]+' "$CONFIG_PATH")
 PROJECT_ID=$(gcloud config get-value project)
 DESCRIPTION="The service account for the Terraform"
 KEY_FILE="${2%.json}.json"
