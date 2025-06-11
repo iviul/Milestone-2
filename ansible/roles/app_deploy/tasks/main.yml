@@ -1,12 +1,12 @@
 - name: Install Python dependencies
-  apt:
+  ansible.builtin.apt:
     update_cache: yes
     pkg:
       - python3-pip
     state: present
 
 - name: Install Python packages system-wide (PEP 668 override)
-  pip:
+  ansible.builtin.pip:
     name:
       - openshift
       - pyyaml
@@ -21,7 +21,7 @@
     mode: '0700'
 
 - name: Copy kubeconfig for root user
-  copy:
+  ansible.builtin.copy:
     src: /etc/rancher/k3s/k3s.yaml
     dest: /root/.kube/config
     remote_src: yes
