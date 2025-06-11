@@ -40,6 +40,7 @@ module "load_balancers" {
   load_balancers = local.load_balancers
   subnets = module.network.subnets
   security_groups = module.security_groups.sg_ids_by_name
+  network = module.network.vpc_self_links["k3s-vpc"]
 }
 
 module "listeners" {
