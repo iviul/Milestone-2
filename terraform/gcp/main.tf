@@ -40,8 +40,9 @@ module "network" {
   project_id      = local.config.project.name
   region          = local.region
   networks        = local.config.network
-  acls            = local.config.networks
+  acls            = local.config.network[0].subnets
   security_groups = local.config.security_groups
+  health_check_port = var.health_check_port
 }
 
 module "vm" {
@@ -81,8 +82,10 @@ module "load_balancer" {
   load_balancer_name        = local.load_balancer.name
   region                    = local.load_balancer.region
   zone                      = "europe-west3-a"               
-  network                   = "https://www.googleapis.com/compute/v1/projects/${local.config.project.name}/global/networks/lofty-memento-458508-i1-k3s-vpc-vpc"
+  network                   = module.network.vpc_self_links["k3s-vpc"]
   instances                 = module.vm.instances_self_links
   ip_address                = local.load_balancer.ip_address
   load_balancer_port_range  = local.load_balancer.port_range
+  health_check_port         = var.health_check_port
 }
+
