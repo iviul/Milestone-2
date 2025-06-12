@@ -20,3 +20,15 @@ variable "private_key_path" {
   default     = "/home/user/.ssh"
 }
 
+variable "cloudflare_api_token" {
+  type        = string
+  description = "API token for Cloudflare"
+  sensitive   = true
+}
+
+variable "cloudflare_zone_id" {
+  type    = string
+  default = "42b42abbecbb7793d4e4f1d20b1f836f"
+}
+
+

@@ -2,5 +2,20 @@
 - name: Deploy application
   hosts: k3s-node-1
   become: true
+  vars_files:
+    - "{{ config_path }}"
   roles:
     - app_deploy
+  vars:
+    secrets: "{{ secrets }}"
+    configmaps: "{{ configmaps }}"
+    services: "{{ services }}"
+    deployments: "{{ deployments }}"
+
+- name: Deploy ingress
+  hosts: k3s-node-1
+  become: true
+  roles:
+    - cert_manager
+    - nginx_ingress_controller
+

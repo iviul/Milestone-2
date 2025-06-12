@@ -6,7 +6,7 @@ resource "google_sql_database_instance" "primary" {
 
   settings {
     tier              = "db-g1-${each.value.size}"
-    availability_type = each.value.secondary_zone >= 1 ? "REGIONAL" : "ZONAL" 
+    availability_type = each.value.secondary_zone != null ? "REGIONAL" : "ZONAL" 
 
     dynamic "location_preference" {
       for_each = [1]
@@ -42,6 +42,6 @@ resource "google_sql_database" "databases" {
 resource "google_sql_user" "users" {
   for_each = google_sql_database_instance.primary
   name        = var.db_username
-  instance    = google_sql_database_instance.instances[each.value.name].name
+  instance = google_sql_database_instance.primary[each.key].name
   password = var.db_pass
 }

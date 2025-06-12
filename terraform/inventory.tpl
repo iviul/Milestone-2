@@ -1,11 +1,22 @@
-[public]
-%{ for name, ip in public_ips ~}
-${name} ansible_host=${ip} ansible_host_private=${private_ips[name]}
+[private]
+%{ for name, ip in private_ips ~}
+%{ if name != "bastion" ~}
+${name} ansible_host=${ip}
+%{ endif ~}
 %{ endfor ~}
+
+[bastion]
+bastion ansible_host=${bastion_ip}
 
 [all:vars]
 ansible_user = ubuntu
 ansible_private_key_ssh=${private_key_path}
+db_host=${db_host}
+db_user=${db_user} 
+db_password=${db_password} 
+db_port=${db_port} 
+db_name=${db_name} 
 
-[db]
-db_private ansible_host=${db_private}
+
+[private:vars]
+ansible_ssh_common_args='-o ProxyJump=ubuntu@${bastion_ip}'

@@ -16,11 +16,21 @@ output "private_ips" {
   }
 }
 
-# output "ports" {
-#   value = {
-#     for vm in var.vm_instances : vm.name => vm.port
-#   }
-# }
+output "non_bastion_instances_self_links" {
+  description = "Self links of instances without bastion tag"
+  value = [
+    for inst in google_compute_instance.vm :
+    inst.self_link if !contains(inst.tags, "bastion")
+  ]
+}
+
+output "bastion_instances_self_links" {
+  description = "Self links of instances with bastion tag"
+  value = [
+    for inst in google_compute_instance.vm :
+    inst.self_link if contains(inst.tags, "bastion")
+  ]
+}
 
 output "instances_self_links" {
   value = [

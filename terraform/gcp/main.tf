@@ -56,8 +56,8 @@ module "vm" {
   depends_on            = [module.network]
 }
 
-module "db_instance" {
-  source            = "./modules/db_instance"
+module "db-instance" {
+  source            = "./modules/db-instance"
   project_id        = local.config.project.name
   region            = local.region
   databases         = local.config.databases
@@ -68,22 +68,23 @@ module "db_instance" {
   db_username       = local.db_username
 }
 
-module "artifact_registry" {
-  source                        = "./modules/artifact_registry"
+module "artifact-registry" {
+  source                        = "./modules/artifact-registry"
   region                        = local.gcp_artifact_registry.region
   artifact_registry_id          = local.gcp_artifact_registry.name
   artifact_registry_description = local.gcp_artifact_registry.repository_type
   artifact_registry_format      = local.gcp_artifact_registry.format
 }
 
-module "load_balancer" {
-  source                    = "./modules/load_balancer"
+module "load-balancer" {
+  source                    = "./modules/load-balancer"
   project_id                = local.config.project.name
   load_balancer_name        = local.load_balancer.name
   region                    = local.load_balancer.region
   zone                      = "europe-west3-a"               
   network                   = module.network.vpc_self_links["k3s-vpc"]
-  instances                 = module.vm.instances_self_links
+  instances                 = module.vm.non_bastion_instances_self_links
+
   ip_address                = local.load_balancer.ip_address
   load_balancer_port_range  = local.load_balancer.port_range
   health_check_port         = var.health_check_port

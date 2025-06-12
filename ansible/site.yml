@@ -8,39 +8,38 @@
   hosts: redis
   become: yes
   vars_files:
-    - ../terraform/config.json
+    - "{{ config_path }}"
   roles:
     - role: install_packages
     - role: container_exec
   vars:
-    container: "{{ containers.redis }}" 
-
+    container: "{{ containers.redis }}"
 
 - name: Deploy Backend Service
   hosts: backend
   become: yes
   vars_files:
-    - ../terraform/config.json
+    - "{{ config_path }}"
   roles:
     - role: install_packages
     - role: awscli
     - role: ecr_docker_auth
     - role: container_exec
   vars:
-    container: "{{ containers.backend }}" 
+    container: "{{ containers.backend }}"
 
 - name: Deploy Frontend Service
   hosts: frontend
   become: yes
   vars_files:
-    - ../terraform/config.json
+    - "{{ config_path }}"
   roles:
     - role: install_packages
     - role: awscli
     - role: ecr_docker_auth
     - role: container_exec
   vars:
-    container: "{{ containers.frontend }}" 
+    container: "{{ containers.frontend }}"
 
 - name: K3s cluster join
   hosts: public
