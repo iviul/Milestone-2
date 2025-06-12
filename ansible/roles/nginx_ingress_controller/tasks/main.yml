@@ -1,24 +1,32 @@
-# SPDX-License-Identifier: MIT-0
----
-- name: Install NGINX Ingress Controller using Helm
+- name: Add ingress-nginx Helm repo
+  community.kubernetes.helm_repository:
+    name: ingress-nginx
+    repo_url: https://kubernetes.github.io/ingress-nginx
+
+- name: Install ingress-nginx controller with NodePort service
   community.kubernetes.helm:
     name: ingress-nginx
     chart_ref: ingress-nginx/ingress-nginx
-    release_namespace: ingress-nginx
+    release_namespace: "{{ ingress_namespace }}"
     create_namespace: true
     values:
       controller:
-        publishService:
+        kind: DaemonSet
+        hostNetwork: true
+        dnsPolicy: ClusterFirstWithHostNet
+        service:
+          type: ClusterIP
+        ingressClassResource:
+          name: "{{ ingress_class_name }}"
           enabled: true
+          default: true
+        admissionWebhooks:
+          enabled: false
+    wait: true
     update_repo_cache: true
 
-- name: Wait for ingress controller pods to be ready
-  kubernetes.core.k8s_info:
-    kind: Pod
-    namespace: ingress-nginx
-    label_selectors:
-      - "app.kubernetes.io/component=controller"
-  register: ingress_pods
-  until: ingress_pods.resources | selectattr('status.phase', 'equalto', 'Running') | list | length > 0
-  retries: 10
-  delay: 10
+- name: Create app ingress resource
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'app_ingress.yml.j2') }}"
+
