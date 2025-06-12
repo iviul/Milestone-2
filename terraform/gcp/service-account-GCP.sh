@@ -31,6 +31,7 @@ REQUIRED_APIS=(
 	"artifactregistry.googleapis.com"
 	"secretmanager.googleapis.com"
 	"sqladmin.googleapis.com"
+	"servicenetworking.googleapis.com"
 )
 
 echo "=== Enabling required APIs for project: $PROJECT_ID ==="
@@ -60,6 +61,8 @@ IAM_ROLES=(
 	"editor"
 	"secretmanager.secretAccessor"
     "iam.serviceAccountViewer"
+	"servicenetworking.admin"
+	"compute.networkAdmin"
 )
 for iam_role in "${IAM_ROLES[@]}"; do
 	echo "=== Binding role '$iam_role' to service account... ==="
