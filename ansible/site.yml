@@ -1,3 +1,9 @@
+- name: Install Google Cloud Ops Agent
+  hosts: all   # or specify your GCP hosts group
+  become: yes
+  roles:
+    - gcp-ops-agent
+
 - name: Configure reverse proxy
   hosts: reverse-proxy
   become: yes
@@ -47,3 +53,5 @@
   become: yes
   roles: 
     - k3s_cluster_join
+
+
