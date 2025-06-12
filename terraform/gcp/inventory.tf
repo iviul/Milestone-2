@@ -12,12 +12,6 @@ locals {
     db_port     = module.db_instance.db_ports[local.db_name]
     db_name     = module.db_instance.db_names[local.db_name]
 
-    db_host     = module.db-instance.db_hosts[local.db_name]
-    db_user     = module.db-instance.db_users[local.db_name]
-    db_password = module.db-instance.db_passwords[local.db_name]
-    db_port     = module.db-instance.db_ports[local.db_name]
-    db_name     = module.db-instance.db_names[local.db_name]
-
     # redis_host = module.vm.private_ips["redis"]
     # redis_port = module.vm.ports["redis"]
    })

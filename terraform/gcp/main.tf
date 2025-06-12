@@ -9,12 +9,16 @@
 # }
 
 locals {
-  config = jsondecode(file("${path.module}/config-kuber.json"))
+  config = jsondecode(file("${path.module}/../config-kuber.json"))
 
   fixed_region_map = {
     aws = "eu-central-1"
     gcp = "europe-west3"
   }
+  gcp_artifact_registry = one([
+    for ar in local.config.artifact_registry : ar
+    if ar.provider == "gcp"
+  ])
 
   region = local.fixed_region_map["gcp"]
   db_password           = "password"
@@ -64,8 +68,8 @@ module "db_instance" {
   db_username       = local.db_username
 }
 
-module "artifact-registry" {
-  source                        = "./modules/artifact-registry"
+module "artifact_registry" {
+  source                        = "./modules/artifact_registry"
   region                        = local.gcp_artifact_registry.region
   artifact_registry_id          = local.gcp_artifact_registry.name
   artifact_registry_description = local.gcp_artifact_registry.repository_type

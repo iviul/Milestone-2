@@ -17,17 +17,17 @@ configmaps: [
     {
       "name": "server-config",
       "data": {
-        "POSTGRES_URL": "jdbc:postgresql://34.28.11.99:5432/class_schedule_db",
+        "POSTGRES_URL": "jdbc:postgresql://<your-ip>:5432/class_schedule_db",
         "REDIS_URL": "redis://redis:6379",
         "MONGOHOST_URL": "mongo",
-        "REACT_APP_API_BASE_URL": "http://34.89.179.31:31111"
+        "REACT_APP_API_BASE_URL": "http://<your-ip>:31111"
       },
       "namespace": "intproject"
     },
     {
       "name": "frontend-config",
       "data": {
-        "REACT_APP_API_BASE_URL": "http://34.89.179.31:31111"
+        "REACT_APP_API_BASE_URL": "http://server:8080"
       },
       "namespace": "intproject"
     }
