@@ -4,11 +4,11 @@ set -euo pipefail
 #########################################################################
 CONFIG_PATH=$1
 ENV_FILE="gcp_cloud_env.sh"
-SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' "$CONFIG_PATH")
+SERVICE_ACCOUNT_NAME=$(ggrep -oP '"terraform_username":\s*"\K[^"]+' "$CONFIG_PATH")
 PROJECT_ID=$(gcloud config get-value project)
 DESCRIPTION="The service account for the Terraform"
 KEY_FILE="${2%.json}.json"
-BUCKET_LOCATION=$(grep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' "$CONFIG_PATH")
+BUCKET_LOCATION=$(ggrep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' "$CONFIG_PATH")
 DB_USERNAME=postgres
 DB_PASS=postgres
 SECRET_NAME_DB_USERNAME=db_username
@@ -50,11 +50,11 @@ echo
 
 #########################################################################
 echo "=== Checking for service account $SERVICE_ACCOUNT_NAME... ==="
-if gcloud iam service-accounts describe "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" > /dev/null 2>&1; then
+if gcloud iam.service-accounts describe "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" > /dev/null 2>&1; then
 	echo "=== Service account: $SERVICE_ACCOUNT_NAME already exists. ==="
 else
 	echo "=== Creating service account: $SERVICE_ACCOUNT_NAME ==="
-	gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" \
+	gcloud iam.service-accounts create "$SERVICE_ACCOUNT_NAME" \
 		--description="$DESCRIPTION" \
 		--display-name="$SERVICE_ACCOUNT_NAME"
 	echo
@@ -64,6 +64,7 @@ echo
 #########################################################################
 IAM_ROLES=(
 	"editor"
+	"compute.networkAdmin"
 	"secretmanager.secretAccessor"
 	"iam.serviceAccountViewer"
 	"logging.logWriter"
@@ -142,7 +143,7 @@ if [ -f "$ENV_FILE" ]; then
 fi
 
 if [ -z "$NEW_BUCKET_NAME" ]; then
-    BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' "$CONFIG_PATH")
+    BUCKET_NAME=$(ggrep -oP '"bucket_state_name":\s*"\K[^"]+' "$CONFIG_PATH")
     NEW_BUCKET_NAME="${BUCKET_NAME}-$(date +'%Y-%m-%d-%H-%M-%S')"
 
     echo "=== Creating bucket: gs://$NEW_BUCKET_NAME ==="

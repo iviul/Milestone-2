@@ -105,10 +105,10 @@ resource "google_compute_router" "nat_router" {
 }
 
 resource "google_compute_router_nat" "cloud_nat" {
-  for_each = google_compute_router.nat_router
+  for_each = local.vpcs_map
 
   name   = "${each.key}-nat"
-  router = each.value.name
+  router = google_compute_router.nat_router[each.key].name
   region = var.region
 
   nat_ip_allocate_option             = "AUTO_ONLY"

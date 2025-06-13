@@ -1,7 +1,7 @@
 variable "project_id" {
   description = "GCP project ID."
   type        = string
-  #  default       = "micro-avenue-459114-p8"
+  #  default       = "trraform-462806"
 }
 
 variable "load_balancer_name" {
@@ -49,4 +49,17 @@ variable "health_check_port" {
 variable "network" {
   description = "The self_link of the VPC network where the instances and instance group reside"
   type        = string
+}
+
+variable "load_balancers" {
+  description = "List of load balancer configurations."
+  type        = list(object({
+    name              = string
+    port_name         = string
+    health_check_port = number
+    port_range        = string
+    instances         = list(string)
+    network           = string
+    target_tags       = list(string)
+  }))
 }

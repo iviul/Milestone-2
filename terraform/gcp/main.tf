@@ -57,7 +57,7 @@ module "vm" {
 }
 
 module "load_balancer" {
-  source                    = "./modules/load_balancer"
+  source                    = "./modules/load-balancer"
   project_id                = local.config.project.name
   load_balancer_name        = local.load_balancer.name
   region                    = local.load_balancer.region
@@ -67,10 +67,21 @@ module "load_balancer" {
   ip_address                = local.load_balancer.ip_address
   load_balancer_port_range  = local.load_balancer.port_range
   health_check_port         = var.health_check_port
+  load_balancers = [
+    for lb in local.config.load_balancers : {
+      name              = lb.name
+      port_name         = "k3s" # or set dynamically if needed
+      health_check_port = lb.port != null ? lb.port : 6443
+      port_range        = tostring(lb.port)
+      instances         = [for idx, inst in module.vm.instances_self_links : inst if length(regexall("bastion", lower(local.config.vm_instances[idx].name))) == 0]
+      network           = module.network.vpc_self_links[lb.vpc]
+      target_tags       = ["k3s-node"] # or set dynamically if needed
+    }
+  ]
 }
 
 # module "db_instance" {
-#   source            = "./modules/db_instance"
+#   source            = "./modules/db-instance"
 #   project_id        = local.config.project.name
 #   region            = local.region
 #   databases         = local.config.databases
