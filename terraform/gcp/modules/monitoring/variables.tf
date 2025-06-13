@@ -6,23 +6,52 @@ variable "alert_email" {
 variable "disk_usage_threshold" {
   description = "Disk usage threshold in percentage"
   type        = number
-  default     = 0.50
+
 }
 
 variable "memory_usage_threshold" {
   description = "Memory usage threshold in percentage"
   type        = number
-  default     = 0.50
+
 }
 
 variable "network_outbound_threshold" {
   description = "Network outbound threshold in bytes"
   type        = number
-  default     = 1073741824 # 1GB
+
 }
 
 variable "cpu_usage_threshold" {
   description = "CPU usage threshold in percentage"
   type        = number
-  default     = 0.40
+
+}
+
+# variable "swap_usage_threshold" {
+#   description = "Swap usage threshold in percentage"
+#   type        = number
+
+# }
+
+# variable "processes_threshold" {
+#   description = "Processes count threshold"
+#   type        = number
+
+# }
+
+variable "agent_self_threshold" {
+  description = "Agent self metric threshold (example: CPU usage %)"
+  type        = number
+
+}
+
+variable "gpu_usage_threshold" {
+  description = "GPU usage threshold in percentage"
+  type        = number
+
+}
+
+variable "network_interface_usage_threshold" {
+  description = "Network interface usage threshold in bytes"
+  type        = number
 }

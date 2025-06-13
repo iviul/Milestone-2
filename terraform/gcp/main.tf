@@ -69,7 +69,17 @@ resource "google_project_service" "monitoring" {
 
 module "monitoring" {
   source      = "./modules/monitoring"
-  alert_email = "olegkuzo23@gmail.com"
+  alert_email = local.config.monitoring.alert_email
+
+  disk_usage_threshold                = local.config.monitoring.disk_usage_threshold
+  memory_usage_threshold              = local.config.monitoring.memory_usage_threshold
+  network_outbound_threshold          = local.config.monitoring.network_outbound_threshold
+  cpu_usage_threshold                 = local.config.monitoring.cpu_usage_threshold
+# swap_usage_threshold                = local.config.monitoring.swap_usage_threshold
+# processes_threshold                 = local.config.monitoring.processes_threshold
+  agent_self_threshold                = local.config.monitoring.agent_self_threshold
+  gpu_usage_threshold                 = local.config.monitoring.gpu_usage_threshold
+  network_interface_usage_threshold   = local.config.monitoring.network_interface_usage_threshold
 }
 
 module "load_balancer" {
