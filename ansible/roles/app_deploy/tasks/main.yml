@@ -1,23 +1,32 @@
-- name: install pip3
-  apt: 
+- name: Install Python dependencies
+  ansible.builtin.apt:
     update_cache: yes
-    pkg: 
-      - python3-pip 
-
+    pkg:
+      - python3-pip
     state: present
 
-- name: install pre-requisites
-  pip:
+- name: Install Python packages system-wide (PEP 668 override)
+  ansible.builtin.pip:
     name:
       - openshift
       - pyyaml
-      - kubernetes 
+      - kubernetes
+    extra_args: --break-system-packages
+    executable: pip3
+
+- name: Ensure .kube directory exists for root user
+  file:
+    path: /root/.kube
+    state: directory
+    mode: '0700'
 
 - name: Copy kubeconfig for root user
-  copy:
+  ansible.builtin.copy:
     src: /etc/rancher/k3s/k3s.yaml
     dest: /root/.kube/config
     remote_src: yes
+    mode: '0600'
+
 
 - name: Create a k8s namespace
   kubernetes.core.k8s:

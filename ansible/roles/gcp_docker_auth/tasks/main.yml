@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for gcp-docker-auth
+- name: Ensure gcloud is installed
+  ansible.builtin.command: which gcloud
+  register: gcloud_check
+  failed_when: gcloud_check.rc != 0
+  changed_when: false
+
+
+- name: Configure Docker to use gcloud as a credential helper for Artifact Registry
+  ansible.builtin.command: >
+    gcloud auth configure-docker {{ gcp_registry_domain }} --quiet
+  register: docker_auth
+  changed_when: false
+
+
+- name: Show success message
+  ansible.builtin.debug:
+    msg: "Successfully authenticated Docker to GCP registry {{ gcp_registry_domain }}"

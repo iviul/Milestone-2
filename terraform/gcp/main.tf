@@ -9,21 +9,20 @@
 # }
 
 locals {
-  config = jsondecode(file("${path.module}/config-kuber.json"))
+  config = jsondecode(file("${path.module}/../config-kuber.json"))
 
   fixed_region_map = {
     aws = "eu-central-1"
     gcp = "europe-west3"
   }
+  gcp_artifact_registry = one([
+    for ar in local.config.artifact_registry : ar
+    if ar.provider == "gcp"
+  ])
 
-  region      = local.fixed_region_map["gcp"]
-  # db_username = data.google_secret_manager_secret_version_access.db_username.secret
-  # db_password = data.google_secret_manager_secret_version_access.db_password.secret
-
-  # gcp_artifact_registry = one([
-  #   for ar in local.config.artifact_registry : ar
-  #   if ar.provider == "gcp"
-  # ])
+  region = local.fixed_region_map["gcp"]
+  db_password           = "password"
+  db_username       = "user"
 
   ssh_keys = local.config.project.keys
 
@@ -45,9 +44,11 @@ module "network" {
   project_id      = local.config.project.name
   region          = local.region
   networks        = local.config.network
-  acls            = local.config.networks
+  acls            = local.config.network[0].subnets
   security_groups = local.config.security_groups
+  health_check_port = var.health_check_port
 }
+
 
 module "vm" {
   source                = "./modules/vm"
@@ -82,26 +83,37 @@ module "monitoring" {
   network_interface_usage_threshold   = local.config.monitoring.network_interface_usage_threshold
 }
 
-module "load_balancer" {
-  source                    = "./modules/load_balancer"
+module "db-instance" {
+  source            = "./modules/db-instance"
+  project_id        = local.config.project.name
+  region            = local.region
+  databases         = local.config.databases
+  private_networks  = module.network.vpc_self_links
+  subnet_self_links = module.network.subnet_self_links_by_name
+  depends_on        = [module.network]
+  db_pass           = local.db_password
+  db_username       = local.db_username
+}
+
+module "artifact-registry" {
+  source                        = "./modules/artifact-registry"
+  region                        = local.gcp_artifact_registry.region
+  artifact_registry_id          = local.gcp_artifact_registry.name
+  artifact_registry_description = local.gcp_artifact_registry.repository_type
+  artifact_registry_format      = local.gcp_artifact_registry.format
+}
+
+module "load-balancer" {
+  source                    = "./modules/load-balancer"
   project_id                = local.config.project.name
   load_balancer_name        = local.load_balancer.name
   region                    = local.load_balancer.region
   zone                      = "europe-west3-a"               
-  network                   = "https://www.googleapis.com/compute/v1/projects/${local.config.project.name}/global/networks/lofty-memento-458508-i1-k3s-vpc-vpc"
-  instances                 = module.vm.instances_self_links
+  network                   = module.network.vpc_self_links["k3s-vpc"]
+  instances                 = module.vm.non_bastion_instances_self_links
+
   ip_address                = local.load_balancer.ip_address
   load_balancer_port_range  = local.load_balancer.port_range
+  health_check_port         = var.health_check_port
 }
 
-# module "db_instance" {
-#   source            = "./modules/db_instance"
-#   project_id        = local.config.project.name
-#   region            = local.region
-#   databases         = local.config.databases
-#   private_networks  = module.network.vpc_self_links
-#   subnet_self_links = module.network.subnet_self_links_by_name
-#   depends_on        = [module.network]
-#   db_pass           = local.db_password
-#   db_username       = local.db_username
-# }

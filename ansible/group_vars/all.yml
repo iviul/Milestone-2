@@ -3,6 +3,8 @@
 cloud_provider: "aws"  # Options: "aws", "gcp"
 aws_region: "{{ lookup('env', 'AWS_REGION') | default('eu-central-1') }}"
 
+config_path: "../terraform/config.json"
+
 # Container registry URLs
 registry_urls:
   aws: "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com"
@@ -21,3 +23,7 @@ k3s_group: "k3s_node"
 tls_san: "{{ hostvars[groups[k3s_group][0]].ansible_host }}"
 master_node: "{{ groups[k3s_group][0] }}"
 master_ip: "{{ hostvars[master_node].ansible_host }}"
+
+# List of domain names included in the certificate and ingress
+domains:
+  - "classschedule.pp.ua"

@@ -21,7 +21,7 @@
   ansible.builtin.unarchive:
     src: /tmp/awscliv2.zip
     dest: /tmp
-    remote_src: yes
+    remote_src: true
   when: not awscli_already_installed
 
 - name: Run AWS CLI installer
@@ -29,7 +29,7 @@
   args:
     chdir: /tmp
   when: not awscli_already_installed
-  become: yes
+  become: true
 
 - name: Clean up installer files
   ansible.builtin.file:
