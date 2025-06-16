@@ -9,7 +9,6 @@ locals {
   region                = local.fixed_region_map["gcp"]
   db_password           = "password"
   db_username           = "user"
-  service_account_email = local.config.project.service_account_email
 
 
   gcp_artifact_registry = one([
@@ -68,4 +67,24 @@ module "load-balancer" {
   instances      = module.vm.non_bastion_instances_self_links
   
   load_balancers = local.config.load_balancers 
+}
+
+module "db-instance" {
+  source            = "./modules/db-instance"
+  project_id        = local.config.project.name
+  region            = local.region
+  databases         = local.config.databases
+  private_networks  = module.network.vpc_self_links
+  subnet_self_links = module.network.subnet_self_links_by_name
+  depends_on        = [module.network]
+  db_pass           = local.db_password
+  db_username       = local.db_username
+}
+    
+module "cloudflare_dns" {
+  source               = "../shared_modules/cloudflare_dns"
+  cloudflare_zone_id   = var.cloudflare_zone_id
+  dns_records_config   = local.config.dns_records
+  lb_dns_names         = module.load-balancer.lb_name_to_ip_map
+  cloudflare_api_token = var.cloudflare_api_token
 }

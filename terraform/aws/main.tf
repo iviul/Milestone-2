@@ -67,10 +67,10 @@ module "db" {
 }
 
 module "cloudflare_dns" {
-  source               = "./modules/cloudflare_dns"
+  source               = "../shared_modules/cloudflare_dns"
   cloudflare_zone_id   = var.cloudflare_zone_id
   dns_records_config   = local.config.dns_records
-  lb_dns_names         = module.load_balancers.lb_dns_names
+  resource_dns_map     = module.load_balancers.lb_dns_names
   cloudflare_api_token = var.cloudflare_api_token
 }
 

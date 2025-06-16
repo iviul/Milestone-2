@@ -18,8 +18,8 @@ locals {
       name = record.name
       type = record.type
       value = (
-        record.value_from == "load_balancer" ?
-        var.lb_dns_names[record.lb_name] :
+        lookup(record, "resolve_value", false) ?
+        lookup(var.resource_dns_map, record.value, record.value) :
         record.value
       )
       proxied = lookup(record, "proxied", true)
