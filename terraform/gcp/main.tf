@@ -1,13 +1,3 @@
-# data "google_secret_manager_secret_version_access" "db_username" {
-#   secret  = "db_username"
-#   version = "latest"
-# }
-
-# data "google_secret_manager_secret_version_access" "db_password" {
-#   secret  = "db_pass"
-#   version = "latest"
-# }
-
 locals {
   config = jsondecode(file("${path.module}/../config-kuber.json"))
 
@@ -15,23 +5,17 @@ locals {
     aws = "eu-central-1"
     gcp = "europe-west3"
   }
+
+  region        = local.fixed_region_map["gcp"]
+  db_password   = "password"
+  db_username   = "user"
+
   gcp_artifact_registry = one([
     for ar in local.config.artifact_registry : ar
     if ar.provider == "gcp"
   ])
 
-  region = local.fixed_region_map["gcp"]
-  db_password           = "password"
-  db_username       = "user"
-
   ssh_keys = local.config.project.keys
-
-  load_balancer = {
-    name       = "k3s-lb"
-    region     = local.region
-    ip_address = ""
-    port_range = "6443"
-  }
 }
 
 module "network" {
@@ -43,7 +27,6 @@ module "network" {
   security_groups = local.config.security_groups
   health_check_port = var.health_check_port
 }
-
 
 module "vm" {
   source                = "./modules/vm"
@@ -77,16 +60,12 @@ module "artifact-registry" {
 }
 
 module "load-balancer" {
-  source                    = "./modules/load-balancer"
-  project_id                = local.config.project.name
-  load_balancer_name        = local.load_balancer.name
-  region                    = local.load_balancer.region
-  zone                      = "europe-west3-a"               
-  network                   = module.network.vpc_self_links["k3s-vpc"]
-  instances                 = module.vm.non_bastion_instances_self_links
-
-  ip_address                = local.load_balancer.ip_address
-  load_balancer_port_range  = local.load_balancer.port_range
-  health_check_port         = var.health_check_port
+  source         = "./modules/load-balancer"
+  project_id     = local.config.project.name
+  region         = local.region
+  zone           = "europe-west3-a"
+  network = module.network.vpc_self_links[local.config.load_balancers[0].vpc]
+  instances      = module.vm.non_bastion_instances_self_links
+  
+  load_balancers = local.config.load_balancers 
 }
-

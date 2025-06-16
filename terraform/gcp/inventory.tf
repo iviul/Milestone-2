@@ -11,6 +11,7 @@ locals {
     db_password = module.db-instance.db_passwords[local.db_name]
     db_port     = module.db-instance.db_ports[local.db_name]
     db_name     = module.db-instance.db_names[local.db_name]
+    lb_ips = module.load-balancer.lb_name_to_ip_map
   })
 }
 
