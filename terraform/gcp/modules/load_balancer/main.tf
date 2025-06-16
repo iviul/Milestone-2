@@ -30,7 +30,7 @@ resource "google_compute_region_health_check" "tcp_hc" {
   region = var.region
 
   tcp_health_check {
-    port = 6443 // use the same port as the instance group
+    port = 6443
   }
 
   check_interval_sec  = 5
@@ -57,7 +57,7 @@ resource "google_compute_region_backend_service" "k3s_backend" {
 }
 
 
-# Global static IP (if needed)
+# Global static IP
 resource "google_compute_address" "lb_static_ip" {
   name   = "${var.load_balancer_name}-static-ip"
   region = var.region
@@ -82,7 +82,7 @@ resource "google_compute_firewall" "allow_lb_to_vm" {
   priority      = 1000
   source_ranges = [google_compute_forwarding_rule.k3s_forwarding_rule.ip_address]
 
-  target_tags = ["k3s-worker", "k3s-master"] # Adjust tags as needed
+  target_tags = ["k3s-worker", "k3s-master"]
 
   allow {
     protocol = "tcp"

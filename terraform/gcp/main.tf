@@ -1,34 +1,23 @@
-# data "google_secret_manager_secret_version_access" "db_username" {
-#   secret  = "db_username"
-#   version = "latest"
-# }
-
-# data "google_secret_manager_secret_version_access" "db_password" {
-#   secret  = "db_pass"
-#   version = "latest"
-# }
-
 locals {
-  config = jsondecode(file("${path.module}/config-kuber.json"))
+  config = jsondecode(file("${path.module}/../config-kuber.json"))
 
   fixed_region_map = {
     aws = "eu-central-1"
     gcp = "europe-west3"
   }
 
-  region      = local.fixed_region_map["gcp"]
-  # db_username = data.google_secret_manager_secret_version_access.db_username.secret
-  # db_password = data.google_secret_manager_secret_version_access.db_password.secret
+  region                = local.fixed_region_map["gcp"]
+  db_password           = "password"
+  db_username           = "user"
 
-  # gcp_artifact_registry = one([
-  #   for ar in local.config.artifact_registry : ar
-  #   if ar.provider == "gcp"
-  # ])
+  gcp_artifact_registry = one([
+    for ar in local.config.artifact_registry : ar
+    if ar.provider == "gcp"
+  ])
 
   ssh_keys = local.config.project.keys
 
   service_account_email = local.config.project.service_account_email
-
 
   load_balancer = {
     name       = "k3s-lb"
@@ -70,16 +59,10 @@ resource "google_project_service" "monitoring" {
 module "monitoring" {
   source      = "./modules/monitoring"
   alert_email = local.config.monitoring.alert_email
-
   disk_usage_threshold                = local.config.monitoring.disk_usage_threshold
   memory_usage_threshold              = local.config.monitoring.memory_usage_threshold
   network_outbound_threshold          = local.config.monitoring.network_outbound_threshold
   cpu_usage_threshold                 = local.config.monitoring.cpu_usage_threshold
-# swap_usage_threshold                = local.config.monitoring.swap_usage_threshold
-# processes_threshold                 = local.config.monitoring.processes_threshold
-  agent_self_threshold                = local.config.monitoring.agent_self_threshold
-  gpu_usage_threshold                 = local.config.monitoring.gpu_usage_threshold
-  network_interface_usage_threshold   = local.config.monitoring.network_interface_usage_threshold
 }
 
 module "load_balancer" {
@@ -94,14 +77,14 @@ module "load_balancer" {
   load_balancer_port_range  = local.load_balancer.port_range
 }
 
-# module "db_instance" {
-#   source            = "./modules/db_instance"
-#   project_id        = local.config.project.name
-#   region            = local.region
-#   databases         = local.config.databases
-#   private_networks  = module.network.vpc_self_links
-#   subnet_self_links = module.network.subnet_self_links_by_name
-#   depends_on        = [module.network]
-#   db_pass           = local.db_password
-#   db_username       = local.db_username
-# }
+module "db_instance" {
+  source            = "./modules/db_instance"
+  project_id        = local.config.project.name
+  region            = local.region
+  databases         = local.config.databases
+  private_networks  = module.network.vpc_self_links
+  subnet_self_links = module.network.subnet_self_links_by_name
+  depends_on        = [module.network]
+  db_pass           = local.db_password
+  db_username       = local.db_username
+}

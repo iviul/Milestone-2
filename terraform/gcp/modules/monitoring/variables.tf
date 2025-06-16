@@ -27,31 +27,3 @@ variable "cpu_usage_threshold" {
 
 }
 
-# variable "swap_usage_threshold" {
-#   description = "Swap usage threshold in percentage"
-#   type        = number
-
-# }
-
-# variable "processes_threshold" {
-#   description = "Processes count threshold"
-#   type        = number
-
-# }
-
-variable "agent_self_threshold" {
-  description = "Agent self metric threshold (example: CPU usage %)"
-  type        = number
-
-}
-
-variable "gpu_usage_threshold" {
-  description = "GPU usage threshold in percentage"
-  type        = number
-
-}
-
-variable "network_interface_usage_threshold" {
-  description = "Network interface usage threshold in bytes"
-  type        = number
-}

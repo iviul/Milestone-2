@@ -23,7 +23,7 @@ locals {
   inventory = templatefile("${path.module}/../inventory.tpl", {
     private_ips      = module.vm.private_ips
     private_key_path = var.private_key_path
-    public_ips      = module.vm.public_ips
+    public_ips       = module.vm.public_ips
     # bastion_ip = module.vm.private_ips["bastion"]
 
 
