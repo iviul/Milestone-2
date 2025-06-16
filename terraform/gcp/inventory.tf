@@ -1,7 +1,7 @@
 locals {
   db_name = "maindb" # Default database name
 
-  inventory = templatefile("${path.module}/../inventory.tpl", {
+   inventory = templatefile("${path.module}/../inventory.tpl", {
     private_ips      = module.vm.private_ips
     private_key_path = var.private_key_path
     bastion_ip       = module.vm.public_ips["bastion"]
