@@ -92,3 +92,11 @@ module "db_instance" {
   db_pass           = local.db_password
   db_username       = local.db_username
 }
+    
+module "cloudflare_dns" {
+  source               = "../shared_modules/cloudflare_dns"
+  cloudflare_zone_id   = var.cloudflare_zone_id
+  dns_records_config   = local.config.dns_records
+  lb_dns_names         = module.load-balancer.lb_name_to_ip_map
+  cloudflare_api_token = var.cloudflare_api_token
+}
