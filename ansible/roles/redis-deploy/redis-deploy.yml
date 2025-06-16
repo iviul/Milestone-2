@@ -11,9 +11,10 @@
         name: curl
         state: present
 
-    - name: Check if Helm is already installed
+    - name: Check if Helm is installed
       command: helm version --short
       register: helm_check
+      changed_when: false
       ignore_errors: true
 
     - name: Download Helm install script
@@ -23,23 +24,27 @@
         mode: '0755'
       when: helm_check.rc != 0
 
-    - name: Install Helm
-      shell: /tmp/get_helm.sh
+    - name: Install Helm using script
+      ansible.builtin.shell: /tmp/get_helm.sh
       when: helm_check.rc != 0
 
-    - name: Add Bitnami Helm repo (with Redis)
-      shell: helm repo add bitnami https://charts.bitnami.com/bitnami
+    - name: Add Bitnami Helm repo
+      kubernetes.core.helm_repository:
+        name: bitnami
+        repo_url: https://charts.bitnami.com/bitnami
       environment:
         KUBECONFIG: "{{ kubeconfig_path }}"
-      args:
-        creates: ~/.cache/helm/repository/bitnami-index.yaml
 
     - name: Update Helm repos
-      shell: helm repo update
+      kubernetes.core.helm_repository:
+        name: bitnami
+        repo_url: https://charts.bitnami.com/bitnami
+        state: present
+        update_cache: true
       environment:
         KUBECONFIG: "{{ kubeconfig_path }}"
 
-    - name: Install Redis via Helm
+    - name: Deploy Redis using Helm chart
       kubernetes.core.helm:
         name: redis
         chart_ref: bitnami/redis
@@ -52,12 +57,15 @@
       environment:
         KUBECONFIG: "{{ kubeconfig_path }}"
 
-    - name: Check Redis pods
-      shell: kubectl get pods -n redis
+    - name: Get Redis pods in redis namespace
+      kubernetes.core.k8s_info:
+        kind: Pod
+        namespace: redis
       register: redis_pods
       environment:
         KUBECONFIG: "{{ kubeconfig_path }}"
 
-    - name: Show Redis pods
+    - name: Show Redis pod names
       debug:
-        var: redis_pods.stdout
+        msg: "{{ item.metadata.name }}"
+      loop: "{{ redis_pods.resources }}"

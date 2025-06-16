@@ -1,0 +1,13 @@
+---
+- name: Restrict root access
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: PermitRootLogin no
+
+- name: Allow ForwardAgent
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^AllowAgentForwarding'
+    line: AllowAgentForwarding yes
+  notify: Reload SSH

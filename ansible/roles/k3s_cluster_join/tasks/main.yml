@@ -9,15 +9,15 @@
   ansible.builtin.set_fact:
     k3s_token: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
   when:
-    - inventory_hostname == groups['all'][0]
+    - inventory_hostname == groups['private'][0]
     - k3s_token is not defined
 
 # Distribute the token to all other hosts
 - name: Set k3s_token on all non-first nodes
   ansible.builtin.set_fact:
-    k3s_token: "{{ hostvars[groups['all'][0]].k3s_token }}"
+    k3s_token: "{{ hostvars[groups['private'][0]].k3s_token }}"
   when:
-    - inventory_hostname != groups['all'][0]
+    - inventory_hostname != groups['private'][0]
     - k3s_token is not defined
 
 # Debug the generated or assigned token (useful for troubleshooting)
@@ -28,7 +28,7 @@
 # Debug the private IP of the first node
 - name: Show first node's private IP
   ansible.builtin.debug:
-    msg: "First node private IP: {{ hostvars[groups['all'][0]].ansible_host_private }}"
+    msg: "First node private IP: {{ hostvars[groups['private'][0]].ansible_host }}"
 
 # Initialize the K3s cluster on the first node (if not already installed)
 - name: Initialize cluster on 1st node
@@ -36,23 +36,24 @@
     curl -sfL {{ k3s_url }} | sh -s - \
       --cluster-init \
       --disable=traefik \
+      --disable=servicelb \
       --token {{ k3s_token }} \
-      --tls-san {{ dns_name }}
+      --tls-san {{ vars['k3s-nlb-kubeapi'] }}
   args:
     creates: "{{ k3s_binary_path }}"
   when:
-    - inventory_hostname == groups['all'][0]
+    - inventory_hostname == groups['private'][0]
     - not k3s_installed.stat.exists
 
 # Join the cluster as a server node (on other nodes, if not already installed)
 - name: Join k3s cluster as server
   ansible.builtin.shell: |
     curl -sfL {{ k3s_url }} | sh -s - \
-      --server https://{{ hostvars[groups['all'][0]].ansible_host_private }}:6443 \
-      --token {{ k3s_token }}
+      --server https://{{ hostvars[groups['private'][0]].ansible_host }}:6443 \
+      --token {{ k3s_token }} \
+      --disable=traefik 
   args:
     creates: "{{ k3s_binary_path }}"
   when:
-    - inventory_hostname != groups['all'][0]
+    - inventory_hostname != groups['private'][0]
     - not k3s_installed.stat.exists
-  become: false

@@ -19,7 +19,8 @@ configmaps: [
       "data": {
         "POSTGRES_URL": "jdbc:postgresql://<your-ip>:5432/class_schedule_db",
         "REDIS_URL": "redis://redis:6379",
-        "MONGOHOST_URL": "mongo"
+        "MONGOHOST_URL": "mongo",
+        "REACT_APP_API_BASE_URL": "http://<your-ip>:31111"
       },
       "namespace": "intproject"
     },

@@ -3,7 +3,7 @@
   become: true
 
   roles:
-    - role: ssh-users
+    - role: ssh_users
     - role: bastion-restriction
 
 
@@ -12,4 +12,4 @@
   become: false
 
   roles:
-    - configure-ssh-config
+    - configure_ssh_config
