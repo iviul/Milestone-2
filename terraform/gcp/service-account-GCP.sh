@@ -38,7 +38,9 @@ REQUIRED_APIS=(
 	"logging.googleapis.com"
 	"cloudtrace.googleapis.com"
 	"cloudmonitoring.googleapis.com"
+
 	"servicenetworking.googleapis.com"
+
 )
 
 echo "=== Enabling required APIs for project: $PROJECT_ID ==="
@@ -70,9 +72,11 @@ IAM_ROLES=(
 	"logging.logWriter"
 	"monitoring.metricWriter"
 	"monitoring.viewer"
+
     "iam.serviceAccountViewer"
 	"servicenetworking.admin"
 	"compute.networkAdmin"
+
 )
 
 for iam_role in "${IAM_ROLES[@]}"; do
@@ -185,4 +189,8 @@ startTerraformAndApply() {
 	echo "=== Terraform apply completed ==="
 }
 startTerraformAndApply "$NEW_BUCKET_NAME"
+
 #########################################################################
+
+#########################################################################
+
