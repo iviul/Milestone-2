@@ -1,1 +1,2 @@
 terraform/gcp/terraform-key.json
+gcp_cloud_env.sh
