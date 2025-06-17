@@ -37,8 +37,6 @@ REQUIRED_APIS=(
 	"monitoring.googleapis.com"
 	"logging.googleapis.com"
 	"cloudtrace.googleapis.com"
-	"cloudmonitoring.googleapis.com"
-
 	"servicenetworking.googleapis.com"
 
 )
@@ -67,6 +65,7 @@ echo
 #########################################################################
 IAM_ROLES=(
 	"editor"
+	"compute.networkAdmin"
 	"secretmanager.secretAccessor"
 	"iam.serviceAccountViewer"
 	"logging.logWriter"
@@ -76,7 +75,7 @@ IAM_ROLES=(
     "iam.serviceAccountViewer"
 	"servicenetworking.admin"
 	"compute.networkAdmin"
-
+	"storage.objectAdmin"
 )
 
 for iam_role in "${IAM_ROLES[@]}"; do
@@ -150,7 +149,7 @@ if [ -f "$ENV_FILE" ]; then
 fi
 
 if [ -z "$NEW_BUCKET_NAME" ]; then
-    BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' "$CONFIG_PATH")
+    BUCKET_NAME=$(ggrep -oP '"bucket_state_name":\s*"\K[^"]+' "$CONFIG_PATH")
     NEW_BUCKET_NAME="${BUCKET_NAME}-$(date +'%Y-%m-%d-%H-%M-%S')"
 
     echo "=== Creating bucket: gs://$NEW_BUCKET_NAME ==="

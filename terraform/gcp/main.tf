@@ -1,6 +1,5 @@
 locals {
   config = jsondecode(file("${path.module}/../config-kuber.json"))
-  config = jsondecode(file("${path.module}/../config-kuber.json"))
 
   fixed_region_map = {
     aws = "eu-central-1"
@@ -11,6 +10,7 @@ locals {
   db_password           = "password"
   db_username           = "user"
 
+
   gcp_artifact_registry = one([
     for ar in local.config.artifact_registry : ar
     if ar.provider == "gcp"
@@ -19,15 +19,6 @@ locals {
   ssh_keys = local.config.project.keys
 
   service_account_email = local.config.project.service_account_email
-
-  load_balancer = {
-    name       = "k3s-lb"
-    region     = local.region
-    ip_address = ""
-    port_range = "6443"
-  }
-
-
 }
 
 module "network" {
@@ -39,7 +30,6 @@ module "network" {
   security_groups = local.config.security_groups
   health_check_port = var.health_check_port
 }
-
 
 module "vm" {
   source                = "./modules/vm"
@@ -68,21 +58,19 @@ module "monitoring" {
   cpu_usage_threshold                 = local.config.monitoring.cpu_usage_threshold
 }
 
-module "load_balancer" {
-  source                    = "./modules/load_balancer"
-  project_id                = local.config.project.name
-  load_balancer_name        = local.load_balancer.name
-  region                    = local.load_balancer.region
-  zone                      = "europe-west3-a"               
-  network                   = module.network.vpc_self_links["k3s-vpc"]
-  instances                 = module.vm.non_bastion_instances_self_links
-
-  ip_address                = local.load_balancer.ip_address
-  load_balancer_port_range  = local.load_balancer.port_range
+module "load-balancer" {
+  source         = "./modules/load-balancer"
+  project_id     = local.config.project.name
+  region         = local.region
+  zone           = "europe-west3-a"
+  network = module.network.vpc_self_links[local.config.load_balancers[0].vpc]
+  instances      = module.vm.non_bastion_instances_self_links
+  
+  load_balancers = local.config.load_balancers 
 }
 
-module "db_instance" {
-  source            = "./modules/db_instance"
+module "db-instance" {
+  source            = "./modules/db-instance"
   project_id        = local.config.project.name
   region            = local.region
   databases         = local.config.databases
