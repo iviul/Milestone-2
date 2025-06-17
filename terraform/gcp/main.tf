@@ -82,7 +82,7 @@ module "load_balancer" {
 }
 
 module "db_instance" {
-  source            = "./modules/db_instance"
+  source            = "./modules/db-instance"
   project_id        = local.config.project.name
   region            = local.region
   databases         = local.config.databases
