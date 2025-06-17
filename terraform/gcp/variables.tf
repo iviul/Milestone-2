@@ -10,3 +10,9 @@ variable "health_check_port" {
   default     = 6443
 }
 
+variable "cloudflare_zone_id" {
+  type    = string
+  sensitive = true
+  description = "Cloudflare zone ID for DNS management"
+  default = "42b42abbecbb7793d4e4f1d20b1f836f"
+}
