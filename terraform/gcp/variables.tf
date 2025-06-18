@@ -11,8 +11,14 @@ variable "health_check_port" {
 }
 
 variable "cloudflare_zone_id" {
-  type    = string
-  sensitive = true
+  type        = string
+  sensitive   = true
   description = "Cloudflare zone ID for DNS management"
-  default = "42b42abbecbb7793d4e4f1d20b1f836f"
+  default     = "42b42abbecbb7793d4e4f1d20b1f836f"
+}
+
+variable "cloudflare_api_token" {
+  type        = string
+  description = "API token for Cloudflare"
+  sensitive   = true
 }

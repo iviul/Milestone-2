@@ -6,12 +6,12 @@ resource "google_sql_database_instance" "primary" {
 
   settings {
     tier              = "db-g1-${each.value.size}"
-    availability_type = each.value.secondary_zone != null ? "REGIONAL" : "ZONAL" 
+    availability_type = each.value.secondary_zone != null ? "REGIONAL" : "ZONAL"
 
     dynamic "location_preference" {
       for_each = [1]
       content {
-        zone           = "${var.region}-${each.value.zone[0]}"  
+        zone           = "${var.region}-${each.value.zone[0]}"
         secondary_zone = each.value.secondary_zone != null ? "${var.region}-${each.value.secondary_zone}" : null
       }
     }
@@ -41,7 +41,7 @@ resource "google_sql_database" "databases" {
 
 resource "google_sql_user" "users" {
   for_each = google_sql_database_instance.primary
-  name        = var.db_username
+  name     = var.db_username
   instance = google_sql_database_instance.primary[each.key].name
   password = var.db_pass
 }
