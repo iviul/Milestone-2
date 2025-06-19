@@ -9,14 +9,16 @@ pipeline{
         stage('Load Infra Pipeline') {
             steps {
                 script {
-                    load 'jenkins/infra/infra_pipeline.groovy'
+                    def infraPipeline = load 'jenkins/infra/infra_pipeline.groovy'
+                    infraPipeline()
                 }
             }
         }
         stage('Load App Pipeline') {
             steps {
                 script {
-                    load 'jenkins/application/app_pipeline.groovy'
+                    def appPipeline = load 'jenkins/application/app_pipeline.groovy'
+                    appPipeline()
                 }
             }
         }
