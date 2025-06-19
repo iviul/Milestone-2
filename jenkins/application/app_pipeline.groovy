@@ -1,11 +1,7 @@
-pipeline {
-  agent any
-
-  stages {
-    stage('local test') {
-      steps {
-        echo "Hello world from application"
-      }
+def call() {
+    
+    stage('Application Build') {
+        echo 'Building application...'
     }
-  }
 }
+return this
