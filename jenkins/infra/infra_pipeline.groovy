@@ -1,11 +1,6 @@
-pipeline {
-  agent any
-
-  stages {
-    stage('local test') {
-      steps {
-        echo "Hello world from infra"
-      }
+def call() {
+    stage('Infrastructure Deploy') {
+        echo 'Deploying infrastructure...'
     }
-  }
 }
+return this
