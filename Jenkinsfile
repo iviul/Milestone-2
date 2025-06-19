@@ -1,8 +1,8 @@
 node {
     stage('Load Infra Pipeline') {
-        load 'jenkins/infra/pipeline_infra.groovy'
+        load 'jenkins/infra/infra_pipeline.groovy'
     }
     stage('Load App Pipeline') {
-        load 'jenkins/application/pipeline_app.groovy'
+        load 'jenkins/application/app_pipeline.groovy'
     }
 }
