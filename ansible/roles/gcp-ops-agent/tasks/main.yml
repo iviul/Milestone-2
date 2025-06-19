@@ -1,0 +1,27 @@
+---
+# tasks file for gcp-ops-agent
+
+- name: Ensure required apt packages are installed
+  apt:
+    name:
+      - curl
+      - gnupg
+    state: present
+    update_cache: yes
+
+- name: Download Google Cloud Ops Agent install script
+  get_url:
+    url: https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
+    dest: /tmp/add-google-cloud-ops-agent-repo.sh
+    mode: '0755'
+
+- name: Run Google Cloud Ops Agent install script
+  command: bash /tmp/add-google-cloud-ops-agent-repo.sh --also-install
+  args:
+    creates: /etc/google-cloud-ops-agent
+
+- name: Ensure Google Cloud Ops Agent is running
+  systemd:
+    name: google-cloud-ops-agent
+    state: restarted
+    enabled: yes

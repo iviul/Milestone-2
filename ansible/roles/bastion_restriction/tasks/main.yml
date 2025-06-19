@@ -1,0 +1,18 @@
+---
+- name: Configure ForceCommand
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^ForceCommand'
+    line: 'ForceCommand /bin/false'
+    state: present
+    create: true
+    backup: true
+
+- name: Configure PermitTTY
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitTTY'
+    line: 'PermitTTY no'
+    state: present
+    create: true
+    backup: true

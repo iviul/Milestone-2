@@ -1,0 +1,17 @@
+- name: Make sure ~/.ssh exists
+  ansible.builtin.file:
+    path: "{{ lookup('env', 'HOME') }}/.ssh"
+    state: directory
+    mode: '0700'
+
+- name: Get subnet prefix from private group
+  set_fact:
+    private_subnet_prefix: "{{ hostvars[groups['private'][0]]['ansible_host'].split('.')[0:2] | join('.') }}"
+
+- name: Append SSH config block to ~/.ssh/config
+  ansible.builtin.blockinfile:
+    path: "{{ lookup('env', 'HOME') }}/.ssh/config"
+    block: "{{ lookup('template', 'config-template.j2') }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - BASTION CONFIG"
+    create: true
+    mode: '0600'

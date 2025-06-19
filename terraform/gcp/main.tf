@@ -1,40 +1,37 @@
-data "google_secret_manager_secret_version_access" "db_username" {
-  secret  = "db_username"
-  version = "latest"
-}
-
-data "google_secret_manager_secret_version_access" "db_password" {
-  secret  = "db_pass"
-  version = "latest"
-}
-
 locals {
-  config = jsondecode(file("${path.module}/../config.json"))
+  config = jsondecode(file("${path.module}/../config-kuber.json"))
 
   fixed_region_map = {
     aws = "eu-central-1"
     gcp = "europe-west3"
   }
 
-  region = local.fixed_region_map["gcp"]
+  region      = local.fixed_region_map["gcp"]
+  db_password = "password"
+  db_username = "user"
 
-  db_username = data.google_secret_manager_secret_version_access.db_username.secret
-  db_password = data.google_secret_manager_secret_version_access.db_password.secret
 
   gcp_artifact_registry = one([
     for ar in local.config.artifact_registry : ar
     if ar.provider == "gcp"
   ])
+
   ssh_keys = local.config.project.keys
+
+  service_account_email = local.config.project.service_account_email
+
+
+  primary_gke_key = keys(module.gke_cluster.cluster_endpoints)[0]
 }
 
 module "network" {
-  source          = "./modules/network"
-  project_id      = local.config.project.name
-  region          = local.region
-  networks        = local.config.network
-  acls            = local.config.networks
-  security_groups = local.config.security_groups
+  source            = "./modules/network"
+  project_id        = local.config.project.name
+  region            = local.region
+  networks          = local.config.network
+  acls              = local.config.network[0].subnets
+  security_groups   = local.config.security_groups
+  health_check_port = var.health_check_port
 }
 
 module "vm" {
@@ -46,10 +43,37 @@ module "vm" {
   subnet_self_links_map = module.network.subnet_self_links_by_name
   ssh_keys              = local.ssh_keys
   depends_on            = [module.network]
+  service_account_email = local.service_account_email
 }
 
-module "db_instance" {
-  source            = "./modules/db_instance"
+resource "google_project_service" "monitoring" {
+  service                    = "monitoring.googleapis.com"
+  project                    = local.config.project.name
+  disable_dependent_services = true
+}
+
+module "monitoring" {
+  source                     = "./modules/monitoring"
+  alert_email                = local.config.monitoring.alert_email
+  disk_usage_threshold       = local.config.monitoring.disk_usage_threshold
+  memory_usage_threshold     = local.config.monitoring.memory_usage_threshold
+  network_outbound_threshold = local.config.monitoring.network_outbound_threshold
+  cpu_usage_threshold        = local.config.monitoring.cpu_usage_threshold
+}
+
+# module "load-balancer" {
+#   source     = "./modules/load-balancer"
+#   project_id = local.config.project.name
+#   region     = local.region
+#   zone       = "europe-west3-a"
+#   network    = module.network.vpc_self_links[local.config.load_balancers[0].vpc]
+#   instances  = module.vm.non_bastion_instances_self_links
+
+#   load_balancers = local.config.load_balancers
+# }
+
+module "db-instance" {
+  source            = "./modules/db-instance"
   project_id        = local.config.project.name
   region            = local.region
   databases         = local.config.databases
@@ -60,10 +84,46 @@ module "db_instance" {
   db_username       = local.db_username
 }
 
-module "artifact_registry" {
-  source                        = "./modules/artifact_registry"
-  region                        = local.gcp_artifact_registry.region
-  artifact_registry_id          = local.gcp_artifact_registry.name
-  artifact_registry_description = local.gcp_artifact_registry.repository_type
-  artifact_registry_format      = local.gcp_artifact_registry.format
+
+# module "cloudflare_dns" {
+#   source               = "../shared_modules/cloudflare_dns"
+#   cloudflare_zone_id   = var.cloudflare_zone_id
+#   dns_records_config   = local.config.dns_records
+#   resource_dns_map     = module.load-balancer.lb_name_to_ip_map
+#   cloudflare_api_token = var.cloudflare_api_token
+# }
+
+module "static_ips" {
+  source      = "./modules/static_ips"
+  static_ips  = local.config.static_ips
 }
+
+module "cloudflare_dns" {
+  source               = "../shared_modules/cloudflare_dns"
+  cloudflare_zone_id   = var.cloudflare_zone_id
+  dns_records_config   = local.config.dns_records
+  resource_dns_map     = module.static_ips.ip_addresses
+  cloudflare_api_token = var.cloudflare_api_token
+}
+
+
+module "gke_cluster" {
+  source            = "./modules/gke_cluster"
+  clusters          = local.config.gke_clusters
+  vpc_self_links    = module.network.vpc_self_links
+  subnet_self_links = module.network.subnet_self_links_by_name
+}
+
+module "jenkins" {
+  source    = "./modules/jenkins"
+
+  cluster_endpoint = module.gke_cluster.cluster_endpoints["main-cluster"] // change if using more than one cluster
+  ca_certificate   = module.gke_cluster.cluster_ca_certificates["main-cluster"] // change if using more than one cluster
+  access_token     = data.google_client_config.default.access_token
+
+  providers = {
+    kubernetes = kubernetes
+    helm       = helm
+  }
+}
+

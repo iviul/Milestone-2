@@ -1,0 +1,6 @@
+---
+- name: Configure K3s Cluster
+  hosts: private
+  become: true
+  roles:
+    - role: k3s_cluster_join

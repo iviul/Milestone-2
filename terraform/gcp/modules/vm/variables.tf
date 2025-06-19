@@ -21,7 +21,6 @@ variable "vm_instances" {
     zone            = string
     subnet          = string
     tags            = set(string)
-    port            = number
     security_groups = optional(list(string), [])
     public_ip       = bool
   }))
@@ -35,4 +34,9 @@ variable "subnet_self_links_map" {
 
 variable "ssh_keys" {
   description = "SSH public keys"
+}
+
+variable "service_account_email" {
+  type        = string
+  description = "Service account email for the VM"
 }

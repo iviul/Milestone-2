@@ -1,0 +1,74 @@
+- name: Install Python dependencies
+  ansible.builtin.apt:
+    update_cache: yes
+    pkg:
+      - python3-pip
+    state: present
+
+- name: Install Python packages system-wide (PEP 668 override)
+  ansible.builtin.pip:
+    name:
+      - openshift
+      - pyyaml
+      - kubernetes
+    extra_args: --break-system-packages
+    executable: pip3
+
+- name: Ensure .kube directory exists for root user
+  file:
+    path: /root/.kube
+    state: directory
+    mode: '0700'
+
+- name: Copy kubeconfig for root user
+  ansible.builtin.copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /root/.kube/config
+    remote_src: yes
+    mode: '0600'
+
+
+- name: Create a k8s namespace
+  kubernetes.core.k8s:
+    name: "{{ item.name }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  loop: "{{ namespaces }}"
+  tags: namespaces
+
+- name: Deploy ConfigMap
+  kubernetes.core.k8s:
+    state: present
+    template: "{{ role_path }}/templates/configmap.yaml.j2"
+  loop: "{{ configmaps }}"
+  tags:
+    - configmap
+
+
+- name: Deploy Secret
+  kubernetes.core.k8s:
+    state: present
+    template: "{{ role_path }}/templates/secret.yaml.j2"
+  loop: "{{ secrets }}"
+  tags:
+    - secret
+
+
+- name: Deploy Service
+  kubernetes.core.k8s:
+    state: present
+    template: "{{ role_path }}/templates/service.yaml.j2"
+  loop: "{{ services }}"
+  tags:
+    - service
+
+
+- name: Deploy Deployment
+  kubernetes.core.k8s:
+    state: present
+    template: "{{ role_path }}/templates/deployment.yaml.j2"
+  loop: "{{ deployments }}"
+  tags:
+    - deployment
+

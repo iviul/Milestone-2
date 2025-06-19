@@ -1,0 +1,71 @@
+- name: Install Helm and deploy Redis
+  hosts: all
+  become: yes
+
+  vars:
+    kubeconfig_path: /etc/rancher/k3s/k3s.yaml
+
+  tasks:
+    - name: Ensure curl is installed
+      package:
+        name: curl
+        state: present
+
+    - name: Check if Helm is installed
+      command: helm version --short
+      register: helm_check
+      changed_when: false
+      ignore_errors: true
+
+    - name: Download Helm install script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: '0755'
+      when: helm_check.rc != 0
+
+    - name: Install Helm using script
+      ansible.builtin.shell: /tmp/get_helm.sh
+      when: helm_check.rc != 0
+
+    - name: Add Bitnami Helm repo
+      kubernetes.core.helm_repository:
+        name: bitnami
+        repo_url: https://charts.bitnami.com/bitnami
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
+    - name: Update Helm repos
+      kubernetes.core.helm_repository:
+        name: bitnami
+        repo_url: https://charts.bitnami.com/bitnami
+        state: present
+        update_cache: true
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
+    - name: Deploy Redis using Helm chart
+      kubernetes.core.helm:
+        name: redis
+        chart_ref: bitnami/redis
+        namespace: redis
+        create_namespace: true
+        values:
+          auth:
+            enabled: false
+        wait: true
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
+    - name: Get Redis pods in redis namespace
+      kubernetes.core.k8s_info:
+        kind: Pod
+        namespace: redis
+      register: redis_pods
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
+    - name: Show Redis pod names
+      debug:
+        msg: "{{ item.metadata.name }}"
+      loop: "{{ redis_pods.resources }}"

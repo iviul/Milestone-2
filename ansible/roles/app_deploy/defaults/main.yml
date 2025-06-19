@@ -1,0 +1,113 @@
+---
+# Default configurations
+namespaces: [
+    {
+      "name": "intproject"
+    }
+]
+configmaps: [
+    {
+      "name": "redis-config",
+      "data": {
+        "timeout": "1440",
+        "maxmemory-policy": "allkeys-lru"
+      },
+      "namespace": "intproject"
+    },
+    {
+      "name": "server-config",
+      "data": {
+        "POSTGRES_URL": "jdbc:postgresql://<your-ip>:5432/maindb",
+        "REDIS_URL": "redis://redis:6379",
+        "MONGOHOST_URL": "mongo",
+        "REACT_APP_API_BASE_URL": "http://<your-ip>:31111"
+      },
+      "namespace": "intproject"
+    },
+    {
+      "name": "frontend-config",
+      "data": {
+        "REACT_APP_API_BASE_URL": "http://server:8080"
+      },
+      "namespace": "intproject"
+    }
+  ]
+secrets: [
+    {
+      "name": "mongo-secret",
+      "data": {
+        "username": "user",
+        "password": "password"
+      },
+      "namespace": "intproject"
+    }
+  ]
+services: [
+    {
+      "name": "redis",
+      "app": "redis",
+      "type": "ClusterIP",
+      "port": 6379,
+      "target_port": 6379,
+      "protocol": "TCP",
+      "namespace": "intproject"
+
+    },
+    {
+      "name": "mongo",
+      "app": "mongo",
+      "type": "ClusterIP",
+      "port": 27017,
+      "target_port": 27017,
+      "protocol": "TCP",
+      "namespace": "intproject"
+    },
+    {
+      "name": "server",
+      "app": "server",
+      "type": "NodePort",
+      "port": 8080,
+      "target_port": 8080,
+      "protocol": "TCP",
+      "node_port": 31111,
+      "namespace": "intproject"
+    }
+]
+deployments:  [
+    {
+      "name": "redis",
+      "app": "redis",
+      "registry": "dockerhub",
+      "image": "redis",
+      "version": "7",
+      "replicas": 1,
+      "port": 6379,
+      "config_refs": ["redis-config"],
+      "secret_refs": [],
+      "namespace": "intproject"
+    },
+    {
+      "name": "mongo",
+      "app": "mongo",
+      "registry": "dockerhub",
+      "image": "mongo",
+      "version": "6",
+      "replicas": 1,
+      "port": 27017,
+      "config_refs": [],
+      "secret_refs": ["mongo-secret"],
+      "namespace": "intproject"
+    },
+    {
+      "name": "server",
+      "app": "server",
+      "registry": "dockerhub",
+      "image": "artamonovdima/intproject",
+      "version": "2",
+      "replicas": 1,
+      "port": 8080,
+      "config_refs": ["server-config"],
+      "secret_refs": [],
+      "namespace": "intproject"
+    }
+]
