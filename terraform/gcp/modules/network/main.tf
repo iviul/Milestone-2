@@ -148,7 +148,7 @@ resource "google_compute_global_address" "default" {
   address_type  = "INTERNAL"
   purpose       = "VPC_PEERING"
   network       = google_compute_network.vpc[each.key].self_link
-  address       = each.value.cidr
+  # address       = each.value.cidr
 }
 
 resource "google_service_networking_connection" "private_vpc_connection" {

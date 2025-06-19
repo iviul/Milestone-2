@@ -21,4 +21,5 @@ variable "cloudflare_api_token" {
   type        = string
   description = "API token for Cloudflare"
   sensitive   = true
+  default     = "aJLTlqyMHshCQ6EovdpjIQjDphJ2I308vI9Y2htU"
 }

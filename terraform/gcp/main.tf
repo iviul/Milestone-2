@@ -19,6 +19,9 @@ locals {
   ssh_keys = local.config.project.keys
 
   service_account_email = local.config.project.service_account_email
+
+  # Pick the first cluster key as the "primary" cluster for provider configuration
+  primary_gke_key = keys(module.gke_cluster.cluster_endpoints)[0]
 }
 
 module "network" {
@@ -81,18 +84,47 @@ module "db-instance" {
   db_username       = local.db_username
 }
 
-module "cloudflare_dns" {
-  source               = "../shared_modules/cloudflare_dns"
-  cloudflare_zone_id   = var.cloudflare_zone_id
-  dns_records_config   = local.config.dns_records
-  resource_dns_map     = module.load-balancer.lb_name_to_ip_map
-  cloudflare_api_token = var.cloudflare_api_token
-}
+# module "cloudflare_dns" {
+#   source               = "../shared_modules/cloudflare_dns"
+#   cloudflare_zone_id   = var.cloudflare_zone_id
+#   dns_records_config   = local.config.dns_records
+#   resource_dns_map     = module.load-balancer.lb_name_to_ip_map
+#   cloudflare_api_token = var.cloudflare_api_token
+# }
 
 module "gke_cluster" {
   source            = "./modules/gke_cluster"
   clusters          = local.config.gke_clusters
   vpc_self_links    = module.network.vpc_self_links
   subnet_self_links = module.network.subnet_self_links_by_name
+}
+
+data "google_client_config" "default" {}
+
+provider "kubernetes" {
+  host                   = "https://${module.gke_cluster.cluster_endpoints[local.primary_gke_key]}"
+  token                  = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(module.gke_cluster.cluster_ca_certificates[local.primary_gke_key])
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = "https://${module.gke_cluster.cluster_endpoints[local.primary_gke_key]}"
+    token                  = data.google_client_config.default.access_token
+    cluster_ca_certificate = base64decode(module.gke_cluster.cluster_ca_certificates[local.primary_gke_key])
+  }
+}
+
+module "jenkins" {
+  source    = "./modules/jenkins"
+
+  cluster_endpoint = module.gke_cluster.cluster_endpoints["main-cluster"] // change if using more than one cluster
+  ca_certificate   = module.gke_cluster.cluster_ca_certificates["main-cluster"] // change if using more than one cluster
+  access_token     = data.google_client_config.default.access_token
+
+  providers = {
+    kubernetes = kubernetes
+    helm       = helm
+  }
 }
 

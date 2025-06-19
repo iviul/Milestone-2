@@ -27,6 +27,7 @@ fi
 #########################################################################
 REQUIRED_APIS=(
 	"iamcredentials.googleapis.com"
+	"iam.googleapis.com"
 	"compute.googleapis.com"
 	"cloudresourcemanager.googleapis.com"
 	"serviceusage.googleapis.com"
@@ -38,8 +39,10 @@ REQUIRED_APIS=(
 	"logging.googleapis.com"
 	"cloudtrace.googleapis.com"
 	"servicenetworking.googleapis.com"
-
+	"container.googleapis.com"
+	"dns.googleapis.com"
 )
+
 
 echo "=== Enabling required APIs for project: $PROJECT_ID ==="
 for api in "${REQUIRED_APIS[@]}"; do
@@ -76,6 +79,10 @@ IAM_ROLES=(
 	"servicenetworking.admin"
 	"compute.networkAdmin"
 	"storage.objectAdmin"
+
+	"container.admin"
+	"container.clusterAdmin"
+	"iam.serviceAccountUser"
 )
 
 for iam_role in "${IAM_ROLES[@]}"; do
