@@ -3,7 +3,7 @@
 cloud_provider: "aws"  # Options: "aws", "gcp"
 aws_region: "{{ lookup('env', 'AWS_REGION') | default('eu-central-1') }}"
 
-config_path: "../terraform/config.json"
+config_path: "../terraform/config-kuber.json"
 
 # Container registry URLs
 registry_urls:

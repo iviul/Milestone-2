@@ -16,7 +16,6 @@
     src: "/tmp/helm-v3.11.0-linux-amd64.tar.gz"
     dest: "/tmp/"
     remote_src: true
-  become: true
 
 - name: "Copy to /usr/local/bin"
   ansible.builtin.command:

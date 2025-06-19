@@ -1,7 +1,6 @@
 ---
 - name: Deploy application
-  hosts: k3s-node-1
-  become: true
+  hosts: localhost
   vars_files:
     - "{{ config_path }}"
   roles:
@@ -13,8 +12,7 @@
     deployments: "{{ deployments }}"
 
 - name: Deploy ingress
-  hosts: k3s-node-1
-  become: true
+  hosts: localhost
   roles:
     - cert_manager
     - nginx_ingress_controller

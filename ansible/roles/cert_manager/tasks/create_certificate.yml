@@ -17,8 +17,6 @@
     kind: Namespace
     name: "{{ cert_namespace }}"
     state: present
-    kubeconfig: "{{ kubeconfig_path }}"
-  delegate_to: k3s-node-1
   run_once: true
   tags:
     - certificate
@@ -26,7 +24,6 @@
 
 - name: Render Certificate manifest on controller
   run_once: true
-  delegate_to: k3s-node-1
   ansible.builtin.template:
     src: certificate.yml.j2
     dest: "/tmp/{{ certificate_name }}.yaml"
@@ -39,10 +36,8 @@
     msg: "{{ lookup('template', 'certificate.yml.j2') }}"
 
 - name: Apply Certificate via k8s module
-  become: true
   kubernetes.core.k8s:
     state: present
     src: "/tmp/{{ certificate_name }}.yaml"
-    kubeconfig: /etc/rancher/k3s/k3s.yaml
   tags:
     - certificate
