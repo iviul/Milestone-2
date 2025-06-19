@@ -1,16 +1,24 @@
-node {
-    stage('Checkout') {
-        checkout scm
-    }
-    stage('Debug') {
-        sh 'pwd'
-        sh 'ls -la'
-        sh 'find . -name "*.groovy" -type f'
-    }
-    stage('Load Infra Pipeline') {
-        load 'jenkins/infra/infra_pipeline.groovy'
-    }
-    stage('Load App Pipeline') {
-        load 'jenkins/application/app_pipeline.groovy'
+pipeline{
+    agent any
+    stages{
+        stage("checkout"){
+            steps{
+                checkout scm
+            }
+        }
+        stage('Load Infra Pipeline') {
+            steps {
+                script {
+                    load 'jenkins/infra/infra_pipeline.groovy'
+                }
+            }
+        }
+        stage('Load App Pipeline') {
+            steps {
+                script {
+                    load 'jenkins/application/app_pipeline.groovy'
+                }
+            }
+        }
     }
 }
