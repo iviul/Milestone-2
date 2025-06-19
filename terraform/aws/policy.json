@@ -27,11 +27,17 @@
       "Effect": "Allow",
       "Action": [
         "ecr:CreateRepository",
-        "ecr:DescribeRepositories",
-        "ecr:PutImageTagMutability",
-        "ecr:ListTagsForResource",
         "ecr:DeleteRepository",
-        "ecr:PutLifecyclePolicy"
+        "ecr:DescribeRepositories",
+        "ecr:ListTagsForResource",
+        "ecr:ListImages",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:InitiateLayerUpload",
+        "ecr:UploadLayerPart",
+        "ecr:CompleteLayerUpload",
+        "ecr:PutImage",
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchGetImage"
       ],
       "Resource": "*"
     },

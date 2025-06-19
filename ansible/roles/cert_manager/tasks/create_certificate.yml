@@ -1,0 +1,43 @@
+---
+- name: Check if Certificate namespace exists
+  ansible.builtin.command:
+    cmd: kubectl get ns "{{ cert_namespace }}"
+  register: cert_ns_check
+  changed_when: false
+  failed_when: cert_ns_check.rc not in [0, 1]
+  tags:
+    - certificate
+    - check_namespace
+
+- name: "Create namespace for Certificates ({{ cert_namespace }})"
+  when: cert_ns_check.rc != 0
+  become: true
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Namespace
+    name: "{{ cert_namespace }}"
+    state: present
+  run_once: true
+  tags:
+    - certificate
+    - create_namespace
+
+- name: Render Certificate manifest on controller
+  run_once: true
+  ansible.builtin.template:
+    src: certificate.yml.j2
+    dest: "/tmp/{{ certificate_name }}.yaml"
+    mode: '0644'
+  tags:
+    - certificate
+
+- name: Debug rendered certificate manifest
+  ansible.builtin.debug:
+    msg: "{{ lookup('template', 'certificate.yml.j2') }}"
+
+- name: Apply Certificate via k8s module
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/{{ certificate_name }}.yaml"
+  tags:
+    - certificate

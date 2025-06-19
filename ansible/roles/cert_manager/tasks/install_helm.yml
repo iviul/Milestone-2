@@ -1,0 +1,37 @@
+---
+- name: Download Helm
+  ansible.builtin.get_url:
+    url: "https://get.helm.sh/helm-v3.11.0-linux-amd64.tar.gz"
+    dest: "/tmp/helm-v3.11.0-linux-amd64.tar.gz"
+    mode: '0644'
+
+- name: Remove existing helm extract directory (if any)
+  ansible.builtin.file:
+    path: "/tmp/linux-amd64"
+    state: absent
+  become: true
+
+- name: Unzip Helm
+  ansible.builtin.unarchive:
+    src: "/tmp/helm-v3.11.0-linux-amd64.tar.gz"
+    dest: "/tmp/"
+    remote_src: true
+
+- name: "Copy to /usr/local/bin"
+  ansible.builtin.command:
+    cmd: mv /tmp/linux-amd64/helm /usr/local/bin/helm
+  become: true
+
+- name: "Ensure /usr/local/bin/helm is executable "
+  ansible.builtin.file:
+    path: "/usr/local/bin/helm"
+    mode: "0755"
+
+- name: Check Helm client version
+  ansible.builtin.command: "helm version --client --short"
+  register: helm_check
+  changed_when: false
+
+- name: Print Helm client version output
+  ansible.builtin.debug:
+    msg: "{{ helm_check.stdout }}"

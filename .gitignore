@@ -29,7 +29,7 @@ terraform.rc
 # Ignore JSON files
 config.json
 keys.json
-
+**/config-kuber.json
 # Ignore IDE files
 .idea/
 *.iml

@@ -12,6 +12,7 @@ variable "networks" {
   type = list(object({
     name     = string
     vpc_cidr = string
+    psa_range = string
     subnets = list(object({
       name   = string
       cidr   = string
@@ -41,11 +42,18 @@ variable "security_groups" {
       port     = number
       source   = string
     }))
-    egress = list(object({
-      protocol    = string
-      port        = number
-      destination = string
-    }))
+    # egress = list(object({
+    #   protocol    = string
+    #   port        = number
+    #   destination = string
+    # }))
   }))
   description = "Firewall definitions mapping tags → ingress/egress rules"
 }
+
+variable "health_check_port" {
+  description = "Port used for health checks (default: 6443 for K3s)"
+  type        = number
+  default     = 6443
+}
+

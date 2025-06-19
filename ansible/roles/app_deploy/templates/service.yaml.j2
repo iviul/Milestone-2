@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ item.name }}
+  namespace: {{ item.namespace }}
+spec:
+  selector:
+    app: {{ item.app }}
+  type: {{ item.type }}
+  ports:
+    - port: {{ item.port }}
+      targetPort: {{ item.target_port }}
+      protocol: {{ item.protocol }}
+{% if item.node_port is defined %}
+      nodePort: {{ item.node_port }}
+{% endif %}
