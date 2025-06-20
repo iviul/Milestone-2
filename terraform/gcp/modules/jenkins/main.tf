@@ -4,6 +4,15 @@ resource "kubernetes_namespace" "jenkins" {
   }
 }
 
+data "template_file" "jenkins_values" {
+  template = file("${path.module}/jenkins-values.yaml.tmpl")
+
+  vars = {
+    jenkins_admin_username = var.config.jenkins_username
+    jenkins_admin_password = var.config.jenkins_password
+    system_message         = "Welcome to Jenkins kh by ${var.config.jenkins_username}"
+  }
+}
 
 resource "helm_release" "jenkins" {
   name       = "jenkins"
