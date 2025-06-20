@@ -25,5 +25,9 @@ master_node: "{{ groups[k3s_group][0] }}"
 master_ip: "{{ hostvars[master_node].ansible_host }}"
 
 # List of domain names included in the certificate and ingress
-domains:
+cert_domains:
+  - "classschedule.pp.ua"
+  - "*.classschedule.pp.ua"
+
+ingress_domains:
   - "classschedule.pp.ua"

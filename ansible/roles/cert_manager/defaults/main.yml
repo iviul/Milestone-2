@@ -26,7 +26,7 @@ certificate_name: nginx-hello-cert
 
 certificate_secret: nginx-hello-tls-secret
 
-domains:
+cert_domains:
   - "{{ vars['k3s-nlb-ingress'] }}"
 
 ingress_class_name: nginx

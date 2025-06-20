@@ -10,7 +10,7 @@ spec:
     name: {{cluster_issuer_name}}
     kind: ClusterIssuer
   dnsNames:
-{% for d in domains %}
+{% for d in cert_domains %}
     - {{ d }}
 {% endfor %}
   acme:
@@ -18,6 +18,6 @@ spec:
       - http01:
           ingressClass: {{ingress_class_name}}
         domains:
-{% for d in domains %}
+{% for d in cert_domains %}
           - {{ d }}
 {% endfor %}
