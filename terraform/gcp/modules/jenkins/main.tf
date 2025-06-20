@@ -5,7 +5,7 @@ resource "kubernetes_namespace" "jenkins" {
 }
 
 data "template_file" "jenkins_values" {
-  template = file("${path.module}/values.yaml.tmpl")
+  template = file("${path.module}/jenkins-values.yaml.tmpl")
 
   vars = {
     jenkins_admin_username = var.config.jenkins_username
