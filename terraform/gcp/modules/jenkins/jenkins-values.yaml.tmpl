@@ -12,3 +12,14 @@ controller:
   admin:
     username: ${jenkins_admin_username}
     password: ${jenkins_admin_password}
+
+  ingress:
+    enabled: true
+    hostName: ${jenkins_hostname}
+    annotations:
+      kubernetes.io/ingress.class: "${ingress_class}"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    tls:
+      - secretName: ${jenkins_tls_secret_name}
+        hosts:
+          - ${jenkins_hostname}
