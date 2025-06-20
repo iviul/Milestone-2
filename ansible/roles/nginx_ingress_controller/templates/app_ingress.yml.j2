@@ -11,12 +11,12 @@ spec:
   ingressClassName: {{ ingress_class_name }}
   tls:
     - hosts:
-{% for domain in domains %}
+{% for domain in ingress_domains %}
         - {{ domain }}
 {% endfor %}
       secretName: {{ tls_secret_name }}
   rules:
-{% for domain in domains %}
+{% for domain in ingress_domains %}
     - host: {{ domain }}
       http:
         paths:
