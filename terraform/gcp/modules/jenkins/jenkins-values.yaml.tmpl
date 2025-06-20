@@ -1,0 +1,14 @@
+controller:
+  installPlugins:
+    - kubernetes
+    - workflow-aggregator
+    - git
+    - configuration-as-code
+  JCasC:
+    configScripts:
+      welcome-message: |
+        jenkins:
+          systemMessage: "${system_message}"
+  admin:
+    username: ${jenkins_admin_username}
+    password: ${jenkins_admin_password}
