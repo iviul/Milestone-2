@@ -1,0 +1,31 @@
+---
+controller:
+  image:
+    tag: "2.452.1-jdk17" 
+
+  installPlugins:
+    - kubernetes
+    - workflow-aggregator
+    - git
+    - configuration-as-code
+
+  admin:
+    username: admin
+    password: admin
+
+  JCasC:
+    configScripts:
+      welcome-message: |
+        jenkins:
+          systemMessage: "Welcome to Jenkins 11in GKE!"
+
+# Uncomment and adjust ingress if needed
+#  ingress:
+#    enabled: true
+#    hostName: jenkins.anfox.pp.ua
+#    annotations:
+#      kubernetes.io/ingress.class: "nginx"
+#    tls:
+#      - hosts:
+#          - jenkins.anfox.pp.ua
+#        secretName: jenkins-tls
