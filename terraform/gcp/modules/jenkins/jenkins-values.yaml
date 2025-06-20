@@ -1,7 +1,7 @@
 ---
 controller:
   image:
-    tag: "2.452.1-jdk17"  # Ensure Jenkins version is compatible with your plugins
+    tag: "2.452.1-jdk17" 
 
   installPlugins:
     - kubernetes

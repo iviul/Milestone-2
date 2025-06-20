@@ -20,7 +20,7 @@ locals {
 
   service_account_email = local.config.project.service_account_email
 
-  # Pick the first cluster key as the "primary" cluster for provider configuration
+
   primary_gke_key = keys(module.gke_cluster.cluster_endpoints)[0]
 }
 
@@ -98,22 +98,6 @@ module "gke_cluster" {
   vpc_self_links    = module.network.vpc_self_links
   subnet_self_links = module.network.subnet_self_links_by_name
 }
-
-# data "google_client_config" "default" {}
-
-# provider "kubernetes" {
-#   host                   = "https://${module.gke_cluster.cluster_endpoints[local.primary_gke_key]}"
-#   token                  = data.google_client_config.default.access_token
-#   cluster_ca_certificate = base64decode(module.gke_cluster.cluster_ca_certificates[local.primary_gke_key])
-# }
-
-# provider "helm" {
-#   kubernetes {
-#     host                   = "https://${module.gke_cluster.cluster_endpoints[local.primary_gke_key]}"
-#     token                  = data.google_client_config.default.access_token
-#     cluster_ca_certificate = base64decode(module.gke_cluster.cluster_ca_certificates[local.primary_gke_key])
-#   }
-# }
 
 module "jenkins" {
   source    = "./modules/jenkins"
