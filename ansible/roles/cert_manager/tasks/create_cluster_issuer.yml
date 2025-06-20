@@ -16,6 +16,5 @@
   kubernetes.core.k8s:
     state: present
     src: "/tmp/{{ cluster_issuer_name }}-clusterissuer.yaml"
-    kubeconfig: "{{ kubeconfig_path }}"
   tags:
     - clusterissuer

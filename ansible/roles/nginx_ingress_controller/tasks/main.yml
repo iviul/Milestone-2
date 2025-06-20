@@ -3,7 +3,7 @@
     name: ingress-nginx
     repo_url: https://kubernetes.github.io/ingress-nginx
 
-- name: Install ingress-nginx controller with NodePort service
+- name: Install ingress-nginx controller with LoadBalancer and named static IP (GCP)
   community.kubernetes.helm:
     name: ingress-nginx
     chart_ref: ingress-nginx/ingress-nginx
@@ -11,17 +11,14 @@
     create_namespace: true
     values:
       controller:
-        kind: DaemonSet
-        hostNetwork: true
-        dnsPolicy: ClusterFirstWithHostNet
+        kind: Deployment
         service:
-          type: ClusterIP
+          type: LoadBalancer
+          loadBalancerIP: "{{ gke-ingress-ip }}"
         ingressClassResource:
           name: "{{ ingress_class_name }}"
           enabled: true
           default: true
-        admissionWebhooks:
-          enabled: false
     wait: true
     update_repo_cache: true
 
