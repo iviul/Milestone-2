@@ -99,21 +99,21 @@ module "gke_cluster" {
   subnet_self_links = module.network.subnet_self_links_by_name
 }
 
-data "google_client_config" "default" {}
+# data "google_client_config" "default" {}
 
-provider "kubernetes" {
-  host                   = "https://${module.gke_cluster.cluster_endpoints[local.primary_gke_key]}"
-  token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(module.gke_cluster.cluster_ca_certificates[local.primary_gke_key])
-}
+# provider "kubernetes" {
+#   host                   = "https://${module.gke_cluster.cluster_endpoints[local.primary_gke_key]}"
+#   token                  = data.google_client_config.default.access_token
+#   cluster_ca_certificate = base64decode(module.gke_cluster.cluster_ca_certificates[local.primary_gke_key])
+# }
 
-provider "helm" {
-  kubernetes {
-    host                   = "https://${module.gke_cluster.cluster_endpoints[local.primary_gke_key]}"
-    token                  = data.google_client_config.default.access_token
-    cluster_ca_certificate = base64decode(module.gke_cluster.cluster_ca_certificates[local.primary_gke_key])
-  }
-}
+# provider "helm" {
+#   kubernetes {
+#     host                   = "https://${module.gke_cluster.cluster_endpoints[local.primary_gke_key]}"
+#     token                  = data.google_client_config.default.access_token
+#     cluster_ca_certificate = base64decode(module.gke_cluster.cluster_ca_certificates[local.primary_gke_key])
+#   }
+# }
 
 module "jenkins" {
   source    = "./modules/jenkins"
