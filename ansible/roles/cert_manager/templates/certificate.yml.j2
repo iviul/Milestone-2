@@ -1,5 +1,5 @@
 ---
-apiVersion: cert-manager.io/v1More actions
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{certificate_secret}}
@@ -10,16 +10,14 @@ spec:
     name: {{cluster_issuer_name}}
     kind: ClusterIssuer
   dnsNames:
-{% for d in domains %}
 {% for d in cert_domains %}
-    - {{ d }}
+    - "{{ d }}"
 {% endfor %}
   acme:
     config:
       - http01:
           ingressClass: {{ingress_class_name}}
         domains:
-{% for d in domains %}
 {% for d in cert_domains %}
-          - {{ d }}
+          - "{{ d }}"
 {% endfor %}
