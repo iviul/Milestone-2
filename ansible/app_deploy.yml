@@ -19,7 +19,7 @@
         db_name: "{{ db_secret_result.resources[0].data.db_name | b64decode }}"
         db_host: "{{ db_secret_result.resources[0].data.db_host | b64decode }}"
         db_port: "{{ db_secret_result.resources[0].data.db_port | b64decode }}"
-        gke-ingress-ip: "{{ db_secret_result.resources[0].data.gke_ingress_ip | b64decode }}"
+        gke_ingress_ip: "{{ db_secret_result.resources[0].data.gke_ingress_ip | b64decode }}"
 
 - name: Deploy application
   hosts: localhost
