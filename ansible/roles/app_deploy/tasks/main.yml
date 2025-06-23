@@ -1,9 +1,9 @@
-- name: Install Python dependencies
-  ansible.builtin.apt:
-    update_cache: yes
-    pkg:
-      - python3-pip
-    state: present
+# - name: Install Python dependencies
+#   ansible.builtin.apt:
+#     update_cache: yes
+#     pkg:
+#       - python3-pip
+#     state: present
 
 # - name: Install Python packages system-wide (PEP 668 override)
 #   ansible.builtin.pip:
