@@ -11,7 +11,7 @@ spec:
     kind: ClusterIssuer
   dnsNames:
 {% for d in cert_domains %}
-    - {{ d }}
+    - "{{ d }}"
 {% endfor %}
   acme:
     config:
