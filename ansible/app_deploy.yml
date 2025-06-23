@@ -9,7 +9,7 @@
         api_version: v1
         kind: Secret
         name: db-secret
-        namespace: intproject
+        namespace: jenkins
       register: db_secret_result
 
     - name: Set secret facts
