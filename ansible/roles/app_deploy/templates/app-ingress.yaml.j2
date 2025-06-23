@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ ingress_name }}
+  namespace: {{ ingress_namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: {{ ingress_class_name }}
+  tls:
+    - hosts:
+{% for domain in ingress_domains %}
+        - {{ domain }}
+{% endfor %}
+      secretName: {{ tls_secret_name }}
+  rules:
+{% for domain in ingress_domains %}
+    - host: {{ domain }}
+      http:
+        paths:
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: server
+                port:
+                  number: 8080
+          - path: /()(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
+{% endfor %}
