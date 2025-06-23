@@ -41,23 +41,23 @@ resource "google_compute_subnetwork" "subnet" {
   network       = google_compute_network.vpc[each.value.network_name].id
 }
 
-resource "google_compute_firewall" "ingress" {
-  for_each = {
-    for sg in var.security_groups : sg.name => sg
-    if length(sg.ingress) > 0
-  }
-
-  name        = each.value.name
-  network     = google_compute_network.vpc[each.value.vpc].self_link
-  target_tags = each.value.attach_to
-
-  dynamic "allow" {
-    for_each = each.value.ingress
-    content {
-      protocol = allow.value.protocol
-      ports    = [tostring(allow.value.port)]
-    }
-  }
+# resource "google_compute_firewall" "ingress" {
+#   for_each = {
+#     for sg in var.security_groups : sg.name => sg
+#     if length(sg.ingress) > 0
+#   }
+# 
+#   name        = each.value.name
+#   network     = google_compute_network.vpc[each.value.vpc].self_link
+#   target_tags = each.value.attach_to
+# 
+#  dynamic "allow" {
+#     for_each = each.value.ingress
+#     content {
+#       protocol = allow.value.protocol
+#       ports    = [tostring(allow.value.port)]
+#     }
+#   }
 
   # Handle source ranges properly - either use CIDR from ACLs or default to 0.0.0.0/0
   source_ranges = distinct(flatten([
@@ -101,6 +101,7 @@ resource "google_compute_firewall" "ingress" {
 #   ]))
 
 # }
+
 resource "google_compute_router" "nat_router" {
   for_each = google_compute_network.vpc
 

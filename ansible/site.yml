@@ -1,18 +1,21 @@
+---
 - name: Install Google Cloud Ops Agent
-  hosts: all   # or specify your GCP hosts group
-  become: yes
+  hosts: all
+  become: true
   roles:
     - gcp-ops-agent
 
+---
 - name: Configure reverse proxy
   hosts: reverse-proxy
-  become: yes
+  become: true
   roles:
     - reverse_proxy
 
+---
 - name: Deploy Redis Service
   hosts: redis
-  become: yes
+  become: true
   vars_files:
     - "{{ config_path }}"
   roles:
@@ -21,9 +24,10 @@
   vars:
     container: "{{ containers.redis }}"
 
+---
 - name: Deploy Backend Service
   hosts: backend
-  become: yes
+  become: true
   vars_files:
     - "{{ config_path }}"
   roles:
@@ -34,9 +38,10 @@
   vars:
     container: "{{ containers.backend }}"
 
+---
 - name: Deploy Frontend Service
   hosts: frontend
-  become: yes
+  become: true
   vars_files:
     - "{{ config_path }}"
   roles:
@@ -47,10 +52,27 @@
   vars:
     container: "{{ containers.frontend }}"
 
+---
 - name: K3s cluster join
   hosts: public
-  become: yes
+  become: true
   roles: 
     - k3s_cluster_join
 
-
+---
+- name: Configure GCP Ingress Rules
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: gcp_firewall
+      vars:
+        project: lofty-memento-458508-i1
+        security_groups:
+          - name: k3s-sg
+            vpc: lofty-memento-458508-i1
+            attach_to: [ "k3s" ]
+            ingress:
+              - protocol: tcp
+                port: 6443
+              - protocol: tcp
+                port: 22
