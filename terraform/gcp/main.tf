@@ -120,10 +120,39 @@ module "jenkins" {
   cluster_endpoint = module.gke_cluster.cluster_endpoints["main-cluster"] // change if using more than one cluster
   ca_certificate   = module.gke_cluster.cluster_ca_certificates["main-cluster"] // change if using more than one cluster
   access_token     = data.google_client_config.default.access_token
-
+  admin_user = local.config.project.jenkins_username
+  admin_password = local.config.project.jenkins_password
   providers = {
     kubernetes = kubernetes
     helm       = helm
   }
+}
+
+module "gke_service_account" {
+  source = "./modules/gke_service_account"
+  service_account = local.config.kubernetes_service_account
+}
+
+resource "kubernetes_secret" "jenkins_db_secret" {
+  metadata {
+    name      = "db-secret"
+    namespace = "jenkins"
+  }
+
+  data = {
+    db_host     = module.db-instance.db_hosts[local.db_name]
+    db_user     = module.db-instance.db_users[local.db_name]
+    db_password = module.db-instance.db_passwords[local.db_name]
+    db_port     = module.db-instance.db_ports[local.db_name]
+    db_name    = module.db-instance.db_names[local.db_name]
+    gke_ingress_ip = module.static_ips.ip_addresses["gke-ingress-ip"]
+  }
+
+  type = "Opaque"
+
+  depends_on = [
+    module.db-instance,
+    module.static_ips
+  ]
 }
 
