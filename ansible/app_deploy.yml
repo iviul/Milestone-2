@@ -14,12 +14,12 @@
 
     - name: Set secret facts
       set_fact:
-        db_user: "{{ db_secret_result.resources[0].data.DB_USER | b64decode }}"
-        db_password: "{{ db_secret_result.resources[0].data.DB_PASSWORD | b64decode }}"
-        db_name: "{{ db_secret_result.resources[0].data.DB_NAME | b64decode }}"
-        db_host: "{{ db_secret_result.resources[0].data.DB_HOST | b64decode }}"
-        db_port: "{{ db_secret_result.resources[0].data.DB_PORT | b64decode }}"
-        gke-ingress-ip: "{{ db_secret_result.resources[0].data.GKE_INGRESS_IP | b64decode }}"
+        db_user: "{{ db_secret_result.resources[0].data.db_user | b64decode }}"
+        db_password: "{{ db_secret_result.resources[0].data.db_password | b64decode }}"
+        db_name: "{{ db_secret_result.resources[0].data.db_name | b64decode }}"
+        db_host: "{{ db_secret_result.resources[0].data.db_host | b64decode }}"
+        db_port: "{{ db_secret_result.resources[0].data.db_port | b64decode }}"
+        gke-ingress-ip: "{{ db_secret_result.resources[0].data.gke-ingress-ip | b64decode }}"
 
 - name: Deploy application
   hosts: localhost
