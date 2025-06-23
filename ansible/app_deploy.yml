@@ -23,6 +23,7 @@
 
 - name: Deploy application
   hosts: localhost
+  become: true
   vars_files:
     - "{{ config_path }}"
   roles:
