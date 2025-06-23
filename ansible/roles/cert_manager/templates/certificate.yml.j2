@@ -5,7 +5,7 @@ metadata:
   name: {{certificate_secret}}
   namespace: {{cert_namespace}}
 spec:
-  secretName: {{certificate_secret}}
+  secretName: nginx-hello-tls-secret 
   issuerRef:
     name: {{cluster_issuer_name}}
     kind: ClusterIssuer
