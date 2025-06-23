@@ -8,10 +8,20 @@ data "template_file" "jenkins_values" {
   template = file("${path.module}/jenkins-values.yaml.tmpl")
 
   vars = {
-    jenkins_admin_username = var.config.jenkins_username
-    jenkins_admin_password = var.config.jenkins_password
-    system_message         = "Welcome to Jenkins kh by ${var.config.jenkins_username}"
+    jenkins_namespace = "jenkins"
+    jenkins_hostname       = var.jenkins_hostname
+    ingress_class          = var.ingress_class
+    jenkins_admin_username = var.jenkins_admin_username
+    jenkins_admin_password = var.jenkins_admin_password
+    jenkins_tls_secret_name = var.jenkins_tls_secret_name
+    system_message         = "Welcome to Jenkins kh by ${var.jenkins_admin_username}!"
   }
+}
+
+resource "local_file" "jenkins_values_yaml" {
+  content  = data.template_file.jenkins_values.rendered
+  filename = "${path.module}/jenkins-values.yaml"
+  
 }
 
 resource "helm_release" "jenkins" {
@@ -21,9 +31,8 @@ resource "helm_release" "jenkins" {
   version    = "5.1.11" 
   namespace  = kubernetes_namespace.jenkins.metadata[0].name
 
-
   values = [
-    file("${path.module}/jenkins-values.yaml")
+    data.template_file.jenkins_values.rendered
   ]
   depends_on = [kubernetes_namespace.jenkins]
 }
