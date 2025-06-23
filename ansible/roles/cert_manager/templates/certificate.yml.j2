@@ -1,16 +1,25 @@
 ---
-apiVersion: cert-manager.io/v1
+apiVersion: cert-manager.io/v1More actions
 kind: Certificate
 metadata:
-  name: {{ certificate_secret }}
-  namespace: {{ cert_namespace }}
+  name: {{certificate_secret}}
+  namespace: {{cert_namespace}}
 spec:
-  secretName: nginx-hello-tls-secret
+  secretName: {{certificate_secret}}
   issuerRef:
-    name: {{ cluster_issuer_name }}
+    name: {{cluster_issuer_name}}
     kind: ClusterIssuer
   dnsNames:
+{% for d in domains %}
 {% for d in cert_domains %}
-    - "{{ d }}"
+    - {{ d }}
 {% endfor %}
-
+  acme:
+    config:
+      - http01:
+          ingressClass: {{ingress_class_name}}
+        domains:
+{% for d in domains %}
+{% for d in cert_domains %}
+          - {{ d }}
+{% endfor %}
