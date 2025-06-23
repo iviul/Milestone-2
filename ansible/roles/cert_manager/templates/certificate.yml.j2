@@ -19,5 +19,5 @@ spec:
           ingressClass: {{ingress_class_name}}
         domains:
 {% for d in cert_domains %}
-          - {{ d }}
+          - "{{ d }}"
 {% endfor %}

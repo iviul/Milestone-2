@@ -28,6 +28,7 @@ master_ip: "{{ hostvars[master_node].ansible_host }}"
 cert_domains:
   - "classschedule.pp.ua"
   - "*.classschedule.pp.ua"
+  - "qjsoq.pp.ua"
 
 ingress_domains:
   - "classschedule.pp.ua"
