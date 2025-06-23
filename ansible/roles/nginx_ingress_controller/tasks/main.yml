@@ -14,7 +14,7 @@
         kind: Deployment
         service:
           type: LoadBalancer
-          loadBalancerIP: "{{ vars['gke-ingress-ip'] }}"
+          loadBalancerIP: "{{ vars['gke_ingress_ip'] }}"
         ingressClassResource:
           name: "{{ ingress_class_name }}"
           enabled: true
