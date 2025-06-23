@@ -26,17 +26,21 @@
 #     dest: /root/.kube/config
 #     remote_src: yes
 #     mode: '0600'
+- name: Debug full db_secret_result
+  debug:
+    var: db_secret_result
+
 - name: Debug decoded secrets
   debug:
     msg: |
       Decoded Secrets:
       -----------------
-      DB User: {{ db_user }} (type: {{ db_user | type_debug }})
-      DB Password: {{ db_password }} (type: {{ db_password | type_debug }})
-      DB Name: {{ db_name }} (type: {{ db_name | type_debug }})
-      DB Host: {{ db_host }} (type: {{ db_host | type_debug }})
-      DB Port: {{ db_port }} (type: {{ db_port | type_debug }})
-      GKE Ingress IP: {{ gke_ingress_ip }} (type: {{ gke_ingress_ip | type_debug }})
+      DB User: {{ db_user }}
+      DB Password: {{ db_password }}
+      DB Name: {{ db_name }}
+      DB Host: {{ db_host }}
+      DB Port: {{ db_port }}
+      GKE Ingress IP: {{ gke_ingress_ip }}
 
 - name: Create a k8s namespace
   kubernetes.core.k8s:
