@@ -1,0 +1,26 @@
+- name: Create GCP firewall rules for each security group
+  vars:
+    rules: "{{ item.ingress }}"
+  loop: "{{ security_groups }}"
+  when: item.ingress | length > 0
+  loop_control:
+    label: "{{ item.name }}"
+  block:
+    - name: "Create firewall rule for each ingress port"
+      loop: "{{ rules }}"
+      loop_control:
+        label: "{{ item.name }} - {{ item.port }}"
+      google.cloud.gcp_compute_firewall:
+        name: "{{ outer_item.name }}"
+        project: "{{ project }}"
+        network: "projects/{{ project }}/global/networks/{{ outer_item.vpc }}"
+        allowed:
+          - IPProtocol: "{{ item.protocol }}"
+            ports:
+              - "{{ item.port }}"
+        direction: INGRESS
+        target_tags: "{{ outer_item.attach_to }}"
+        state: present
+      vars:
+        outer_item: "{{ lookup('vars', 'item') }}"
+        
