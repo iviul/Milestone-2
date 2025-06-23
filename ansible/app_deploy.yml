@@ -1,4 +1,26 @@
 ---
+- name: Load Kubernetes secrets
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+    - name: Get DB secret
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Secret
+        name: db-secret
+        namespace: intproject
+      register: db_secret_result
+
+    - name: Set secret facts
+      set_fact:
+        db_user: "{{ db_secret_result.resources[0].data.DB_USER | b64decode }}"
+        db_password: "{{ db_secret_result.resources[0].data.DB_PASSWORD | b64decode }}"
+        db_name: "{{ db_secret_result.resources[0].data.DB_NAME | b64decode }}"
+        db_host: "{{ db_secret_result.resources[0].data.DB_HOST | b64decode }}"
+        db_port: "{{ db_secret_result.resources[0].data.DB_PORT | b64decode }}"
+        gke-ingress-ip: "{{ db_secret_result.resources[0].data.GKE_INGRESS_IP | b64decode }}"
+
 - name: Deploy application
   hosts: localhost
   vars_files:
