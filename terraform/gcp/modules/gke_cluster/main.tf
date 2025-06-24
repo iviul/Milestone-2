@@ -22,6 +22,7 @@ resource "google_container_cluster" "gke" {
   for_each = var.clusters
   name     = each.value.name
   location = each.value.location
+  deletion_protection = false
 
   initial_node_count       = each.value.initial_node_count
   remove_default_node_pool = true

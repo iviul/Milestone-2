@@ -1,8 +1,3 @@
-variable "private_key_path" {
-  type        = string
-  description = "Path to a private key"
-}
-
 variable "gcp_credentials_file" {
   description = "Path to the GCP credentials JSON file"
   type        = string
