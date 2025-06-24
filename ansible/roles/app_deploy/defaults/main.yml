@@ -111,3 +111,20 @@ deployments:  [
       "namespace": "intproject"
     }
 ]
+ingress: [
+    {
+      name: app-tls-secret,
+      cluster_issuer_name: "letsencrypt-production",
+      ingress_class_name: nginx,
+      certificate_secret_map: { staging: "tls-secret-stag", production: "tls-secret-prod" },
+      app_name: my-app,
+      namespace: "intproject",
+      ingress_name: app-ingress,
+      domain: anfox.pp.ua,
+      tls_secret_name_map: {staging: "app-secret-tls-stag", production: "app-secret-tls-prod"},
+      ingress_namespace: intproject
+    }
+]
+# cluster_issuer_name: "letsencrypt-staging"change to 
+# cluster_issuer_name: "letsencrypt-production" after testing 
+# due to limits let`sencrypt`
