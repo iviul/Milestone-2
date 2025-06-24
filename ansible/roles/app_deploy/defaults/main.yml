@@ -114,7 +114,7 @@ deployments:  [
 ingress: [
     {
       name: app-tls-secret,
-      cluster_issuer_name: "letsencrypt-production",
+      cluster_issuer_name_map: {staging: "letsencrypt-staging", production: "letsencrypt-production"},
       ingress_class_name: nginx,
       certificate_secret_map: { staging: "tls-secret-stag", production: "tls-secret-prod" },
       app_name: my-app,
