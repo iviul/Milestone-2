@@ -2,7 +2,7 @@
 # --- Run the playbook ---
 
 # 1 · Production certificate (live Let’s Encrypt issuer)
-ansible-playbook -i app_deploy.yml inventory/inventory.ini --ask-become-pass -e "env=production"
+ansible-playbook app_deploy.yml inventory/inventory.ini --ask-become-pass -e "env=production"
 
 # 2 · Staging certificate (Let’s Encrypt staging issuer, safe for testing)
-ansible-playbook -i app_deploy.yml inventory/inventory.ini --ask-become-pass -e "env=staging"
+ansible-playbook app_deploy.yml inventory/inventory.ini --ask-become-pass -e "env=staging"
