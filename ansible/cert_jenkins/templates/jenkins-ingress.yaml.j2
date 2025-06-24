@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ item.ingress_name }}
+  namespace: "{{ item.jenkins_namespace }}"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: {{ item.ingress_class_name }}
+  tls:
+    - hosts:
+        - "{{ item.jenkins_host }}"
+      secretName: "{{ item.jenkins_cert_secret_map[env] }}"
+  rules:
+    - host: "{{ item.jenkins_host }}"
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: "{{ item.jenkins_service_name }}"
+                port:
+                  number: {{ item.jenkins_service_port }}
+

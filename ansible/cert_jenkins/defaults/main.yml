@@ -1,0 +1,18 @@
+---
+jenkins: [
+    {
+        jenkins_namespace: jenkins,
+        name: jenkins-tls-secret,
+        jenkins_host: jenkins.anfox.pp.ua,
+        jenkins_cert_secret_map: {staging: "jenkins-secret-tls-stag", production: "jenkins-secret-tls-prod"},
+        jenkins_issuer_kind: ClusterIssuer,
+        cluster_issuer_name_map: {staging: "letsencrypt-staging", production: "letsencrypt-production"},
+        jenkins_service_name: jenkins,
+        jenkins_service_port: 8080,
+        ingress_class: nginx,
+        ingress_name: nginx,
+        ingress_namespace: jenkins,
+        ingress_class_name: nginx,
+        domain_jenkins: jenkins.anfox.pp.ua
+    }
+]
