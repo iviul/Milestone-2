@@ -1,0 +1,14 @@
+---
+- name: Apply Ingress Jenkins
+  kubernetes.core.k8s:
+    state: present
+    template: "{{ role_path }}/templates/jenkins-ingress.yaml.j2"
+    # namespace: "{{ namespace | default('jenkins') }}"
+  loop: "{{ jenkins }}"
+
+- name: Apply Certificate Jenkins
+  kubernetes.core.k8s:
+    state: present
+    template: "{{ role_path }}/templates/jenkins-certificate.yaml.j2"
+    namespace: "{{ namespace | default('jenkins') }}"
+  loop: "{{ jenkins }}"

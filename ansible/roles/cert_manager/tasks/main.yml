@@ -23,6 +23,3 @@
 
 - name: "Create ClusterIssuer"
   import_tasks: create_cluster_issuer.yml
-
-- name: "Deploy Certificate"
-  import_tasks: create_certificate.yml

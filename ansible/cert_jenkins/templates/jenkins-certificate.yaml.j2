@@ -1,0 +1,17 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "{{ item.name }}"
+  namespace: "{{ item.jenkins_namespace }}"
+spec:
+  secretName: "{{ item.jenkins_cert_secret_map[env] }}"
+  issuerRef:
+    name: {{item.cluster_issuer_name_map[env]}}
+    kind: ClusterIssuer
+  dnsNames:
+{% for d in domain_jenkins %}
+    - {{ d }}
+{% endfor %}
+
+
