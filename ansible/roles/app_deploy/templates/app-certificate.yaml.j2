@@ -3,7 +3,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{item.name}}
-  namespace: intproject
+  namespace: {{ item.namespace }}
 spec:
   secretName: {{ item.tls_secret_name_map[env] }}
   issuerRef:
