@@ -61,16 +61,16 @@ module "monitoring" {
   cpu_usage_threshold        = local.config.monitoring.cpu_usage_threshold
 }
 
-# module "load-balancer" {
-#   source     = "./modules/load-balancer"
-#   project_id = local.config.project.name
-#   region     = local.region
-#   zone       = "europe-west3-a"
-#   network    = module.network.vpc_self_links[local.config.load_balancers[0].vpc]
-#   instances  = module.vm.non_bastion_instances_self_links
+module "load-balancer" {
+  source     = "./modules/load-balancer"
+  project_id = local.config.project.name
+  region     = local.region
+  zone       = "europe-west3-a"
+  network    = module.network.vpc_self_links[local.config.load_balancers[0].vpc]
+  instances  = module.vm.non_bastion_instances_self_links
 
-#   load_balancers = local.config.load_balancers
-# }
+  load_balancers = local.config.load_balancers
+}
 
 module "db-instance" {
   source            = "./modules/db-instance"
@@ -98,13 +98,13 @@ module "static_ips" {
   static_ips  = local.config.static_ips
 }
 
-module "cloudflare_dns" {
-  source               = "../shared_modules/cloudflare_dns"
-  cloudflare_zone_id   = var.cloudflare_zone_id
-  dns_records_config   = local.config.dns_records
-  resource_dns_map     = module.static_ips.ip_addresses
-  cloudflare_api_token = var.cloudflare_api_token
-}
+# module "cloudflare_dns" {
+#   source               = "../shared_modules/cloudflare_dns"
+#   cloudflare_zone_id   = var.cloudflare_zone_id
+#   dns_records_config   = local.config.dns_records
+#   resource_dns_map     = module.static_ips.ip_addresses
+#   cloudflare_api_token = var.cloudflare_api_token
+# }
 
 
 module "gke_cluster" {
@@ -116,7 +116,9 @@ module "gke_cluster" {
 
 module "jenkins" {
   source    = "./modules/jenkins"
-
+  jenkins_hostname = local.config.project.jenkins_hostname
+  jenkins_admin_username = local.config.project.jenkins_admin_username
+  jenkins_admin_password = local.config.project.jenkins_admin_password
   cluster_endpoint = module.gke_cluster.cluster_endpoints["main-cluster"] // change if using more than one cluster
   ca_certificate   = module.gke_cluster.cluster_ca_certificates["main-cluster"] // change if using more than one cluster
   access_token     = data.google_client_config.default.access_token

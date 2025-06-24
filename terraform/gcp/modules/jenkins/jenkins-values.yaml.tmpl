@@ -1,3 +1,7 @@
+
+
+namespace: ${jenkins_namespace}
+
 controller:
   installPlugins:
     - kubernetes
@@ -23,3 +27,5 @@ controller:
       - secretName: ${jenkins_tls_secret_name}
         hosts:
           - ${jenkins_hostname}
+  image:
+      tag: "2.452.1-jdk17"
