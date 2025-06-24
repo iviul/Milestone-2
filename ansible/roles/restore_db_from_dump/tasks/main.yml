@@ -1,7 +1,4 @@
-# SPDX-License-Identifier: MIT-0
 ---
-# tasks file for restore-db-from-dump
-
 - name: Restore PostgreSQL database to Cloud SQL from local dump
   delegate_to: localhost
   ansible.builtin.command: >
