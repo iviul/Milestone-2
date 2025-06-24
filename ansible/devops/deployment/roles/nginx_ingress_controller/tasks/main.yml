@@ -1,0 +1,28 @@
+- name: Add ingress-nginx Helm repo
+  community.kubernetes.helm_repository:
+    name: ingress-nginx
+    repo_url: https://kubernetes.github.io/ingress-nginx
+
+- name: Install ingress-nginx controller with LoadBalancer and named static IP (GCP)
+  community.kubernetes.helm:
+    name: ingress-nginx
+    chart_ref: ingress-nginx/ingress-nginx
+    release_namespace: "{{ ingress_namespace }}"
+    create_namespace: true
+    values:
+      controller:
+        kind: Deployment
+        service:
+          type: LoadBalancer
+          loadBalancerIP: "{{ vars['gke-ingress-ip'] }}"
+        ingressClassResource:
+          name: "{{ ingress_class_name }}"
+          enabled: true
+          default: true
+    wait: true
+    update_repo_cache: true
+
+# - name: Create app ingress resource
+#   kubernetes.core.k8s:
+#     state: present
+#     definition: "{{ lookup('template', 'app_ingress.yml.j2') }}"

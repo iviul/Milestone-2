@@ -1,0 +1,28 @@
+- name: Build container environment from env_vars with all values as strings
+  ansible.builtin.set_fact:
+    container_env: >-
+      {{
+        dict(container.env |
+        zip(
+          container.env |
+          map('lower') |
+          map('extract', vars) |
+          map('string')
+        ))
+      }}
+  when: container.env is defined and container.env | length > 0
+
+- name: Set full container image path (use Docker Hub if no registry_url)
+  ansible.builtin.set_fact:
+    full_image_path: "{{ (registry_url | length > 0) | ternary(registry_url ~ '/', '') ~ container.image ~ ':' ~ container.tag }}"
+
+- name: Create Docker container
+  docker_container:
+    name: "{{ container.name }}"
+    image: "{{ full_image_path }}"
+    state: started
+    restart_policy: "{{ container_restart_policy }}"
+    ports: "{{ container.ports }}"
+    env: "{{ container_env | default({}) }}"
+    volumes: "{{ container.volumes | default([]) }}"
+    pull: true

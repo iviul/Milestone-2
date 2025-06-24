@@ -1,0 +1,60 @@
+---
+# Dynamically sets the registry URL based on the cloud provider (aws/gcp)
+# Fails safely if cloud_provider isn't in registry_urls
+- name: Determine container registry URL
+  ansible.builtin.set_fact:
+    registry_url: "{{ registry_urls[cloud_provider] }}"
+  when: cloud_provider in registry_urls.keys()
+  tags: ecr-auth
+
+# Ensures required AWS variables are defined before proceeding
+- name: Validate AWS ECR variables
+  ansible.builtin.assert:
+    that:
+      - aws_region is defined
+      - aws_account_id is defined
+    fail_msg: "Missing required AWS variables (aws_region/aws_account_id)"
+    success_msg: "AWS ECR variables validated"
+  when: cloud_provider == "aws"
+  tags: ecr-auth
+
+# Displays configuration details for debugging
+- name: Show ECR login variables
+  ansible.builtin.debug:
+    msg: |
+      ECR Login Configuration:
+      - Region: {{ aws_region }}
+      - Registry: {{ registry_url }}
+      - Account ID: {{ aws_account_id }}
+  tags: ecr-auth
+  changed_when: false
+
+# Uses IAM role credentials to authenticate with ECR
+# pipefail ensures errors in the pipeline fail the task
+# Changed_when checks for success message rather than RC
+- name: Login to ECR using instance role
+  ansible.builtin.shell: |
+    aws ecr get-login-password --region {{ aws_region }} |
+    docker login --username AWS --password-stdin {{ registry_url }}
+  args:
+    executable: /bin/bash
+  register: ecr_login
+  changed_when: "'Login Succeeded' in ecr_login.stdout"
+  failed_when:
+    - "'Login Succeeded' not in ecr_login.stdout"
+    - "'Error' in ecr_login.stderr"
+  tags: ecr-auth
+
+# Explicit failure with helpful message if authentication fails
+- name: Handle ECR login failure
+  ansible.builtin.fail:
+    msg: "ECR login failed. Check IAM permissions and network connectivity."
+  when: "'Login Succeeded' not in ecr_login.stdout"
+  tags: ecr-auth
+
+# Final confirmation message when authentication succeeds
+- name: Show successful auth confirmation
+  ansible.builtin.debug:
+    msg: "Successfully authenticated with {{ registry_url }}"
+  when: "'Login Succeeded' in ecr_login.stdout"
+  tags: ecr-auth

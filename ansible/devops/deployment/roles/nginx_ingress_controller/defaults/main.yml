@@ -1,0 +1,11 @@
+---
+ingress_namespace: intproject
+
+ingress_class_name: nginx
+
+tls_secret_name: nginx-hello-tls-secret
+
+ingress_domains:
+  - "example.com"
+
+ingress_name: backend-ingress

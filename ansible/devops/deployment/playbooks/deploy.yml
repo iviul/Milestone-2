@@ -1,0 +1,19 @@
+---
+- name: Deploy application
+  hosts: localhost
+  vars_files:
+    - "{{ config_path }}"
+  roles:
+    - devops.deployment.app_deploy
+  vars:
+    secrets: "{{ secrets }}"
+    configmaps: "{{ configmaps }}"
+    services: "{{ services }}"
+    deployments: "{{ deployments }}"
+
+- name: Deploy ingress
+  hosts: localhost
+  roles:
+    - devops.deployment.cert_manager
+    - devops.deployment.nginx_ingress_controller
+    - devops.deployment.cert_jenkins

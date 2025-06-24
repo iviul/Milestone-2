@@ -1,0 +1,20 @@
+---
+- name: "Render ClusterIssuer template to a file"
+  ansible.builtin.template:
+    src: cluster_issuer.yml.j2
+    dest: "/tmp/{{ cluster_issuer_name }}-clusterissuer.yaml"
+    mode: '0644'
+  tags:
+    - clusterissuer
+
+- name: Debug cluster_issuer_name (raw output)
+  ansible.builtin.debug:
+    var: cluster_issuer_name
+
+
+- name: "Create ClusterIssuer ({{ cluster_issuer_name }}) in Kubernetes"
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/{{ cluster_issuer_name }}-clusterissuer.yaml"
+  tags:
+    - clusterissuer
