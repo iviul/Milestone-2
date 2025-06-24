@@ -1,3 +1,8 @@
+locals {
+  gcp_sa_key_b64 = base64encode(file(var.gcp_credentials_file))
+}
+
+
 resource "kubernetes_namespace" "jenkins" {
   metadata {
     name = "jenkins"
@@ -5,7 +10,7 @@ resource "kubernetes_namespace" "jenkins" {
 }
 
 data "template_file" "jenkins_values" {
-  template = file("${path.module}/jenkins-values.yaml.tmpl")
+  template = file("${path.module}/jenkins-values.tpl")
 
   vars = {
     jenkins_namespace = "jenkins"
@@ -16,7 +21,8 @@ data "template_file" "jenkins_values" {
     ingress_class          = var.ingress_class
     jenkins_admin_username = var.jenkins_admin_username
     jenkins_admin_password = var.jenkins_admin_password
-    jenkins_tls_secret_name = var.jenkins_tls_secret_name
+    gcp_sa_key_b64         = local.gcp_sa_key_b64
+    cloudflare_api_token   = var.cloudflare_api_token
     system_message         = "Welcome to Jenkins kh by ${var.jenkins_admin_username}!"
     JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY
     gar_password_base64 = file("${path.root}/tfbase64")

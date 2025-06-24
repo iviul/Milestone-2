@@ -52,25 +52,25 @@ resource "google_project_service" "monitoring" {
   disable_dependent_services = true
 }
 
-module "monitoring" {
-  source                     = "./modules/monitoring"
-  alert_email                = local.config.monitoring.alert_email
-  disk_usage_threshold       = local.config.monitoring.disk_usage_threshold
-  memory_usage_threshold     = local.config.monitoring.memory_usage_threshold
-  network_outbound_threshold = local.config.monitoring.network_outbound_threshold
-  cpu_usage_threshold        = local.config.monitoring.cpu_usage_threshold
-}
+# module "monitoring" {
+#   source                     = "./modules/monitoring"
+#   alert_email                = local.config.monitoring.alert_email
+#   disk_usage_threshold       = local.config.monitoring.disk_usage_threshold
+#   memory_usage_threshold     = local.config.monitoring.memory_usage_threshold
+#   network_outbound_threshold = local.config.monitoring.network_outbound_threshold
+#   cpu_usage_threshold        = local.config.monitoring.cpu_usage_threshold
+# }
 
-module "load-balancer" {
-  source     = "./modules/load-balancer"
-  project_id = local.config.project.name
-  region     = local.region
-  zone       = "europe-west3-a"
-  network    = module.network.vpc_self_links[local.config.load_balancers[0].vpc]
-  instances  = module.vm.non_bastion_instances_self_links
+# module "load-balancer" {
+#   source     = "./modules/load-balancer"
+#   project_id = local.config.project.name
+#   region     = local.region
+#   zone       = "europe-west3-a"
+#   network    = module.network.vpc_self_links[local.config.load_balancers[0].vpc]
+#   instances  = module.vm.non_bastion_instances_self_links
 
-  load_balancers = local.config.load_balancers
-}
+#   load_balancers = local.config.load_balancers
+# }
 
 module "db-instance" {
   source            = "./modules/db-instance"
@@ -116,7 +116,6 @@ module "gke_cluster" {
 
 module "jenkins" {
   source    = "./modules/jenkins"
-  jenkins_hostname = local.config.project.jenkins_hostname
   jenkins_admin_username = local.config.project.jenkins_admin_username
   jenkins_admin_password = local.config.project.jenkins_admin_password
   jenkins_controller_registry = local.config.project.jenkins_controller_registry
@@ -124,19 +123,20 @@ module "jenkins" {
   jenkins_controller_tag = local.config.project.jenkins_controller_tag
   cluster_endpoint = module.gke_cluster.cluster_endpoints["main-cluster"] // change if using more than one cluster
   ca_certificate   = module.gke_cluster.cluster_ca_certificates["main-cluster"] // change if using more than one cluster
-  access_token     = data.google_client_config.default.access_token    
+  access_token     = data.google_client_config.default.access_token
+  gcp_credentials_file = var.gcp_credentials_file
+  cloudflare_api_token = var.cloudflare_api_token
   JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY
-
   providers = {
     kubernetes = kubernetes
     helm       = helm
   }
 }
 
-module "gke_service_account" {
-  source = "./modules/gke_service_account"
-  service_account = local.config.kubernetes_service_account
-}
+# module "gke_service_account" {
+#   source = "./modules/gke_service_account"
+#   service_account = local.config.kubernetes_service_account
+# }
 
 resource "kubernetes_secret" "jenkins_db_secret" {
   metadata {

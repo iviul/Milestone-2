@@ -35,18 +35,35 @@ variable "jenkins_admin_password" {
   description = "Password for the Jenkins admin user"
 }
 
-variable "jenkins_hostname" {
+variable "gcp_credentials_file" {
+  description = "Path to the GCP credentials JSON file"
   type        = string
-  description = "Hostname for the Jenkins service"
 }
 
-variable "ingress_class" {
+variable "cloudflare_api_token" {
   type        = string
-  description = "Ingress class to use for Jenkins"
-  default     = "nginx"
+  description = "API token for Cloudflare"
+  sensitive   = true
 }
 
-variable "jenkins_tls_secret_name" {
+variable "jenkins_github_ssh_private_key" {
+  type        = string
+  description = "SSH private key for GitHub access in Jenkins"
+  sensitive   = true
+}
+
+variable "JENKINS_GITHUB_SSH_PRIVATE_KEY" {
+  description = "Private SSH key for GitHub"
+  type        = string
+  sensitive   = true
+}
+
+variable "jenkins_controller_registry" {
+  type        = string
+  description = "Docker registry for Jenkins controller image"
+}
+
+variable "jenkins_controller_repository" {
   type        = string
   description = "Name of the TLS secret for Jenkins"
   default     = "nginx-hello-tls-secret"

@@ -1,3 +1,14 @@
+variable "private_key_path" {
+  type        = string
+  description = "Path to a private key"
+}
+
+variable "gcp_credentials_file" {
+  description = "Path to the GCP credentials JSON file"
+  type        = string
+  default     = "keys.json"
+}
+
 variable "health_check_port" {
   description = "Port used for health checks (default: 6443 for K3s)"
   type        = number
