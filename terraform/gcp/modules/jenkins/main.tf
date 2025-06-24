@@ -8,9 +8,9 @@ data "template_file" "jenkins_values" {
   template = file("${path.module}/jenkins-values.yaml.tmpl")
 
   vars = {
-    jenkins_admin_username = var.config.jenkins_username
-    jenkins_admin_password = var.config.jenkins_password
-    system_message         = "Welcome to Jenkins kh by ${var.config.jenkins_username}"
+    jenkins_admin_username = var.admin_user
+    jenkins_admin_password = var.admin_password
+    system_message         = "Welcome to Jenkins kh by ${var.admin_user}"
   }
 }
 

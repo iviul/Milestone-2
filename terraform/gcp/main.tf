@@ -98,13 +98,13 @@ module "static_ips" {
   static_ips  = local.config.static_ips
 }
 
-module "cloudflare_dns" {
-  source               = "../shared_modules/cloudflare_dns"
-  cloudflare_zone_id   = var.cloudflare_zone_id
-  dns_records_config   = local.config.dns_records
-  resource_dns_map     = module.static_ips.ip_addresses
-  cloudflare_api_token = var.cloudflare_api_token
-}
+# module "cloudflare_dns" {
+#   source               = "../shared_modules/cloudflare_dns"
+#   cloudflare_zone_id   = var.cloudflare_zone_id
+#   dns_records_config   = local.config.dns_records
+#   resource_dns_map     = module.static_ips.ip_addresses
+#   cloudflare_api_token = var.cloudflare_api_token
+# }
 
 
 module "gke_cluster" {
@@ -116,7 +116,6 @@ module "gke_cluster" {
 
 module "jenkins" {
   source    = "./modules/jenkins"
-
   cluster_endpoint = module.gke_cluster.cluster_endpoints["main-cluster"] // change if using more than one cluster
   ca_certificate   = module.gke_cluster.cluster_ca_certificates["main-cluster"] // change if using more than one cluster
   access_token     = data.google_client_config.default.access_token

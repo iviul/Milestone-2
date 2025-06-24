@@ -1,0 +1,7 @@
+ingress_namespace: intproject
+ingress_name: backend-ingress
+ingress_class_name: nginx
+tls_secret_name: nginx-hello-tls-secret
+domains:
+  - classschedule.pp.ua
+  - jenkins.classschedule.pp.ua

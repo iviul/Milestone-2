@@ -20,5 +20,6 @@ variable "cloudflare_zone_id" {
 variable "cloudflare_api_token" {
   type        = string
   description = "API token for Cloudflare"
-  sensitive   = true
+  sensitive   = false
+  default     = "aJLTlqyMHshCQ6EovdpjIQjDphJ2I308vI9Y2htU"
 }
