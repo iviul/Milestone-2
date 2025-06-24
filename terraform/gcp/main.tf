@@ -52,13 +52,9 @@ resource "google_project_service" "monitoring" {
   disable_dependent_services = true
 }
 
-module "monitoring" {
-  source                     = "./modules/monitoring"
-  alert_email                = local.config.monitoring.alert_email
-  disk_usage_threshold       = local.config.monitoring.disk_usage_threshold
-  memory_usage_threshold     = local.config.monitoring.memory_usage_threshold
-  network_outbound_threshold = local.config.monitoring.network_outbound_threshold
-  cpu_usage_threshold        = local.config.monitoring.cpu_usage_threshold
+module "cloud_monitoring" {
+  source                     = "./modules/cloud_monitoring"
+  monitoring_config           = local.config.monitoring
 }
 
 module "load-balancer" {
