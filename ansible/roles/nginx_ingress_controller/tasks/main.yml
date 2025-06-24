@@ -26,4 +26,3 @@
 #   kubernetes.core.k8s:
 #     state: present
 #     definition: "{{ lookup('template', 'app_ingress.yml.j2') }}"
-
