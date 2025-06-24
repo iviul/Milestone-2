@@ -2,22 +2,22 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: app-secret1
+  name: {{item.name}}
   namespace: intproject
 spec:
-  secretName: {{ tls_secret_name }}
+  secretName: {{ item.tls_secret_name_map[env] }}
   issuerRef:
-    name: letsencrypt-staging
+    name: {{item.cluster_issuer_name}}
     kind: ClusterIssuer
   dnsNames:
 {% for d in cert_domains %}
     - {{ d }}
 {% endfor %}
-  acme:
-    config:
-      - http01:
-          ingressClass: nginx
-        domains:
-{% for d in cert_domains %}
-          - {{ d }}
-{% endfor %}
+#   acme:
+#     config:
+#       - http01:
+#           ingressClass: nginx
+#         domains:
+# {% for d in cert_domains %}
+#           - {{ d }}
+# {% endfor %}

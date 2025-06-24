@@ -59,3 +59,19 @@
   tags:
     - deployment
 
+- name: Apply Ingress
+  kubernetes.core.k8s:
+    state: present
+    template: "{{ role_path }}/templates/app-ingress.yaml.j2"
+  loop: "{{ ingress }}"
+  tags:
+    - ingress
+
+- name: Apply Cert
+  kubernetes.core.k8s:
+    state: present
+    template: "{{ role_path }}/templates/app-certificate.yaml.j2"
+    namespace: "{{ namespace | default('app-ingress') }}"
+  loop: "{{ ingress }}"
+  tags:
+    - cert

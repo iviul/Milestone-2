@@ -16,4 +16,4 @@
   roles:
     - cert_manager
     - nginx_ingress_controller
-
+    - cert_jenkins

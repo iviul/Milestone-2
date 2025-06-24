@@ -22,8 +22,8 @@
     wait: true
     update_repo_cache: true
 
-- name: Create app ingress resource
-  kubernetes.core.k8s:
-    state: present
-    definition: "{{ lookup('template', 'app_ingress.yml.j2') }}"
+# - name: Create app ingress resource
+#   kubernetes.core.k8s:
+#     state: present
+#     definition: "{{ lookup('template', 'app_ingress.yml.j2') }}"
 
