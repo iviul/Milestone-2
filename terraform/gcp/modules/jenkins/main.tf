@@ -5,7 +5,7 @@ resource "kubernetes_namespace" "jenkins" {
 }
 
 data "template_file" "jenkins_values" {
-  template = file("${path.module}/jenkins-values.yaml.tmpl")
+  template = file("${path.module}/jenkins-values.yaml")
 
   vars = {
     jenkins_namespace = "jenkins"
