@@ -45,6 +45,11 @@ controller:
                       id: cloud_bucket
                       description: Cloud Storage bucket for Terraform state
                       secret: ${cloud_bucket}
+                  - string:
+                      scope: GLOBAL
+                      id: gar-password
+                      description: GAR password for Docker registry
+                      secret: ${gar_password_base64}
 
         jobs:
           - script: >
