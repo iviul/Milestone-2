@@ -25,7 +25,7 @@ data "template_file" "jenkins_values" {
     cloud_bucket = var.cloud_bucket
     system_message         = "Welcome to Jenkins kh by ${var.jenkins_admin_username}!"
     JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY
-    gar_password_base64 = file("${path.root}/tfbase64")
+    gar_password_base64 = var.gar_password_base64
   }
 }
 

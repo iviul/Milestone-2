@@ -77,3 +77,9 @@ variable "cloud_bucket"  {
   type        = string
   description = "Name of the Google Cloud Storage bucket for Terraform state"
 }
+
+variable "gar_password_base64" {
+  description = "Base64-encoded password for GAR (Google Artifact Registry) authentication."
+  type        = string
+  sensitive   = true
+}
