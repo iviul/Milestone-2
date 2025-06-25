@@ -23,6 +23,8 @@ data "template_file" "jenkins_values" {
     jenkins_admin_password = var.jenkins_admin_password
     gcp_sa_key_b64         = local.gcp_sa_key_b64
     cloudflare_api_token   = var.cloudflare_api_token
+    jenkins_github_ssh_private_key = var.jenkins_github_ssh_private_key
+    cloud_bucket = var.cloud_bucket
     system_message         = "Welcome to Jenkins kh by ${var.jenkins_admin_username}!"
     JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY
     gar_password_base64 = file("${path.root}/tfbase64")

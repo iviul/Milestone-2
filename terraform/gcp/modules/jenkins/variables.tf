@@ -89,3 +89,8 @@ variable "jenkins_controller_tag" {
   type        = string
   description = "Tag for the Jenkins controller image"
 }
+
+variable "cloud_bucket"  {
+  type        = string
+  description = "Name of the Google Cloud Storage bucket for Terraform state"
+}

@@ -4,13 +4,15 @@ controller:
   image: 
     registry: "docker.io"
     repository: "artamonovdima/jenkins-custom"
-    tag: "3.0"
+    tag: "6.0"
     pullPolicy: "IfNotPresent"
   installPlugins: false 
 
   admin:
     username: ${jenkins_admin_username}
     password: ${jenkins_admin_password}
+
+  jenkinsUrl: ${jenkins_hostname}
 
   JCasC:
     enabled: true
@@ -43,6 +45,11 @@ controller:
                       id: cloudflare-token
                       description: Cloudflare API token
                       secret: ${cloudflare_api_token}
+                  - string:
+                      scope: GLOBAL
+                      id: cloud_bucket
+                      description: Cloud Storage bucket for Terraform state
+                      secret: ${cloud_bucket}
 
         jobs:
           - script: >

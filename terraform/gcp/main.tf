@@ -127,6 +127,7 @@ module "jenkins" {
   gcp_credentials_file = var.gcp_credentials_file
   cloudflare_api_token = var.cloudflare_api_token
   JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY
+  cloud_bucket = var.cloud_bucket
   providers = {
     kubernetes = kubernetes
     helm       = helm

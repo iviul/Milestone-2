@@ -27,3 +27,8 @@ variable "cloudflare_api_token" {
 variable "JENKINS_GITHUB_SSH_PRIVATE_KEY" {
   type = string
 }
+
+variable "cloud_bucket"  {
+  type        = string
+  description = "Name of the Google Cloud Storage bucket for Terraform state"
+}
