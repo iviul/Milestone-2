@@ -52,15 +52,6 @@ resource "google_project_service" "monitoring" {
   disable_dependent_services = true
 }
 
-# module "monitoring" {
-#   source                     = "./modules/monitoring"
-#   alert_email                = local.config.monitoring.alert_email
-#   disk_usage_threshold       = local.config.monitoring.disk_usage_threshold
-#   memory_usage_threshold     = local.config.monitoring.memory_usage_threshold
-#   network_outbound_threshold = local.config.monitoring.network_outbound_threshold
-#   cpu_usage_threshold        = local.config.monitoring.cpu_usage_threshold
-# }
-
 # module "load-balancer" {
 #   source     = "./modules/load-balancer"
 #   project_id = local.config.project.name
@@ -84,15 +75,6 @@ module "db-instance" {
   db_username       = local.db_username
 }
 
-
-# module "cloudflare_dns" {
-#   source               = "../shared_modules/cloudflare_dns"
-#   cloudflare_zone_id   = var.cloudflare_zone_id
-#   dns_records_config   = local.config.dns_records
-#   resource_dns_map     = module.load-balancer.lb_name_to_ip_map
-#   cloudflare_api_token = var.cloudflare_api_token
-# }
-
 module "static_ips" {
   source      = "./modules/static_ips"
   static_ips  = local.config.static_ips
@@ -114,10 +96,16 @@ module "gke_cluster" {
   subnet_self_links = module.network.subnet_self_links_by_name
 }
 
+module "cloud_monitoring" {
+  source                     = "./modules/cloud_monitoring"
+  monitoring_config           = local.config.monitoring
+}
+
 module "jenkins" {
   source    = "./modules/jenkins"
   jenkins_admin_username = local.config.project.jenkins_admin_username
   jenkins_admin_password = local.config.project.jenkins_admin_password
+  jenkins_hostname = local.config.project.jenkins_hostname
   jenkins_controller_registry = local.config.project.jenkins_controller_registry
   jenkins_controller_repository = local.config.project.jenkins_controller_repository
   jenkins_controller_tag = local.config.project.jenkins_controller_tag
@@ -134,10 +122,10 @@ module "jenkins" {
   }
 }
 
-# module "gke_service_account" {
-#   source = "./modules/gke_service_account"
-#   service_account = local.config.kubernetes_service_account
-# }
+module "gke_service_account" {
+  source = "./modules/gke_service_account"
+  service_account = local.config.kubernetes_service_account
+}
 
 resource "kubernetes_secret" "jenkins_db_secret" {
   metadata {

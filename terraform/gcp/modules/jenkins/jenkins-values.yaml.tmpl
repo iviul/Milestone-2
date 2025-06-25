@@ -29,6 +29,22 @@ controller:
                         directEntry:
                               privateKey: |
                                 "${indent(32, JENKINS_GITHUB_SSH_PRIVATE_KEY)}"
+                  - file:
+                      scope: GLOBAL
+                      id: "gcp-sa-key"
+                      description: "GCP service account key"
+                      fileName: "gcp-key.json"
+                      secretBytes: ${gcp_sa_key_b64}
+                  - string:
+                      scope: GLOBAL
+                      id: cloudflare-token
+                      description: Cloudflare API token
+                      secret: ${cloudflare_api_token}
+                  - string:
+                      scope: GLOBAL
+                      id: cloud_bucket
+                      description: Cloud Storage bucket for Terraform state
+                      secret: ${cloud_bucket}
 
         jobs:
           - script: >
@@ -62,12 +78,12 @@ controller:
                     scm {
                       git {
                         remote {
-                          url('https://github.com/qjsoq/Jenkins-Automation.git')
+                          url('https://github.com/Illusion4/jenkins-pipeline-infra.git')
                         }
                         branches('*/main')
                       }
                     }
-                    scriptPath('jenkins/infra/Jenkinsfile')
+                    scriptPath('Jenkinsfile')
                   }
                 }
                 triggers {
@@ -83,15 +99,6 @@ controller:
     username: ${jenkins_admin_username}
     password: ${jenkins_admin_password}
 
-  ingress:
-    enabled: true
-    hostName: ${jenkins_hostname}
-    annotations:
-      kubernetes.io/ingress.class: "${ingress_class}"
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    tls:
-      - secretName: ${jenkins_tls_secret_name}
-        hosts:
-          - ${jenkins_hostname}
+  jenkinsUrl: ${jenkins_hostname}
 rbac:
   create: true

@@ -15,6 +15,11 @@ variable "jenkins_namespace" {
   default = "jenkins"
 }
 
+variable "jenkins_hostname" {
+  type        = string
+  description = "Hostname for the Jenkins instance"
+}
+
 variable "admin_user" {
   type    = string
   default = "admin"
@@ -46,12 +51,6 @@ variable "cloudflare_api_token" {
   sensitive   = true
 }
 
-variable "jenkins_github_ssh_private_key" {
-  type        = string
-  description = "SSH private key for GitHub access in Jenkins"
-  sensitive   = true
-}
-
 variable "JENKINS_GITHUB_SSH_PRIVATE_KEY" {
   description = "Private SSH key for GitHub"
   type        = string
@@ -67,22 +66,6 @@ variable "jenkins_controller_repository" {
   type        = string
   description = "Name of the TLS secret for Jenkins"
   default     = "nginx-hello-tls-secret"
-}
-
-variable "JENKINS_GITHUB_SSH_PRIVATE_KEY" {
-  description = "Private SSH key for GitHub"
-  type        = string
-  sensitive   = true
-}
-
-variable "jenkins_controller_registry" {
-  type        = string
-  description = "Docker registry for Jenkins controller image"
-}
-
-variable "jenkins_controller_repository" {
-  type        = string
-  description = "Docker repository for Jenkins controller image"
 }
 
 variable "jenkins_controller_tag" {
