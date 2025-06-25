@@ -51,3 +51,24 @@ variable "jenkins_tls_secret_name" {
   description = "Name of the TLS secret for Jenkins"
   default     = "nginx-hello-tls-secret"
 }
+
+variable "JENKINS_GITHUB_SSH_PRIVATE_KEY" {
+  description = "Private SSH key for GitHub"
+  type        = string
+  sensitive   = true
+}
+
+variable "jenkins_controller_registry" {
+  type        = string
+  description = "Docker registry for Jenkins controller image"
+}
+
+variable "jenkins_controller_repository" {
+  type        = string
+  description = "Docker repository for Jenkins controller image"
+}
+
+variable "jenkins_controller_tag" {
+  type        = string
+  description = "Tag for the Jenkins controller image"
+}

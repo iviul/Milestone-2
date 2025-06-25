@@ -5,16 +5,21 @@ resource "kubernetes_namespace" "jenkins" {
 }
 
 data "template_file" "jenkins_values" {
-  template = file("${path.module}/jenkins-values.yaml")
+  template = file("${path.module}/jenkins-values.yaml.tmpl")
 
   vars = {
     jenkins_namespace = "jenkins"
     jenkins_hostname       = var.jenkins_hostname
+    jenkins_controller_registry = var.jenkins_controller_registry
+    jenkins_controller_repository = var.jenkins_controller_repository
+    jenkins_controller_tag = var.jenkins_controller_tag
     ingress_class          = var.ingress_class
     jenkins_admin_username = var.jenkins_admin_username
     jenkins_admin_password = var.jenkins_admin_password
     jenkins_tls_secret_name = var.jenkins_tls_secret_name
     system_message         = "Welcome to Jenkins kh by ${var.jenkins_admin_username}!"
+    JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY
+    gar_password_base64 = file("${path.root}/tfbase64")
   }
 }
 

@@ -1,18 +1,84 @@
-
-
 namespace: ${jenkins_namespace}
 
 controller:
-  installPlugins:
-    - kubernetes
-    - workflow-aggregator
-    - git
-    - configuration-as-code
+  image: 
+    registry: "${jenkins_controller_registry}"
+    repository: "${jenkins_controller_repository}"
+    tag: "${jenkins_controller_tag}"
+    pullPolicy: "IfNotPresent"
+  imageCredentials:
+    registry: "${jenkins_controller_registry}"
+    username: "_json_key_base64"
+    password: "${gar_password_base64}"
+  installPlugins: false
   JCasC:
     configScripts:
       welcome-message: |
         jenkins:
           systemMessage: "${system_message}"
+        credentials:
+          system:
+            domainCredentials:
+              - credentials:
+                  - basicSSHUserPrivateKey:
+                      scope: GLOBAL
+                      id: "ssh_privatekey_github"
+                      username: "git"
+                      description: "SSH key for GitHub access"
+                      privateKeySource:
+                        directEntry:
+                              privateKey: |
+                                "${indent(32, JENKINS_GITHUB_SSH_PRIVATE_KEY)}"
+
+        jobs:
+          - script: >
+              pipelineJob('Application Pipeline Job') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/qjsoq/Jenkins-Automation.git')
+                        }
+                        branches('*/main')
+                      }
+                    }
+                    scriptPath('jenkins/application/Jenkinsfile')
+                  }
+                }
+                triggers {
+                  genericTrigger {
+                    token("application-trigger-token")
+                    causeString("Push to Ansible-repo triggered application pipeline")
+                    printContributedVariables(true)
+                    printPostContent(true)
+                  }
+                }
+              }
+          - script: >
+              pipelineJob('Infrastructure Pipeline Job') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/qjsoq/Jenkins-Automation.git')
+                        }
+                        branches('*/main')
+                      }
+                    }
+                    scriptPath('jenkins/infra/Jenkinsfile')
+                  }
+                }
+                triggers {
+                  githubPush()
+                }
+              }
+
+              
+        security:
+          gitHostKeyVerificationConfiguration:
+            sshHostKeyVerificationStrategy: "acceptFirstConnectionStrategy"
   admin:
     username: ${jenkins_admin_username}
     password: ${jenkins_admin_password}
@@ -27,5 +93,5 @@ controller:
       - secretName: ${jenkins_tls_secret_name}
         hosts:
           - ${jenkins_hostname}
-  image:
-      tag: "2.452.1-jdk17"
+rbac:
+  create: true
