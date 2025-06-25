@@ -1,9 +1,3 @@
-variable "private_key_path" {
-  type        = string
-  description = "Path to a private key"
-}
-
-
 variable "health_check_port" {
   description = "Port used for health checks (default: 6443 for K3s)"
   type        = number
@@ -22,4 +16,8 @@ variable "cloudflare_api_token" {
   description = "API token for Cloudflare"
   sensitive   = true
   default = "aJLTlqyMHshCQ6EovdpjIQjDphJ2I308vI9Y2htU"
+}
+
+variable "JENKINS_GITHUB_SSH_PRIVATE_KEY" {
+  type = string
 }
