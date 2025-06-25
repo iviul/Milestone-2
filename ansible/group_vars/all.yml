@@ -26,9 +26,10 @@ master_ip: "{{ hostvars[master_node].ansible_host }}"
 
 # List of domain names included in the certificate and ingress
 cert_domains:
-  - "classschedule.pp.ua"
-  - "*.classschedule.pp.ua"
   - "qjsoq.pp.ua"
 
+domain_jenkins:
+  - "jenkins.qjsoq.pp.ua"
+
 ingress_domains:
-  - "anfox.pp.ua"
+  - "qjsoq.pp.ua"

@@ -83,6 +83,9 @@ IAM_ROLES=(
 	"container.admin"
 	"container.clusterAdmin"
 	"iam.serviceAccountUser"
+
+	"artifactregistry.reader"
+	"artifactregistry.writer"
 )
 
 for iam_role in "${IAM_ROLES[@]}"; do
@@ -107,6 +110,8 @@ else
 	echo
 fi
 echo
+
+base64 "$KEY_FILE" > tfbase64
 
 #########################################################################
 check_secret_exists() {

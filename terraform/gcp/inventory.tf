@@ -3,7 +3,6 @@ locals {
 
   inventory = templatefile("${path.module}/../inventory.tpl", {
     private_ips      = module.vm.private_ips
-    private_key_path = var.private_key_path
 
     db_host     = module.db-instance.db_hosts[local.db_name]
     db_user     = module.db-instance.db_users[local.db_name]
