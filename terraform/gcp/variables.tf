@@ -21,14 +21,20 @@ variable "cloudflare_api_token" {
   type        = string
   description = "API token for Cloudflare"
   sensitive   = true
-  default = "aJLTlqyMHshCQ6EovdpjIQjDphJ2I308vI9Y2htU"
+  default     = "aJLTlqyMHshCQ6EovdpjIQjDphJ2I308vI9Y2htU"
 }
 
 variable "JENKINS_GITHUB_SSH_PRIVATE_KEY" {
   type = string
 }
 
-variable "cloud_bucket"  {
+variable "cloud_bucket" {
   type        = string
   description = "Name of the Google Cloud Storage bucket for Terraform state"
+}
+
+variable "gar_password_base64" {
+  description = "Base64-encoded password for GAR (Google Artifact Registry) authentication."
+  type        = string
+  sensitive   = true
 }

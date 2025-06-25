@@ -57,7 +57,7 @@ resource "google_monitoring_notification_channel" "channels" {
   for_each = {
     for ch in local.config.notification_channels : ch.name => ch
   }
-  
+
   display_name = each.value.name
   type         = each.value.type
   labels       = each.value.labels

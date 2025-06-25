@@ -30,7 +30,7 @@ resource "google_compute_region_health_check" "tcp_hc" {
 
 resource "google_compute_region_backend_service" "k3s_backend" {
   for_each = { for lb in var.load_balancers : lb.name => lb }
-  
+
   name                  = "${each.value.name}-backend"
   region                = var.region
   protocol              = each.value.protocol
@@ -47,7 +47,7 @@ resource "google_compute_region_backend_service" "k3s_backend" {
 
 resource "google_compute_address" "lb_static_ip" {
   for_each = { for lb in var.load_balancers : lb.name => lb }
-  
+
   name         = "${each.value.name}-static-ip"
   region       = var.region
   address_type = each.value.internal ? "INTERNAL" : "EXTERNAL"
@@ -55,7 +55,7 @@ resource "google_compute_address" "lb_static_ip" {
 
 resource "google_compute_forwarding_rule" "k3s_forwarding_rule" {
   for_each = { for lb in var.load_balancers : lb.name => lb }
-  
+
   name                  = "${each.value.name}-fr"
   ip_address            = google_compute_address.lb_static_ip[each.key].address
   ip_protocol           = each.value.protocol
@@ -67,7 +67,7 @@ resource "google_compute_forwarding_rule" "k3s_forwarding_rule" {
 
 resource "google_compute_firewall" "allow_lb_to_vm" {
   for_each = { for lb in var.load_balancers : lb.name => lb }
-  
+
   name    = "allow-lb-to-vm-${each.value.port}"
   network = var.network
 
@@ -81,7 +81,7 @@ resource "google_compute_firewall" "allow_lb_to_vm" {
     protocol = lower(each.value.protocol)
     ports    = [tostring(each.value.port)]
   }
-  
+
   description = "Allow incoming traffic from load balancer IP on port ${each.value.port} to the VMs."
   depends_on = [
     google_compute_forwarding_rule.k3s_forwarding_rule

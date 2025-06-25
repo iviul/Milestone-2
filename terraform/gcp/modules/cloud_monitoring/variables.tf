@@ -2,9 +2,9 @@ variable "monitoring_config" {
   description = "Monitoring configuration object"
   type = object({
     notification_channels = list(object({
-      name        = string
-      type        = string
-      labels      = map(string)
+      name   = string
+      type   = string
+      labels = map(string)
     }))
 
     log_based_metrics = list(object({
@@ -18,8 +18,8 @@ variable "monitoring_config" {
     }))
 
     alert_policies = list(object({
-      name       = string
-      combiner   = string
+      name     = string
+      combiner = string
       conditions = list(object({
         name          = string
         metric_filter = string

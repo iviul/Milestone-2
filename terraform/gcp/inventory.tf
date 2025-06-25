@@ -2,7 +2,7 @@ locals {
   db_name = "maindb" # Default database name
 
   inventory = templatefile("${path.module}/../inventory.tpl", {
-    private_ips      = module.vm.private_ips
+    private_ips = module.vm.private_ips
 
     db_host     = module.db-instance.db_hosts[local.db_name]
     db_user     = module.db-instance.db_users[local.db_name]
@@ -11,7 +11,7 @@ locals {
     db_name     = module.db-instance.db_names[local.db_name]
 
 
-    static_ips  = module.static_ips.ip_addresses
+    static_ips = module.static_ips.ip_addresses
 
   })
 }
