@@ -43,3 +43,4 @@ keys.json
 
 # Ignore dump files
 *.dump
+terraform/gcp/modules/jenkins/jenkins-values.yaml

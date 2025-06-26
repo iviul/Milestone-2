@@ -10,8 +10,8 @@ variable "region" {
 
 variable "networks" {
   type = list(object({
-    name     = string
-    vpc_cidr = string
+    name      = string
+    vpc_cidr  = string
     psa_range = string
     subnets = list(object({
       name   = string
