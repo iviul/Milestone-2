@@ -15,6 +15,11 @@ variable "jenkins_namespace" {
   default = "jenkins"
 }
 
+variable "jenkins_hostname" {
+  type        = string
+  description = "Hostname for the Jenkins instance"
+}
+
 variable "admin_user" {
   type    = string
   default = "admin"
@@ -35,21 +40,15 @@ variable "jenkins_admin_password" {
   description = "Password for the Jenkins admin user"
 }
 
-variable "jenkins_hostname" {
+variable "gcp_credentials_file" {
+  description = "Path to the GCP credentials JSON file"
   type        = string
-  description = "Hostname for the Jenkins service"
 }
 
-variable "ingress_class" {
+variable "cloudflare_api_token" {
   type        = string
-  description = "Ingress class to use for Jenkins"
-  default     = "nginx"
-}
-
-variable "jenkins_tls_secret_name" {
-  type        = string
-  description = "Name of the TLS secret for Jenkins"
-  default     = "nginx-hello-tls-secret"
+  description = "API token for Cloudflare"
+  sensitive   = true
 }
 
 variable "JENKINS_GITHUB_SSH_PRIVATE_KEY" {
@@ -65,10 +64,22 @@ variable "jenkins_controller_registry" {
 
 variable "jenkins_controller_repository" {
   type        = string
-  description = "Docker repository for Jenkins controller image"
+  description = "Name of the TLS secret for Jenkins"
+  default     = "nginx-hello-tls-secret"
 }
 
 variable "jenkins_controller_tag" {
   type        = string
   description = "Tag for the Jenkins controller image"
+}
+
+variable "cloud_bucket" {
+  type        = string
+  description = "Name of the Google Cloud Storage bucket for Terraform state"
+}
+
+variable "gar_password_base64" {
+  description = "Base64-encoded password for GAR (Google Artifact Registry) authentication."
+  type        = string
+  sensitive   = true
 }

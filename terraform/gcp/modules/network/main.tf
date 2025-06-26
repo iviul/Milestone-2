@@ -5,8 +5,8 @@ locals {
   psa_ranges_map = {
     for net in var.networks :
     net.name => {
-      name  = "psa-range-${net.name}"
-      cidr  = "${net.psa_range}"
+      name = "psa-range-${net.name}"
+      cidr = "${net.psa_range}"
     }
   }
 
@@ -134,7 +134,7 @@ resource "google_compute_firewall" "lb_health_check" {
     "35.191.0.0/16"
   ]
 
-  target_tags = ["k3s-worker", "k3s-master"] 
+  target_tags = ["k3s-worker", "k3s-master"]
 }
 
 resource "google_compute_global_address" "default" {
@@ -159,6 +159,6 @@ resource "google_service_networking_connection" "private_vpc_connection" {
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.default[each.key].name]
   update_on_creation_fail = true
-  
+
   deletion_policy = "ABANDON"
 }
