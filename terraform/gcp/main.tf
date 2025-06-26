@@ -114,9 +114,10 @@ module "jenkins" {
   access_token                   = data.google_client_config.default.access_token
   gcp_credentials_file           = var.gcp_credentials_file
   cloudflare_api_token           = var.cloudflare_api_token
-  JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY
+  JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY 
+  project_id = local.config.project.name
+
   cloud_bucket                   = var.cloud_bucket
-  gar_password_base64            = var.gar_password_base64
   providers = {
     kubernetes = kubernetes
     helm       = helm

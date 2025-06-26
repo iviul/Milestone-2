@@ -83,3 +83,8 @@ variable "gar_password_base64" {
   type        = string
   sensitive   = true
 }
+
+variable "project_id" {
+  type        = string
+  description = "GCP project ID"
+}
