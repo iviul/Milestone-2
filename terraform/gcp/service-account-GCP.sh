@@ -113,6 +113,9 @@ echo
 
 base64 "$KEY_FILE" > tfbase64
 
+SECRET_NAME_GAR_BASE64="jenkins_gar_base64"
+
+
 #########################################################################
 check_secret_exists() {
     gcloud secrets describe "$1" --project="$2" &>/dev/null
@@ -142,6 +145,8 @@ create_secret() {
 }
 create_secret "$SECRET_NAME_DB_USERNAME" "$PROJECT_ID" "$DB_USERNAME"
 create_secret "$SECRET_NAME_DB_PASS" "$PROJECT_ID" "$DB_PASS"
+create_secret "$SECRET_NAME_GAR_BASE64" "$PROJECT_ID" "$(cat tfbase64)"
+
 echo
 
 #########################################################################

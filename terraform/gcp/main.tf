@@ -52,13 +52,9 @@ resource "google_project_service" "monitoring" {
   disable_dependent_services = true
 }
 
-module "monitoring" {
-  source                     = "./modules/monitoring"
-  alert_email                = local.config.monitoring.alert_email
-  disk_usage_threshold       = local.config.monitoring.disk_usage_threshold
-  memory_usage_threshold     = local.config.monitoring.memory_usage_threshold
-  network_outbound_threshold = local.config.monitoring.network_outbound_threshold
-  cpu_usage_threshold        = local.config.monitoring.cpu_usage_threshold
+module "cloud_monitoring" {
+  source                     = "./modules/cloud_monitoring"
+  monitoring_config           = local.config.monitoring
 }
 
 module "load-balancer" {
@@ -126,6 +122,7 @@ module "jenkins" {
   ca_certificate   = module.gke_cluster.cluster_ca_certificates["main-cluster"] // change if using more than one cluster
   access_token     = data.google_client_config.default.access_token    
   JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY
+  project_id = local.config.project.name
 
   providers = {
     kubernetes = kubernetes

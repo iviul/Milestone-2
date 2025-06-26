@@ -72,3 +72,8 @@ variable "jenkins_controller_tag" {
   type        = string
   description = "Tag for the Jenkins controller image"
 }
+
+variable "project_id" {
+  type        = string
+  description = "GCP project ID"
+}

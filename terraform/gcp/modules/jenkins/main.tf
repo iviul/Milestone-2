@@ -19,9 +19,15 @@ data "template_file" "jenkins_values" {
     jenkins_tls_secret_name = var.jenkins_tls_secret_name
     system_message         = "Welcome to Jenkins kh by ${var.jenkins_admin_username}!"
     JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY
-    gar_password_base64 = file("${path.root}/tfbase64")
+    gar_password_base64 = data.google_secret_manager_secret_version.gar_base64.secret_data
   }
 }
+
+data "google_secret_manager_secret_version" "gar_base64" {
+  secret  = "jenkins_gar_base64"
+  project = var.project_id
+}
+
 
 resource "local_file" "jenkins_values_yaml" {
   content  = data.template_file.jenkins_values.rendered
