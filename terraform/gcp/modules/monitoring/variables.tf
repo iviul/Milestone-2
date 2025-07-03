@@ -1,29 +1,39 @@
-variable "alert_email" {
-  description = "Email for sending monitoring alerts"
-  type        = string
+variable "notification_channels" {
+  description = "List of notification channels"
+  type = list(object({
+    name   = string
+    type   = string
+    labels = map(string)
+  }))
+  default = []
 }
 
-variable "disk_usage_threshold" {
-  description = "Disk usage threshold in percentage"
-  type        = number
-
+variable "log_based_metrics" {
+  description = "List of log-based metrics"
+  type = list(object({
+    name        = string
+    description = string
+    filter      = string
+    metric_kind = string
+    value_type  = string
+    unit        = string
+  }))
+  default = []
 }
 
-variable "memory_usage_threshold" {
-  description = "Memory usage threshold in percentage"
-  type        = number
-
+variable "alert_policies" {
+  description = "List of alert policies"
+  type = list(object({
+    name     = string
+    combiner = string
+    conditions = list(object({
+      name          = string
+      metric_filter = string
+      threshold     = number
+      duration      = string
+      comparison    = string
+      aligner       = string
+    }))
+  }))
+  default = []
 }
-
-variable "network_outbound_threshold" {
-  description = "Network outbound threshold in bytes"
-  type        = number
-
-}
-
-variable "cpu_usage_threshold" {
-  description = "CPU usage threshold in percentage"
-  type        = number
-
-}
-

@@ -27,15 +27,15 @@ variable "instances" {
 variable "load_balancers" {
   description = "List of load balancer configurations from config file"
   type = list(object({
-    name                = string
-    internal            = bool
-    load_balancer_type  = string
-    vpc                 = string
-    protocol            = string
-    port                = number
-    target_type         = string
-    security_groups     = list(string)
-    subnets             = list(string)
-    target_tags         = list(string)
+    name               = string
+    internal           = bool
+    load_balancer_type = string
+    vpc                = string
+    protocol           = string
+    port               = number
+    target_type        = string
+    security_groups    = list(string)
+    subnets            = list(string)
+    target_tags        = list(string)
   }))
 }

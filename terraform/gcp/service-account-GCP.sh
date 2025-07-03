@@ -149,7 +149,7 @@ if [ -f "$ENV_FILE" ]; then
 fi
 
 if [ -z "$NEW_BUCKET_NAME" ]; then
-    BUCKET_NAME=$(ggrep -oP '"bucket_state_name":\s*"\K[^"]+' "$CONFIG_PATH")
+    BUCKET_NAME=$(grep -oP '"bucket_state_name":\s*"\K[^"]+' "$CONFIG_PATH")
     NEW_BUCKET_NAME="${BUCKET_NAME}-$(date +'%Y-%m-%d-%H-%M-%S')"
 
     echo "=== Creating bucket: gs://$NEW_BUCKET_NAME ==="

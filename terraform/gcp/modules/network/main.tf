@@ -5,8 +5,8 @@ locals {
   psa_ranges_map = {
     for net in var.networks :
     net.name => {
-      name  = "psa-range-${net.name}"
-      cidr  = "${net.psa_range}"
+      name = "psa-range-${net.name}"
+      cidr = "${net.psa_range}"
     }
   }
 
@@ -73,34 +73,6 @@ resource "google_compute_firewall" "ingress" {
   ]))
 }
 
-# 4) Egress firewalls
-# resource "google_compute_firewall" "egress" {
-#   for_each = {
-#     for sg in var.security_groups : sg.name => sg
-#     if length(sg.egress) > 0
-#   }
-
-#   name        = "${each.key}-egress"
-#   network     = google_compute_network.vpc[each.value.vpc].self_link
-#   target_tags = each.value.attach_to
-#   direction   = "EGRESS"
-
-#   dynamic "allow" {
-#     for_each = each.value.egress
-#     content {
-#       protocol = allow.value.protocol
-#       ports    = [tostring(allow.value.port)]
-#     }
-#   }
-
-#   # Handle destination ranges properly - either use CIDR from ACLs or leave empty for all destinations
-#   destination_ranges = distinct(flatten([
-#     for rule in each.value.egress :
-#     contains(keys(local.acls_map), rule.destination) ? [local.acls_map[rule.destination]] : ["0.0.0.0/0"]
-#     if !contains(keys(local.sg_to_instances_map), rule.destination)
-#   ]))
-
-# }
 resource "google_compute_router" "nat_router" {
   for_each = google_compute_network.vpc
 
@@ -134,7 +106,7 @@ resource "google_compute_firewall" "lb_health_check" {
     "35.191.0.0/16"
   ]
 
-  target_tags = ["k3s-worker", "k3s-master"] 
+  target_tags = ["k3s-worker", "k3s-master"]
 }
 
 resource "google_compute_global_address" "default" {
@@ -148,7 +120,6 @@ resource "google_compute_global_address" "default" {
   address_type  = "INTERNAL"
   purpose       = "VPC_PEERING"
   network       = google_compute_network.vpc[each.key].self_link
-  address       = each.value.cidr
 }
 
 resource "google_service_networking_connection" "private_vpc_connection" {
@@ -159,6 +130,6 @@ resource "google_service_networking_connection" "private_vpc_connection" {
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.default[each.key].name]
   update_on_creation_fail = true
-  
+
   deletion_policy = "ABANDON"
 }
