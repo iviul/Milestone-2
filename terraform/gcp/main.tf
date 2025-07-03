@@ -97,30 +97,30 @@ module "gke_cluster" {
 }
 
 module "monitoring" {
-  source = "./modules/monitoring"
+  source                = "./modules/monitoring"
   notification_channels = jsondecode(file("${path.module}/../config-kuber.json"))["monitoring"]["notification_channels"]
   log_based_metrics     = jsondecode(file("${path.module}/../config-kuber.json"))["monitoring"]["log_based_metrics"]
   alert_policies        = jsondecode(file("${path.module}/../config-kuber.json"))["monitoring"]["alert_policies"]
 }
 
 module "jenkins" {
-  source                         = "./modules/jenkins"
-  jenkins_admin_username         = local.config.project.jenkins_admin_username
-  jenkins_admin_password         = local.config.project.jenkins_admin_password
-  jenkins_hostname               = local.config.project.jenkins_hostname
-  jenkins_controller_registry    = local.config.project.jenkins_controller_registry
-  jenkins_controller_repository  = local.config.project.jenkins_controller_repository
-  jenkins_controller_tag         = local.config.project.jenkins_controller_tag
-  cluster_endpoint               = module.gke_cluster.cluster_endpoints["main-cluster"]       // change if using more than one cluster
-  ca_certificate                 = module.gke_cluster.cluster_ca_certificates["main-cluster"] // change if using more than one cluster
-  access_token                   = data.google_client_config.default.access_token
-  gcp_credentials_file           = module.jenkins.gcp_credentials_file
+  source                        = "./modules/jenkins"
+  jenkins_admin_username        = local.config.project.jenkins_admin_username
+  jenkins_admin_password        = local.config.project.jenkins_admin_password
+  jenkins_hostname              = local.config.project.jenkins_hostname
+  jenkins_controller_registry   = local.config.project.jenkins_controller_registry
+  jenkins_controller_repository = local.config.project.jenkins_controller_repository
+  jenkins_controller_tag        = local.config.project.jenkins_controller_tag
+  cluster_endpoint              = module.gke_cluster.cluster_endpoints["main-cluster"]       // change if using more than one cluster
+  ca_certificate                = module.gke_cluster.cluster_ca_certificates["main-cluster"] // change if using more than one cluster
+  access_token                  = data.google_client_config.default.access_token
+  gcp_credentials_file           = var.gcp_credentials_file
   gar_password_base64            = var.gar_password_base64
   cloudflare_api_token           = var.cloudflare_api_token
-  JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY 
+  JENKINS_GITHUB_SSH_PRIVATE_KEY = var.JENKINS_GITHUB_SSH_PRIVATE_KEY
   project_id                     = local.config.project.name
 
-  cloud_bucket                   = var.cloud_bucket
+  cloud_bucket = var.cloud_bucket
   providers = {
     kubernetes = kubernetes
     helm       = helm

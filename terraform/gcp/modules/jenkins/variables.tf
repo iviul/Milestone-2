@@ -71,8 +71,8 @@ variable "cloud_bucket" {
 variable "gar_password_base64" {
   description = "Base64-encoded password for GAR (Google Artifact Registry) authentication."
   type        = string
-  sensitive = true
-  }
+  sensitive   = true
+}
 
 variable "project_id" {
   type        = string

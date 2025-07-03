@@ -14,14 +14,12 @@ variable "cloudflare_zone_id" {
   type        = string
   sensitive   = true
   description = "Cloudflare zone ID for DNS management"
-  default     = "f2ecb3eb8c0cf84bb53c314e402ff57d"
 }
 
 variable "cloudflare_api_token" {
   type        = string
   description = "API token for Cloudflare"
   sensitive   = true
-  default     = "5af6bf3ecbff8088b428a44a2a79e82777859"
 }
 
 variable "JENKINS_GITHUB_SSH_PRIVATE_KEY" {

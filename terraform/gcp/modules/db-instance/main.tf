@@ -43,5 +43,5 @@ resource "google_sql_user" "users" {
   name     = var.db_username
   instance = google_sql_database_instance.primary[each.key].name
   password = var.db_pass
-  
+
 }

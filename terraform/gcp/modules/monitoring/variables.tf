@@ -24,8 +24,8 @@ variable "log_based_metrics" {
 variable "alert_policies" {
   description = "List of alert policies"
   type = list(object({
-    name      = string
-    combiner  = string
+    name     = string
+    combiner = string
     conditions = list(object({
       name          = string
       metric_filter = string

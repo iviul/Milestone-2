@@ -18,7 +18,7 @@ resource "google_logging_metric" "log_metrics" {
 }
 
 resource "google_monitoring_alert_policy" "custom" {
-  for_each = { for ap in var.alert_policies : ap.name => ap }
+  for_each              = { for ap in var.alert_policies : ap.name => ap }
   display_name          = each.value.name
   combiner              = each.value.combiner
   notification_channels = [for nc in google_monitoring_notification_channel.channels : nc.id]

@@ -10,8 +10,8 @@ variable "region" {
 
 variable "networks" {
   type = list(object({
-    name     = string
-    vpc_cidr = string
+    name      = string
+    vpc_cidr  = string
     psa_range = string
     subnets = list(object({
       name   = string
@@ -42,11 +42,6 @@ variable "security_groups" {
       port     = number
       source   = string
     }))
-    # egress = list(object({
-    #   protocol    = string
-    #   port        = number
-    #   destination = string
-    # }))
   }))
   description = "Firewall definitions mapping tags → ingress/egress rules"
 }
