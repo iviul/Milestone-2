@@ -110,4 +110,25 @@ deployments:  [
       "secret_refs": [],
       "namespace": "intproject"
     }
+<<<<<<< Updated upstream
 ]
+=======
+]
+ingress: [
+    {
+      name: app-tls-secret,
+      cluster_issuer_name_map: {staging: "letsencrypt-staging", production: "letsencrypt-production"},
+      ingress_class_name: nginx,
+      certificate_secret_map: { staging: "tls-secret-stag", production: "tls-secret-prod" },
+      app_name: my-app,
+      namespace: "intproject",
+      ingress_name: app-ingress,
+      domain: devps.pp.ua,
+      tls_secret_name_map: {staging: "app-secret-tls-stag", production: "app-secret-tls-prod"},
+      ingress_namespace: intproject
+    }
+]
+# cluster_issuer_name: "letsencrypt-staging"change to 
+# cluster_issuer_name: "letsencrypt-production" after testing 
+# due to limits let`sencrypt`
+>>>>>>> Stashed changes

@@ -1,90 +1,41 @@
-resource "google_monitoring_notification_channel" "email" {
-  display_name = "Email Channel"
-  type         = "email"
-  labels = {
-    email_address = var.alert_email
+resource "google_monitoring_notification_channel" "channels" {
+  for_each     = { for nc in var.notification_channels : nc.name => nc }
+  display_name = each.value.name
+  type         = each.value.type
+  labels       = each.value.labels
+}
+
+resource "google_logging_metric" "log_metrics" {
+  for_each    = { for m in var.log_based_metrics : m.name => m }
+  name        = each.value.name
+  description = each.value.description
+  filter      = each.value.filter
+  metric_descriptor {
+    metric_kind = each.value.metric_kind
+    value_type  = each.value.value_type
+    unit        = each.value.unit
   }
 }
 
-# Disk usage
-resource "google_monitoring_alert_policy" "disk_usage" {
-  display_name          = "Disk Usage Alert"
-  combiner              = "OR"
-  notification_channels = [google_monitoring_notification_channel.email.id]
-  conditions {
-    display_name = "Disk Utilization > disk_usage_threshold%"
-    condition_threshold {
-      filter          = "metric.type=\"agent.googleapis.com/disk/percent_used\" AND resource.type=\"gce_instance\""
-      comparison      = "COMPARISON_GT"
-      threshold_value = var.disk_usage_threshold
-      duration        = "60s"
-      aggregations {
-        alignment_period     = "60s"
-        per_series_aligner   = "ALIGN_MEAN"
-        cross_series_reducer = "REDUCE_NONE"
-      }
-    }
-  }
-}
+resource "google_monitoring_alert_policy" "custom" {
+  for_each = { for ap in var.alert_policies : ap.name => ap }
+  display_name          = each.value.name
+  combiner              = each.value.combiner
+  notification_channels = [for nc in google_monitoring_notification_channel.channels : nc.id]
 
-# Memory usage
-resource "google_monitoring_alert_policy" "memory_usage" {
-  display_name          = "Memory Usage Alert"
-  combiner              = "OR"
-  notification_channels = [google_monitoring_notification_channel.email.id]
-  conditions {
-    display_name = "Memory Usage > memory_usage_threshold%"
-    condition_threshold {
-      filter          = "metric.type=\"agent.googleapis.com/memory/percent_used\" AND resource.type=\"gce_instance\""
-      comparison      = "COMPARISON_GT"
-      threshold_value = var.memory_usage_threshold
-      duration        = "60s"
-      aggregations {
-        alignment_period     = "60s"
-        per_series_aligner   = "ALIGN_MEAN"
-        cross_series_reducer = "REDUCE_NONE"
-      }
-    }
-  }
-}
-
-# Network outbound
-resource "google_monitoring_alert_policy" "network_out" {
-  display_name          = "High Network Outbound Alert"
-  combiner              = "OR"
-  notification_channels = [google_monitoring_notification_channel.email.id]
-  conditions {
-    display_name = "Network Outbound > network_outbound_threshold bytes/min"
-    condition_threshold {
-      filter          = "metric.type=\"compute.googleapis.com/instance/network/sent_bytes_count\" AND resource.type=\"gce_instance\""
-      comparison      = "COMPARISON_GT"
-      threshold_value = var.network_outbound_threshold
-      duration        = "60s"
-      aggregations {
-        alignment_period     = "60s"
-        per_series_aligner   = "ALIGN_RATE"
-        cross_series_reducer = "REDUCE_NONE"
-      }
-    }
-  }
-}
-
-# CPU usage
-resource "google_monitoring_alert_policy" "cpu_usage" {
-  display_name          = "High CPU Usage Alert"
-  combiner              = "OR"
-  notification_channels = [google_monitoring_notification_channel.email.id]
-  conditions {
-    display_name = "CPU Usage > cpu_usage_threshold%"
-    condition_threshold {
-      filter          = "metric.type=\"compute.googleapis.com/instance/cpu/utilization\" AND resource.type=\"gce_instance\""
-      comparison      = "COMPARISON_GT"
-      threshold_value = var.cpu_usage_threshold / 100
-      duration        = "60s"
-      aggregations {
-        alignment_period     = "60s"
-        per_series_aligner   = "ALIGN_MEAN"
-        cross_series_reducer = "REDUCE_NONE"
+  dynamic "conditions" {
+    for_each = each.value.conditions
+    content {
+      display_name = conditions.value.name
+      condition_threshold {
+        filter          = conditions.value.metric_filter
+        comparison      = conditions.value.comparison
+        threshold_value = conditions.value.threshold
+        duration        = conditions.value.duration
+        aggregations {
+          alignment_period   = "60s"
+          per_series_aligner = conditions.value.aligner
+        }
       }
     }
   }

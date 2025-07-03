@@ -1,0 +1,104 @@
+namespace: jenkins
+
+controller:
+  image: 
+    registry: "docker.io"
+    repository: "artamonovdima/jenkins-custom"
+    tag: "5.0"
+    pullPolicy: "IfNotPresent"
+  imageCredentials:
+    registry: "docker.io"
+    username: "_json_key_base64"
+
+  installPlugins: false
+  JCasC:
+    configScripts:
+      welcome-message: |
+        jenkins:
+          systemMessage: "Welcome to Jenkins kh by admin!"
+        credentials:
+          system:
+            domainCredentials:
+              - credentials:
+                  - basicSSHUserPrivateKey:
+                      scope: GLOBAL
+                      id: "ssh_privatekey_github"
+                      username: "git"
+                      description: "SSH key for GitHub access"
+                      privateKeySource:
+                        directEntry:
+                              privateKey: |
+                                "SHA256:8bQ4ja7CU42xtuLsSebcbnKD0V/tJmPJlYqbiH0JDso"
+                  - file:
+                      scope: GLOBAL
+                      id: "gcp-sa-key"
+                      description: "GCP service account key"
+                      fileName: "gcp-key.json"
+                      secretBytes: ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAibG9mdHktbWVtZW50by00NTg1MDgtaTEiLAogICJwcml2YXRlX2tleV9pZCI6ICJhNTg5NWIzODNkNTYwNWJiZGEwNzAxMjJjNWE1ZGNmYzdiMWY1MzYyIiwKICAicHJpdmF0ZV9rZXkiOiAiLS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tXG5NSUlFdndJQkFEQU5CZ2txaGtpRzl3MEJBUUVGQUFTQ0JLa3dnZ1NsQWdFQUFvSUJBUUNzSnA1MlUvM0JLQ0xTXG5HRXBuaWhrOGF6UWhZMk1nR3JZNjZyUTA0THhNazdwVTlkS3pobGtuY0NoRnQvUmd4Y2xQa2lObi9JUnJha2JXXG50MjRYWUExMjRidUsxSUExK1BSU2Fyd3VZVU9RbVV5b21ZSi80ZnpmS29pY0M4R1JjdkV5UU54Sk1EZVhOSngwXG4vRThxcjloaDlEWk43NjRWZ2E0d1FicEo2Mys3RXhZYzh3ZWxpeTJ0ZTgzcmswOFlMSCtKaTU0MEFhUWhQY08yXG45YjVpMXBpR2IwNkJpc1FXZmJuTkpVdlYyMjNvL1JMYlpXeUtqZE44dU1BcDJxLzh2NHlKMHJ5RFNEWVBVZmdwXG4xR3VQSy9PdDIxNHAzSXd3UkhqUzJxUlF2VGhDOC81Z0hvY2xUYWlLOEZoTXNaWTFaQlBKbUJnUTY0VTlITXczXG40RC9iY3VLckFnTUJBQUVDZ2dFQUF3WlVyM0NQVzFiNHNhZFNtMW9lVW1UeDBBcGVnZ0JtSmtmY2JiZHJKNDlLXG43Vlk2WXdRZnllVWJHQXFBNVRoa2JwejdPVWNERHA0WjY0amlpcytadlBaL1pKT1NReUNDTG5hSW91bjdsVzFVXG5IdncvZ2o2MndqY05tbXhNZE9GSG9xSG9IUE1YYnZVeU1JNEVXQlFwNGFLNFY0czRERkd3ZlZHU1U5MHE2OThGXG5FeXE2bisxOUM1VDZhbUY4NVpBUkJtU1pTS0NpRjFjQ3ZRM1habVVvK2kweksxTGtsTEsrbFpTQWl0djhheVNZXG5oY0pQcFdMa1BLcEdDOXU2bjNIMlNxOXJmejgyaUpSWkZWZ0czS0VCa0VwVDlPS290VGpWdGhLZGNCLzF1ZnRnXG5iTnFhRVRsNkxCYnVtVVJPbE94cjc3bm9nOFNqbjBFUkhzQWlZNnp0UFFLQmdRRGxIbXp1dXdSTkJBbDFDcXowXG5YMzRKWlRVb3lnZ1liV2kyQTc1ZFlIZDFPSDNsWjhvd1JNT1ZwTkZHVUVNQ1NsZkV2MFNCZkRiUGNyNDlWem55XG4rU0Qzc1NnNnZnM2hqR3VZbVVwaW1XVFM1NDFxdnBwNVg5d01WZ290RzErV2Joa1FrWWNiQ2lxa2dlaE9sZlh0XG5HQTUxQlB1T2o0ZnY2aGI2MElZaHNOZ1RUUUtCZ1FEQVdTbU1ROE0rUGcrLzErclpwM1hBTHQ3UDJPNG9xbHh0XG5uYjZyaTJyeS9JajBmVG5mbkJOelY0MDl6SjZ4MkFBeVdqRkhtNTEyb2JWdkhrUWxrNDFNajExdTFoUE9mOUJUXG4yYWhWOVhsR0R1cG9pSlFXbnJYT041bkYyeUNIRGhST3pFQktkcHhzdTRlMzJ6YmIzUGp4eFd5UzZpMlZrZ0lSXG5Cd2dORnhUaDF3S0JnUURPL1RDK2NEaFBkN0V2aXVoN2tYV2srVWtRUTQwU3ZHMFgyc1AxU2Z4QjZ6cFpzTzJKXG5zK1hhWUY4c0hjQ2I1aHZxeEQwWW1lWk9mY1ArV0xvaWx3MUFtRXpXM1BKZmJPT2JwZ2o4a01YMGYzcFVFRVF3XG5HUGtNTUFMYmcxcFU1YnhCS3FnYk5wRVZzOEx5bENucis0cThEemRRTUwxSGNuMDJOSUtwRjBIdUZRS0JnUUMwXG5OWlVvbGdBaG01R3o0bjVreDNFWnlvLzBXY0RnRnFTY0NwT3VNdVBUbmVoT2I5aTkrSU44cUFWclpmODBqak80XG4rU2w4ZG41enZCTzVkTGpTSDhqZGR1Qkp6SVlvRFRYSXFYNytjZ3JhS1hWUzFNc3gyaVpwZTB3MXhCUllsRWRRXG5nQ3FuMlRLNjZJUENMTDdjQk02ejdZeklwR0JxNXEzSytEU0IxeU00WndLQmdRQ2JCODFBYXpIWG1YOG9FVDc3XG52TUlkZHpKZUJnYnhzOEIxNHh4SHZtV2NrM1R3MEdLcm9UczhOU01xVFc2Z0tRalZmK3R3NERhMmRieDFlMDdoXG42MFI1Ni83SXQyWmNWTEJtZWlSTzhrakRMS1JKdnhWZDNvN2VzUVl6V1p4K1FYQVRtbVZVaXhNRTJoUWtPNXVlXG5ucTV5SlYwdndjWG5SSmZTWUwxMzM3UWFHZz09XG4tLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tXG4iLAogICJjbGllbnRfZW1haWwiOiAidGVycmFmb3JtLXVzZXJAbG9mdHktbWVtZW50by00NTg1MDgtaTEuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLAogICJjbGllbnRfaWQiOiAiMTE2MjgxNTU1MjI3MzEwNDI4MDM0IiwKICAiYXV0aF91cmkiOiAiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tL28vb2F1dGgyL2F1dGgiLAogICJ0b2tlbl91cmkiOiAiaHR0cHM6Ly9vYXV0aDIuZ29vZ2xlYXBpcy5jb20vdG9rZW4iLAogICJhdXRoX3Byb3ZpZGVyX3g1MDlfY2VydF91cmwiOiAiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vb2F1dGgyL3YxL2NlcnRzIiwKICAiY2xpZW50X3g1MDlfY2VydF91cmwiOiAiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vcm9ib3QvdjEvbWV0YWRhdGEveDUwOS90ZXJyYWZvcm0tdXNlciU0MGxvZnR5LW1lbWVudG8tNDU4NTA4LWkxLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwKICAidW5pdmVyc2VfZG9tYWluIjogImdvb2dsZWFwaXMuY29tIgp9Cg==
+                  - string:
+                      scope: GLOBAL
+                      id: cloudflare-token
+                      description: Cloudflare API token
+                      secret: aJLTlqyMHshCQ6EovdpjIQjDphJ2I308vI9Y2htU
+                  - string:
+                      scope: GLOBAL
+                      id: cloud_bucket
+                      description: Cloud Storage bucket for Terraform state
+                      secret: state-bucket-name-1377-2025-06-26-14-48-02
+
+        jobs:
+          - script: >
+              pipelineJob('Application Pipeline Job') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/qjsoq/Jenkins-Automation.git')
+                        }
+                        branches('*/main')
+                      }
+                    }
+                    scriptPath('jenkins/application/Jenkinsfile')
+                  }
+                }
+                triggers {
+                  genericTrigger {
+                    token("application-trigger-token")
+                    causeString("Push to Ansible-repo triggered application pipeline")
+                    printContributedVariables(true)
+                    printPostContent(true)
+                  }
+                }
+              }
+          - script: >
+              pipelineJob('Infrastructure Pipeline Job') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/Illusion4/jenkins-pipeline-infra.git')
+                        }
+                        branches('*/main')
+                      }
+                    }
+                    scriptPath('Jenkinsfile')
+                  }
+                }
+                triggers {
+                  githubPush()
+                }
+              }
+
+              
+        security:
+          gitHostKeyVerificationConfiguration:
+            sshHostKeyVerificationStrategy: "acceptFirstConnectionStrategy"
+  admin:
+    username: admin
+    password: admin
+
+  jenkinsUrl: jenkins.devps.pp.ua
+rbac:
+  create: true

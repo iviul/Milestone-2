@@ -25,5 +25,15 @@ master_node: "{{ groups[k3s_group][0] }}"
 master_ip: "{{ hostvars[master_node].ansible_host }}"
 
 # List of domain names included in the certificate and ingress
+<<<<<<< Updated upstream
 domains:
   - "classschedule.pp.ua"
+=======
+cert_domains:
+  - "devps.pp.ua"
+domain_jenkins:
+  - "jenkins.devps.pp.ua"
+
+ingress_domains:
+  - "devps.pp.ua"
+>>>>>>> Stashed changes
